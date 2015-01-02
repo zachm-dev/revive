@@ -210,7 +210,7 @@ DEPENDENCIES
   nokogiri
   pg
   puma
-  rails (= 4.2.0)
+  rails
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
   sidekiq!
