@@ -31,6 +31,7 @@ gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
 # gem 'polipus'
 # gem 'hwacha'
+gem 'nokogiri'
 gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
 gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
 gem 'sinatra', require: false

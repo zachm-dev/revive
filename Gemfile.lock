@@ -207,6 +207,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   lazy_high_charts
+  nokogiri
   pg
   puma
   rails (= 4.2.0)
