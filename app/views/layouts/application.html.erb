@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Crawler</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+	
+<%= render 'nav/top_nav' %>
+
+<div class="main_container fill">
+	
+	<div class="main_left_container fill left_nav_bg">
+		<%= render 'nav/left_nav' %>
+	</div>
+	
+	<div class="main_right_container fill main_page_bg">
+		<%= yield %>
+	</div>
+
+</div>
+
+</body>
+</html>
