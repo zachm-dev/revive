@@ -16,27 +16,27 @@ ActiveRecord::Schema.define(version: 20141230085609) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "crawls", force: true do |t|
-    t.string   "name"
+  create_table "crawls", force: :cascade do |t|
+    t.string   "name",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "pages", force: true do |t|
-    t.string   "status_code"
-    t.string   "mime_type"
-    t.string   "length"
+  create_table "pages", force: :cascade do |t|
+    t.string   "status_code",      limit: 255
+    t.string   "mime_type",        limit: 255
+    t.string   "length",           limit: 255
     t.text     "links"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "headers"
-    t.string   "crawl_id"
+    t.string   "crawl_id",         limit: 255
     t.text     "redirect_through"
     t.text     "url"
   end
 
-  create_table "sites", force: true do |t|
-    t.string   "base_url"
+  create_table "sites", force: :cascade do |t|
+    t.string   "base_url",   limit: 255
     t.integer  "crawl_id"
     t.datetime "created_at"
     t.datetime "updated_at"

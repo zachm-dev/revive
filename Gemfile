@@ -38,7 +38,7 @@ gem 'slim'
 gem 'lazy_high_charts'
 #gem "passenger", '>= 5.0.0.beta2'
 gem 'foreman'
-gem 'rubber'
+#gem 'rubber'
 gem "puma"
 
 # Use ActiveModel has_secure_password
