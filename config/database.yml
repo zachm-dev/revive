@@ -25,12 +25,15 @@
 #   database: db/production.sqlite3
 
 production:
-  adapter: postgresql
-  encoding: unicode
-  database: crawler_production
-  pool: 25
-  # username:
-  # password:
+	<<: *default
+	database: <%= ENV["RDS_DB_NAME"] %>
+  	adapter: postgresql
+  	encoding: unicode
+  	pool: 25
+	host: <%= ENV["RDS_HOSTNAME"] %>
+	port: <%= ENV["RDS_PORT"] %>
+  	username: <%= ENV["RDS_USERNAME"] %>
+  	password: <%= ENV["RDS_PASSWORD"] %>
 
 development:
   adapter: postgresql

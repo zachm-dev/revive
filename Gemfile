@@ -36,9 +36,10 @@ gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
 gem 'sinatra', require: false
 gem 'slim'
 gem 'lazy_high_charts'
-gem "passenger", '>= 5.0.0.beta2'
+#gem "passenger", '>= 5.0.0.beta2'
 gem 'foreman'
 gem 'rubber'
+gem "puma"
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
