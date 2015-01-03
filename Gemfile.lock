@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/darzuaga/cobweb.git
-  revision: f76b14994387b7d731448b1f8653ccc3fa042b84
+  revision: 7a8c456aedd100b4ce1b8d51c9a27cae52fde6cf
   branch: passing-options-hash-to-page
   specs:
     cobweb (1.0.21)
