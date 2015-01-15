@@ -26,6 +26,18 @@
 			
 		</div>
 		
+		<div class="field_container text-center">
+			
+			<div class="field_label">
+				<%= f.label :maxpages, "Number Of Pages To Crawl" %>
+			</div>
+			
+			<div class="field">
+				<%= f.text_field :maxpages, class: "form-control" %>
+			</div>
+			
+		</div>
+		
 		<!-- <div class="field_container text-center">
 
 			<div class="field_label">
@@ -47,10 +59,10 @@
 
 		</div> -->
 		
-		<div class="field_container text-center">
+		<div class="field_container text-center pink_form_submit_btn_container">
 			
 			<div class="field_label">
-				<%= f.submit "Start Crawl" %>
+				<%= f.submit "Start Crawl", class: 'btn pink_form_submit_btn' %>
 			</div>
 			
 		</div>

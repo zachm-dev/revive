@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get 'projects/:id' => "crawls#show", as: :crawl_path
   resources :crawls
   get 'domains/' => "sites#index", as: :domains
+  get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
   get 'sites/:id/internal' => "sites#internal", as: :internal
   get 'sites/:id/external' => "sites#external", as: :external
   get 'sites/:id/broken' => "sites#broken", as: :broken

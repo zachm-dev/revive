@@ -34,7 +34,7 @@ class LinkWorker
 #         end
 
         internal = l.include?("#{domain}") ? true : false
-        Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site.id)
+        Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site.id, found_on: "#{link.found_on}")
       end
 
       hydra.queue(request)

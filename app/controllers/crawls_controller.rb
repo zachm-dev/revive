@@ -7,6 +7,7 @@ class CrawlsController < ApplicationController
   def show
     #@project = CobwebCrawlHelper.new(crawl_id: "8-8")
     @project = Site.find(params[:id])
+    @stats_chart = Crawl.stats(params[:id])
   end
 
   def new
@@ -14,7 +15,8 @@ class CrawlsController < ApplicationController
   end
   
   def create
-    Crawl.sites(params[:urls], params[:crawl][:name])
+    #raise
+    Crawl.sites(params[:urls], params[:crawl])
     redirect_to crawls_path
   end
   

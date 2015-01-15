@@ -2,19 +2,19 @@
 	
 	<li class="col-xs-3 yellow_stat fill nopadding">
 		<div class="stat_title">
-			INTERNAL
+			SITES
 		</div>
 		<div class="stat_value">
-			<%= link_to s.pages.where(internal: true).uniq.count, internal_path(s.id) %>
+			<%= link_to '1', "#" %>
 		</div>
 	</li>
 	
 	<li class="col-xs-3 orange_stat fill nopadding">
 		<div class="stat_title">
-			EXTERNAL
+			URLS
 		</div>
 		<div class="stat_value">
-			<%= link_to s.pages.where(internal: false).uniq.count, external_path(s.id) %>
+			<%= link_to s.pages.uniq.count, all_urls_path(s.id) %>
 		</div>
 	</li>
 	

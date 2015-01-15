@@ -48,10 +48,12 @@ class Crawl < ActiveRecord::Base
     links
   end
   
-  def self.sites(base_urls, *name)
+  def self.sites(base_urls, options = {})
     
-    name = eval("#{name}").first
-    new_crawl = Crawl.create(name: name)
+    #name = eval("#{name}").first
+    name = options[:name]
+    maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
+    new_crawl = Crawl.create(name: name, maxpages: maxpages)
     
     if base_urls.include?("\r\n")
       urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
@@ -60,7 +62,7 @@ class Crawl < ActiveRecord::Base
     end
     
     urls_array.each do |u|
-      new_site = new_crawl.sites.create(base_url: u.to_s)
+      new_site = new_crawl.sites.create(base_url: u.to_s, maxpages: maxpages)
       Crawl.delay.start(new_site.id)
     end
     
@@ -99,13 +101,13 @@ class Crawl < ActiveRecord::Base
     #domain = Domainatrix.parse(site.base_url).domain
 
     opts = {
-      'maxpages' => 10
+      'maxpages' => site.maxpages
     }
     Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
       
       
       
-      link_object = site.links.create(links: page.links)
+      link_object = site.links.create(links: page.links, found_on: "#{page.url}")
       
       # #links << page.links
       # page.links.each do |l|
@@ -125,11 +127,17 @@ class Crawl < ActiveRecord::Base
     
   end
   
-  def self.stats
+  def self.stats(site_id)
+    site = Site.find(site_id)
+    internal = site.pages.where(internal: true).uniq.count
+    external = site.pages.where(internal: false).uniq.count
+    broken = site.pages.where(status_code: '404').uniq.count
+    available = site.pages.where(status_code: '0', internal: false).uniq.count
+    
     LazyHighCharts::HighChart.new('graph') do |f|
       #f.title(:text => "Population vs GDP For 5 Big Countries [2009]")
-      f.xAxis(:categories => ["Urls", "Domains", "Pages"])
-      f.series(:name => "GDP in Billions", :showInLegend => false , :data => [14119, 5068, 4985])
+      f.xAxis(:categories => ["Internal", "External", "Broken", "Available"])
+      f.series(:showInLegend => false , :data => [internal, external, broken, available])
       #f.series(:name => "Population in Millions", :yAxis => 1, :data => [310, 127, 1340, 81, 65])
 
       f.yAxis [
