@@ -1,4 +1,6 @@
 class SitesController < ApplicationController
+  before_filter :authorize
+  
   def index
   end
   

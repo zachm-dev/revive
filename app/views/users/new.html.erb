@@ -1,0 +1,63 @@
+<div class="signup_form_container">
+	
+	<h1>Sign Up</h1>
+	
+	<%= form_for @user do |f| %>
+		
+		<div class="field_container">
+			
+			<div class="field_label">
+				<%= f.label :email %>
+			</div>
+			
+			<div class="field">
+				<%= f.text_field :email, class: "form-control" %>
+			</div>
+			
+		</div>
+
+		<div class="field_container">
+			
+			<div class="field_label">
+				<%= f.label :password %>
+			</div>
+			
+			<div class="field">
+				<%= f.password_field :password, class: "form-control" %>
+			</div>
+			
+		</div>
+		
+		<div class="field_container">
+			
+			<div class="field_label">
+				<%= f.label :password_confirmation %>
+			</div>
+			
+			<div class="field">
+				<%= f.password_field :password_confirmation, class: "form-control" %>
+			</div>
+			
+		</div>
+		
+		<div class="field_container text-center pink_form_submit_btn_container">
+			
+			<div class="field_label">
+				<%= f.submit "Sign up to Source Revive", class: 'btn pink_form_submit_btn' %>
+			</div>
+			
+		</div>
+		
+		<span class="or-rule">
+			<div class="or-rule-before"></div>
+			or
+			<div class="or-rule-after"></div>
+		</span>
+		
+		<div class="actions pull-right">
+			<%= link_to "Sign In", login_path %>
+		</div>
+		
+	<% end %>
+	
+</div>

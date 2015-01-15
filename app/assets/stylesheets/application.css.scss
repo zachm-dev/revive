@@ -130,6 +130,9 @@ html, body  {
 	color: #fff;
 }
 
+.white_text {
+	color: #fff !important;
+}
 
 // MAIN PAGE
 
@@ -200,7 +203,52 @@ html, body  {
 	padding: 15px 0px;
 }
 
+// LOGIN FORM
 
+.login_form_container, .signup_form_container {
+	margin: 0px auto;
+	width: 470px;
+	margin-top: 50px;
+}
+
+.login_form_container h1, .signup_form_container h1 {
+	margin-bottom: 20px;
+}
+
+.or-rule {
+	display: block;
+	position: relative;
+	text-align: center;
+	margin: 15px 0;
+	color: #222;
+	opacity: .3;
+	border-color: #222;
+}
+
+.or-rule-before {
+	display: block;
+	border-top: 1px solid #222;
+	content: "";
+	position: absolute;
+	width: 45%;
+	left: 0;
+	top: 50%;
+}
+
+.or-rule-after {
+	display: block;
+	border-top: 1px solid #222;
+	content: "";
+	position: absolute;
+	width: 45%;
+	right: 0;
+	left: auto;
+	top: 50%;
+}
+
+.or-rule-before-report, .or-rule-after-report {
+	width: 20% !important;
+}
 
 
 

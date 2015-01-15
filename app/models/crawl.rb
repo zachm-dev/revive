@@ -3,6 +3,7 @@ require 'domainatrix'
 
 class Crawl < ActiveRecord::Base
   
+  belongs_to :user
   has_many :sites
   has_many :pages, through: :sites
   
@@ -48,12 +49,13 @@ class Crawl < ActiveRecord::Base
     links
   end
   
-  def self.sites(base_urls, options = {})
+  def self.sites(user_id, base_urls, options = {})
     
     #name = eval("#{name}").first
+    user = User.find(user_id)
     name = options[:name]
     maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
-    new_crawl = Crawl.create(name: name, maxpages: maxpages)
+    new_crawl = user.crawls.create(name: name, maxpages: maxpages)
     
     if base_urls.include?("\r\n")
       urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
