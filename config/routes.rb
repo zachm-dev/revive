@@ -9,10 +9,15 @@ Rails.application.routes.draw do
   get 'projects/:id' => "crawls#show", as: :crawl_path
   resources :crawls
   get 'domains/' => "sites#index", as: :domains
+  get 'sites/:id/internal' => "sites#internal", as: :internal
+  get 'sites/:id/external' => "sites#external", as: :external
+  get 'sites/:id/broken' => "sites#broken", as: :broken
+  get 'sites/:id/available' => "sites#available", as: :available
   resources :sites
   resources :pages
   
   mount Sidekiq::Web, at: '/sidekiq'
+  #mount PgHero::Engine, at: "pghero"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141230085609) do
+ActiveRecord::Schema.define(version: 20150113102543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,13 @@ ActiveRecord::Schema.define(version: 20141230085609) do
     t.string   "name",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "links", force: :cascade do |t|
+    t.integer  "site_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text     "links",                   array: true
   end
 
   create_table "pages", force: :cascade do |t|
@@ -33,6 +40,9 @@ ActiveRecord::Schema.define(version: 20141230085609) do
     t.string   "crawl_id",         limit: 255
     t.text     "redirect_through"
     t.text     "url"
+    t.integer  "site_id"
+    t.boolean  "internal"
+    t.text     "found_on"
   end
 
   create_table "sites", force: :cascade do |t|

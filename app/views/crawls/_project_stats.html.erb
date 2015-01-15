@@ -2,37 +2,37 @@
 	
 	<li class="col-xs-3 yellow_stat fill nopadding">
 		<div class="stat_title">
-			URLS
+			INTERNAL
 		</div>
 		<div class="stat_value">
-			2,123,485
+			<%= link_to s.pages.where(internal: true).uniq.count, internal_path(s.id) %>
 		</div>
 	</li>
 	
 	<li class="col-xs-3 orange_stat fill nopadding">
 		<div class="stat_title">
-			LINKS
+			EXTERNAL
 		</div>
 		<div class="stat_value">
-			123,485
+			<%= link_to s.pages.where(internal: false).uniq.count, external_path(s.id) %>
 		</div>
 	</li>
 	
 	<li class="col-xs-3 blue_stat fill nopadding">
 		<div class="stat_title">
-			AVAILABLE
+			BROKEN
 		</div>
 		<div class="stat_value">
-			42
+			<%= link_to s.pages.where(status_code: '404').uniq.count, broken_path(s.id) %>
 		</div>
 	</li>
 	
 	<li class="col-xs-3 green_stat fill nopadding">
 		<div class="stat_title">
-			PRIMED
+			AVAILABLE
 		</div>
 		<div class="stat_value">
-			11
+			<%= link_to s.pages.where(status_code: '0', internal: false).uniq.count, available_path(s.id) %>
 		</div>
 	</li>
 	

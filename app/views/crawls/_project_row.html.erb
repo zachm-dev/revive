@@ -1,51 +1,35 @@
 <div class="row">
-
-	<div class="col-xs-6">
 	
-		<div class="row">
+	<% @sites.each do |s| %>
+		
+		<% if s.pages.count != 0 %>
 			
-			<div class="panel panel-default">
-				<div class="panel-heading panel_pink_heading clearfix project_panel_heading">
-					<div class="pull-left">
-						<p>POJECT NAME</p>
-					</div>
-					<div class="pull-right">
-						<p><%= link_to "VIEW", "#" %></p>
-					</div>
-				</div>
-				<div class="panel-body">
+			<div class="col-xs-6">
+	
+				<div class="row">
+			
+					<div class="panel panel-default">
+						<div class="panel-heading panel_pink_heading clearfix project_panel_heading">
+							<div class="pull-left">
+								<p><%= s.base_url %></p>
+							</div>
+							<div class="pull-right">
+								<p><%= link_to "VIEW", crawl_path_path(s.id) %></p>
+							</div>
+						</div>
+						<div class="panel-body">
 					
-					<%= render 'project_stats' %>
+							<%= render 'project_stats', s: s %>
 					
+						</div>
+					</div>
+			
 				</div>
+	
 			</div>
 			
-		</div>
-	
-	</div>
-	
-	<div class="col-xs-6">
-	
-		<div class="row">
-			
-			<div class="panel panel-default">
-				<div class="panel-heading panel_pink_heading clearfix project_panel_heading">
-					<div class="pull-left">
-						<p>POJECT NAME</p>
-					</div>
-					<div class="pull-right">
-						<p><%= link_to "VIEW", "#" %></p>
-					</div>
-				</div>
-				<div class="panel-body">
-					
-					<%= render 'project_stats' %>
-					
-				</div>
-			</div>
-			
-		</div>
-	
-	</div>
+		<% end %>
+		
+	<% end %>
 
 </div>

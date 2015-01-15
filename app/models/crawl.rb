@@ -1,5 +1,52 @@
+require 'retriever'
+require 'domainatrix'
+
 class Crawl < ActiveRecord::Base
+  
   has_many :sites
+  has_many :pages, through: :sites
+  
+  def self.hydra(id)
+    links = Link.find(id).links
+    hydra = Typhoeus::Hydra.new
+    
+    links.map do |l|
+      request = Typhoeus::Request.new(l, followlocation: true, method: :get, connecttimeout: 1, timeout: 1)
+      
+      request.on_complete do |response|
+        if response.success?
+          puts "hell yeah"
+        elsif response.timed_out?
+          # aw hell no
+          puts "got a time out"
+        elsif response.code == 0
+          # Could not get an http response, something's wrong.
+          puts "#{response.return_message}"
+        else
+          # Received a non-successful http response.
+          puts "HTTP request failed: #{response.code}"
+        end
+      end
+      
+      hydra.queue(request)
+    end
+    
+    hydra.run
+    
+  end
+  
+  def self.test
+    links = []
+    opts = {
+      'maxpages' => 10
+    }
+    t = Retriever::PageIterator.new('http://www.briancalkins.com/fitnesslinks.htm', opts) do |page|
+      puts page.links
+      links << page.links
+
+    end
+    links
+  end
   
   def self.sites(base_urls, *name)
     
@@ -14,30 +61,30 @@ class Crawl < ActiveRecord::Base
     
     urls_array.each do |u|
       new_site = new_crawl.sites.create(base_url: u.to_s)
-      Crawl.start(new_site.id)
+      Crawl.delay.start(new_site.id)
     end
     
   end
   
   def self.start(site_id)
     
-    site = Site.find(site_id)
+    #CrawlerWorker.perform_async(site_id)
     
-    options_hash = {
-      valid_mime_types: ['text/html'],
-      follow_redirects: true, 
-      crawl_linked_external: true, 
-      redirect_limit: 6, 
-      thread_count: 20,
-      processing_queue: "CrawlerWorker",
-      queue_system: :sidekiq,
-      use_encoding_safe_process_job: true,
-      crawl_id: "#{site.crawl_id}-#{site.id}",
-      direct_call_process_job: true
-    }
-    
-    crawler = Cobweb.new(options_hash)
-    crawler.start("#{site.base_url}")
+    # options_hash = {
+    #   valid_mime_types: ['text/html'],
+    #   follow_redirects: false,
+    #   # crawl_linked_external: true,
+    #   redirect_limit: 0,
+    #   thread_count: 10,
+    #   processing_queue: "CrawlerWorker",
+    #   queue_system: :sidekiq,
+    #   use_encoding_safe_process_job: true,
+    #   crawl_id: "#{site.crawl_id}-#{site.id}",
+    #   direct_call_process_job: true
+    # }
+    #
+    # crawler = Cobweb.new(options_hash)
+    # crawler.start("#{site.base_url}")
     
     # crawler = CobwebCrawler.new(options_hash)
     # crawler.crawl("#{url}") do |page|
@@ -45,6 +92,36 @@ class Crawl < ActiveRecord::Base
     #   puts "the self object is #{page[:myoptions][:crawl_id]}"
     #   #puts "the page is #{page}"
     # end
+    
+    #links = []
+    
+    site = Site.find(site_id)
+    #domain = Domainatrix.parse(site.base_url).domain
+
+    opts = {
+      'maxpages' => 10
+    }
+    Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
+      
+      
+      
+      link_object = site.links.create(links: page.links)
+      
+      # #links << page.links
+      # page.links.each do |l|
+      #   internal = l.include?("#{domain}") ? true : false
+      #   if internal == false
+      #     res = Typhoeus.get("#{l}").response_code
+      #   else
+      #     res = ""
+      #   end
+      #   site.pages.create(url: l.to_s, internal: internal, status_code: res, found_on: "#{page.url}", site_id: site_id)
+      # end
+      
+      LinkWorker.perform_async(link_object.id)
+
+    end
+    # #links
     
   end
   

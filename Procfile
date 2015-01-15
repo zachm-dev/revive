@@ -1,4 +1,2 @@
-redis: redis-server
-sidekiq: bundle exec sidekiq -q crawl_worker, crawler_worker, default -c 100
-web: bundle exec rails s
-
+web: bundle exec passenger start -p $PORT --max-pool-size 3
+sidekiq: bundle exec sidekiq -C 100
