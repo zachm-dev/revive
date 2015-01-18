@@ -33,31 +33,61 @@
 								
 								<thead>
 									<tr>
-										<th></th>
+										<!-- <th></th> -->
 										<th>DOMAIN</th>
-										<th>FOUND ON</th>
+										<th>DA</th>
+										<th>PA</th>
 										<th>TF</th>
-										<th>D/A</th>
-										<th>L</th>
-										<th>D</th>
+										<th>CF</th>
+										<th>TF/CF</th>
+										<th>RD</th>
+										<th>BL</th>
+										<th>FOUND ON</th>
 									</tr>
 								</thead>
 								
 								<tbody>
 									
-									<% @internal.each do |i| %>
-										<tr>
-											<td>
-												<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
-												<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-											</td>
-											<td><%= i.url %></td>
-											<td><%= i.found_on %></td>
-											<td>-</td>
-											<td>-</td>
-											<td>-</td>
-											<td>-</td>
-										</tr>
+									<% if @processing %>
+										
+										<% @available.each do |i| %>
+											<tr>
+												<!-- <td>
+													<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
+													<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+												</td> -->
+												<td><%= i.url %></td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td>-</td>
+												<td><%= i.found_on %></td>
+											</tr>
+										<% end %>
+										
+									<% else %>
+									
+										<% @available.each do |i| %>
+											<tr>
+												<!-- <td>
+													<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
+													<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+												</td> -->
+												<td>www.<%= i.simple_url %></td>
+												<td><%= number_with_precision(i.da, precision: 0) %></td>
+												<td><%= number_with_precision(i.pa, precision: 0) %></td>
+												<td><%= i.trustflow %></td>
+												<td><%= i.citationflow %></td>
+												<td><%= number_with_precision(i.trustflow.to_f/i.citationflow.to_f) %></td>
+												<td><%= i.refdomains %></td>
+												<td><%= i.backlinks %></td>
+												<td><%= i.found_on %></td>
+											</tr>
+										<% end %>
+									
 									<% end %>
 									
 									

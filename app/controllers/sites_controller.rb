@@ -26,7 +26,13 @@ class SitesController < ApplicationController
 
   def available
     @site = Site.find(params[:id])
-    @internal = @site.pages.where(status_code: '0', internal: false).limit(50).uniq
+    if @site.pages.where(verified: true).count == 0
+      @processing = 'true'
+      @available = @site.pages.where(status_code: '0', internal: false).limit(50).uniq
+      Namecheap.delay.check(@site.id)
+    else
+      @available = @site.pages.where(available: 'true')
+    end
   end
   
 end

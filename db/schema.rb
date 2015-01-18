@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150115152643) do
+ActiveRecord::Schema.define(version: 20150118125755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,16 @@ ActiveRecord::Schema.define(version: 20150115152643) do
     t.integer  "site_id"
     t.boolean  "internal"
     t.text     "found_on"
+    t.boolean  "verified"
+    t.text     "simple_url"
+    t.string   "available"
+    t.string   "citationflow"
+    t.string   "trustflow"
+    t.string   "trustmetric"
+    t.string   "refdomains"
+    t.string   "backlinks"
+    t.string   "pa"
+    t.string   "da"
   end
 
   create_table "sites", force: :cascade do |t|
