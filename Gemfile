@@ -53,6 +53,7 @@ gem 'rest-client'
 gem "faraday_middleware", :git => 'git://github.com/Agiley/faraday_middleware.git'
 gem "majestic_seo_api"
 gem "linkscape"
+gem 'sidekiq_monitor'
 
 # Use unicorn as the app server
 # gem 'unicorn'

@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   resources :pages
   
   mount Sidekiq::Web, at: '/sidekiq'
+  mount Sidekiq::Monitor::Engine => '/sidekiq_monitor'
   #mount PgHero::Engine, at: "pghero"
   
   get '*path' => redirect('/dashboard')
