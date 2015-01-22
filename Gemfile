@@ -1,3 +1,4 @@
+""
 source 'https://rubygems.org'
 ruby "2.1.4"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -33,7 +34,8 @@ gem 'autoprefixer-rails'
 # gem 'hwacha'
 gem 'nokogiri'
 #gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
-gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
+#gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
+gem 'sidekiq-pro'
 gem 'sinatra', require: false
 gem 'slim'
 gem 'lazy_high_charts'
@@ -54,6 +56,10 @@ gem "faraday_middleware", :git => 'git://github.com/Agiley/faraday_middleware.gi
 gem "majestic_seo_api"
 gem "linkscape"
 gem 'sidekiq_monitor'
+#gem 'newrelic_rpm'
+gem 'platform-api'
+gem 'clockwork'
+gem 'librato-metrics'
 
 # Use unicorn as the app server
 # gem 'unicorn'

@@ -7,6 +7,16 @@ class Crawl < ActiveRecord::Base
   has_many :sites
   has_many :pages, through: :sites
   
+  def self.decision_maker
+    pending_count = GatherLinksBatch.where(status: "pending").count
+    if pending_count > 0
+      stats = Heroku.get_dyno_stats
+      crawl = Crawl.last
+      site = crawl.sites.last
+      GatherLinks.start(site.id)
+    end
+  end
+  
   def self.hydra(id)
     links = Link.find(id).links
     hydra = Typhoeus::Hydra.new
@@ -36,19 +46,6 @@ class Crawl < ActiveRecord::Base
     
   end
   
-  def self.test
-    links = []
-    opts = {
-      'maxpages' => 10
-    }
-    t = Retriever::PageIterator.new('http://www.briancalkins.com/fitnesslinks.htm', opts) do |page|
-      puts page.links
-      links << page.links
-
-    end
-    links
-  end
-  
   def self.sites(user_id, base_urls, options = {})
     
     #name = eval("#{name}").first
@@ -69,6 +66,8 @@ class Crawl < ActiveRecord::Base
     end
     
   end
+  
+
   
   def self.start(site_id)
     
@@ -100,32 +99,17 @@ class Crawl < ActiveRecord::Base
     #links = []
     
     site = Site.find(site_id)
-    #domain = Domainatrix.parse(site.base_url).domain
 
     opts = {
       'maxpages' => site.maxpages
     }
     Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
-      
-      
-      
+
       link_object = site.links.create(links: page.links, found_on: "#{page.url}")
-      
-      # #links << page.links
-      # page.links.each do |l|
-      #   internal = l.include?("#{domain}") ? true : false
-      #   if internal == false
-      #     res = Typhoeus.get("#{l}").response_code
-      #   else
-      #     res = ""
-      #   end
-      #   site.pages.create(url: l.to_s, internal: internal, status_code: res, found_on: "#{page.url}", site_id: site_id)
-      # end
       
       LinkWorker.perform_async(link_object.id)
 
     end
-    # #links
     
   end
   

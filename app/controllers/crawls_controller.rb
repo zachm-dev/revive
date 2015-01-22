@@ -17,7 +17,7 @@ class CrawlsController < ApplicationController
   
   def create
     #raise
-    Crawl.sites(current_user.id, params[:urls], params[:crawl])
+    GatherLinks.sites(current_user.id, params[:urls], params[:crawl])
     redirect_to crawls_path
   end
   
