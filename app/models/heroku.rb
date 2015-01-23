@@ -31,9 +31,32 @@ class Heroku
       memory_total = librato.metrics(metric: "memory_total", source: "worker.#{index+1}")
       resident_memory = librato.metrics(metric: "memory_rss", source: "worker.#{index+1}")
       swap_memory = librato.metrics(metric: "memory_swap", source: "worker.#{index+1}")
-      stats["worker.#{index+1}".to_sym] = {memory_total: memory_total, resident_memory: resident_memory, swap_memory: swap_memory}
+      stats["worker.#{index+1}"] = {memory_total: memory_total, resident_memory: resident_memory, swap_memory: swap_memory}
     end
     stats
+  end
+  
+  def self.memory_stats
+    stats = Heroku.get_dyno_stats
+    memory_stats = []
+    stats.count.times do |index|
+      memory_total = stats["worker.#{index+1}"][:memory_total]["value"]
+      status = memory_total > 400 ? "red" : "green"
+      memory_stats << status
+    end
+    return memory_stats
+  end
+  
+  def self.scale_dyno(options = {})
+    heroku = self.client
+    current_quantity = Heroku.formation_info["quantity"]
+    increase_quantity = options[:quantity].nil? ? 1 : options[:quantity]
+    new_quantity = current_quantity + increase_quantity
+    dyno_type = options[:type].nil? ? "worker" : options[:type] 
+    heroku.formation.update(APP_NAME, dyno_type, {"quantity"=>new_quantity})
+    if !options[:user_id].nil?
+      Crawl.delay.decision_maker(options[:user_id])
+    end
   end
   
 end

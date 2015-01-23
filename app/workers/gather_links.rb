@@ -16,12 +16,14 @@ class GatherLinks
   
   def on_complete(status, options)
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").first
+    user_id = batch.site.crawl.user.id
     total_time = Time.now - batch.started_at
     pages_per_second = batch.site.links.count / total_time
     total_links_gathered = batch.site.links.map(&:links).flatten.count
     est_crawl_time = total_links_gathered / pages_per_second
     batch.update(finished_at: Time.now, status: "finished", pages_per_second: "#{pages_per_second}", total_links_gathered: "#{total_links_gathered}", est_crawl_time: "#{est_crawl_time}")
     puts "GatherLinks Just finished Batch #{options['bid']}"
+    Crawl.delay.decision_maker(user_id)
   end
   
   def self.start(site_id)
@@ -49,8 +51,7 @@ class GatherLinks
     urls_array.each do |u|
       new_site = new_crawl.sites.create(base_url: u.to_s, maxpages: maxpages)
       new_site.create_gather_links_batch(status: "pending")
-      Crawl.delay.decision_maker
-      #GatherLinks.start(new_site.id)
+      Crawl.delay.decision_maker(user_id)
     end
     
   end

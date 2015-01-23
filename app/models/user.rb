@@ -5,5 +5,6 @@ class User < ActiveRecord::Base
   
   has_many :crawls
   has_many :sites, through: :crawls
+  has_many :gather_links_batches, through: :sites
 
 end

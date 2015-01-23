@@ -7,13 +7,19 @@ class Crawl < ActiveRecord::Base
   has_many :sites
   has_many :pages, through: :sites
   
-  def self.decision_maker
-    pending_count = GatherLinksBatch.where(status: "pending").count
-    if pending_count > 0
-      stats = Heroku.get_dyno_stats
-      crawl = Crawl.last
-      site = crawl.sites.last
-      GatherLinks.start(site.id)
+  def self.decision_maker(user_id)
+    user = User.find(user_id)
+    pending_count = user.gather_links_batches.where(status: "pending").count
+    running_count = user.gather_links_batches.where(status: "running").count
+    if pending_count > 0 && running_count < 1
+      memory_stats = Heroku.memory_stats
+      if memory_stats.include?("red")
+        Heroku.scale_dyno(user_id: user_id)
+        puts "Scale dyno formation"
+      else
+        site_to_crawl_id = user.gather_links_batches.where(status: "pending").first.site.id
+        GatherLinks.start(site_to_crawl_id)
+      end
     end
   end
   
