@@ -21,26 +21,28 @@ class Heroku
     formation = heroku.formation.list(APP_NAME)
   end
   
-  def self.get_dyno_stats
-    formation = self.formation_info
+  def self.get_dyno_stats(options = {})
+    dyno_type = options[:type].nil? ? "worker" : options[:type] 
+    formation = self.formation_info(type: dyno_type)
     quantity = formation["quantity"]
     librato = DynoStats.new
     stats = {}
     quantity.times do |index|
-      puts "worker.#{index+1}"
-      memory_total = librato.metrics(metric: "memory_total", source: "worker.#{index+1}")
-      resident_memory = librato.metrics(metric: "memory_rss", source: "worker.#{index+1}")
-      swap_memory = librato.metrics(metric: "memory_swap", source: "worker.#{index+1}")
-      stats["worker.#{index+1}"] = {memory_total: memory_total, resident_memory: resident_memory, swap_memory: swap_memory}
+      puts "#{dyno_type}.#{index+1}"
+      memory_total = librato.metrics(metric: "memory_total", source: "#{dyno_type}.#{index+1}")
+      resident_memory = librato.metrics(metric: "memory_rss", source: "#{dyno_type}.#{index+1}")
+      swap_memory = librato.metrics(metric: "memory_swap", source: "#{dyno_type}.#{index+1}")
+      stats["#{dyno_type}.#{index+1}"] = {memory_total: memory_total, resident_memory: resident_memory, swap_memory: swap_memory}
     end
     stats
   end
   
-  def self.memory_stats
-    stats = Heroku.get_dyno_stats
+  def self.memory_stats(options = {})
+    dyno_type = options[:type].nil? ? "worker" : options[:type] 
+    stats = self.get_dyno_stats(type: dyno_type)
     memory_stats = []
     stats.count.times do |index|
-      memory_total = stats["worker.#{index+1}"][:memory_total]["value"]
+      memory_total = stats["#{dyno_type}.#{index+1}"][:memory_total]["value"]
       status = memory_total > 400 ? "red" : "green"
       memory_stats << status
     end

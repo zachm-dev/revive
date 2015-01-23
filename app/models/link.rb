@@ -1,9 +1,14 @@
 class Link < ActiveRecord::Base
-  #serialize :links, Array
   belongs_to :site
-  #after_create :start_processing
+  has_one :process_links_batch
+  after_create :create_process_links_batch
   
   private
+  
+  def create_process_links_batch
+    ProcessLinksBatch.create(site_id: self.site_id, status: "pending", link_id: self.id)
+    ProcessLinks.delay.decision_maker(self.site_id)
+  end
     
   def start_processing
     ProcessLinks.start(self.id)

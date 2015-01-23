@@ -1,6 +1,7 @@
 class GatherLinks
   
   include Sidekiq::Worker
+  #sidekiq_options :queue => :gather_links
   
   def perform(site_id)
     site = Site.find(site_id)

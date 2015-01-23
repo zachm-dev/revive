@@ -14,7 +14,7 @@ class Crawl < ActiveRecord::Base
     if pending_count > 0 && running_count < 1
       memory_stats = Heroku.memory_stats
       if memory_stats.include?("red")
-        Heroku.scale_dyno(user_id: user_id)
+        Heroku.scale_dyno(user_id: user.id)
         puts "Scale dyno formation"
       else
         site_to_crawl_id = user.gather_links_batches.where(status: "pending").first.site.id

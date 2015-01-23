@@ -3,6 +3,7 @@ require 'domainatrix'
 class ProcessLinks
   
   include Sidekiq::Worker
+  sidekiq_options :queue => :process_links
   
   def perform(l, site_id, found_on, domain)
     request = Typhoeus::Request.new(l, method: :head, followlocation: true)
@@ -14,9 +15,32 @@ class ProcessLinks
     request.run
   end
   
+  def self.decision_maker(site_id)
+    site = Site.find(site_id)
+    user = site.crawl.user
+    pending_count = user.process_links_batches.where(status: "pending").count
+    running_count = user.process_links_batches.where(status: "running").count
+    if pending_count > 0 #&& running_count < 1
+      memory_stats = Heroku.memory_stats(type: 'processlinks')
+      if memory_stats.include?("red")
+        Heroku.scale_dyno(user_id: user.id, type: 'processlinks')
+        puts "Scale dyno formation"
+      else
+        link_to_crawl_id = user.process_links_batches.where(status: "pending").first.link_id
+        ProcessLinks.start(link_to_crawl_id)
+      end
+    end
+  end
+  
   def on_complete(status, options)
-    #product = Product.find(options['pid'])
-    #product.mark_visible!
+    batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
+    user_id = batch.link.site.crawl.user.id
+    total_time = Time.now - batch.started_at
+    #pages_per_second = batch.link.site.pages.count / total_time
+    #total_pages_processed = batch.link.site.pages.count
+    #est_crawl_time = total_pages_processed / pages_per_second
+    batch.update(finished_at: Time.now, status: "finished")
+    ProcessLinks.delay.decision_maker(batch.link.site.id)
     puts "ProcessLinks Just finished Batch #{options['bid']}"
   end
   
@@ -27,6 +51,7 @@ class ProcessLinks
     #hydra = Typhoeus::Hydra.new
     domain = Domainatrix.parse(site.base_url).domain
     batch = Sidekiq::Batch.new
+    link.process_links_batch.update(status: "running", started_at: Time.now, batch_id: batch.bid)
     batch.on(:complete, ProcessLinks, 'bid' => batch.bid)
     
     batch.jobs do
