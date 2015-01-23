@@ -17,8 +17,10 @@ class Crawl < ActiveRecord::Base
         Heroku.scale_dyno(user_id: user.id)
         puts "Scale dyno formation"
       else
-        site_to_crawl_id = user.gather_links_batches.where(status: "pending").first.site.id
-        GatherLinks.start(site_to_crawl_id)
+        site_to_crawl_id = user.gather_links_batches.where(status: "pending").first
+        if !site_to_crawl_id.nil?
+          GatherLinks.start(site_to_crawl_id.site.id)
+        end
       end
     end
   end

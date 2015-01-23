@@ -26,24 +26,28 @@ class ProcessLinks
         Heroku.scale_dyno(user_id: user.id, type: 'processlinks')
         puts "Scale dyno formation"
       else
-        link_to_crawl_id = user.process_links_batches.where(status: "pending").first.link_id
-        ProcessLinks.start(link_to_crawl_id)
+        link_to_crawl_id = user.process_links_batches.where(status: "pending").first
+        if !link_to_crawl_id.nil?
+          ProcessLinks.start(link_to_crawl_id.link_id)
+        end
       end
     end
   end
   
   def on_complete(status, options)
     batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
-    user_id = batch.link.site.crawl.user.id
-    total_time = Time.now - batch.started_at
-    #pages_per_second = batch.link.site.pages.count / total_time
-    #total_pages_processed = batch.link.site.pages.count
-    #est_crawl_time = total_pages_processed / pages_per_second
-    batch.update(finished_at: Time.now, status: "finished")
-    ProcessLinks.delay.decision_maker(batch.link.site.id)
-    puts "ProcessLinks Just finished Batch #{options['bid']}"
+    if !batch.nil?
+      user_id = batch.link.site.crawl.user.id
+      total_time = Time.now - batch.started_at
+      #pages_per_second = batch.link.site.pages.count / total_time
+      #total_pages_processed = batch.link.site.pages.count
+      #est_crawl_time = total_pages_processed / pages_per_second
+      batch.update(finished_at: Time.now, status: "finished")
+      puts "ProcessLinks Just finished Batch #{options['bid']}"
+    end
   end
-  
+
+
   def self.start(link_id)
     link = Link.find(link_id)
     links = link.links
@@ -53,7 +57,7 @@ class ProcessLinks
     batch = Sidekiq::Batch.new
     link.process_links_batch.update(status: "running", started_at: Time.now, batch_id: batch.bid)
     batch.on(:complete, ProcessLinks, 'bid' => batch.bid)
-    
+
     batch.jobs do
       links.each { |l| ProcessLinks.perform_async(l, site.id, link.found_on, domain) }
     end
