@@ -58,7 +58,7 @@ gem "linkscape"
 gem 'sidekiq_monitor'
 #gem 'newrelic_rpm'
 gem 'platform-api'
-gem 'clockwork'
+#gem 'clockwork'
 gem 'librato-metrics'
 
 # Use unicorn as the app server

@@ -2,8 +2,11 @@ require 'sidekiq/pro/web'
 
 Rails.application.routes.draw do
 
+  
+
   #root 'dashboard#index'
-  root 'sessions#new'
+  root 'home#index'
+  #get 'home', to: 'home#index', as: 'home'
   get 'signup', to: 'users#new', as: 'signup'
   get 'login', to: 'sessions#new', as: 'login'
   get 'logout', to: 'sessions#destroy', as: 'logout'
