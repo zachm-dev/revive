@@ -145,19 +145,22 @@
 			<div class="col-xs-5">
 			
 				<div class="row">
-					<!-- <div class="title_number">
-						<p>14</p>
-					</div> -->
-					<div class="title_text">
-						<p>TOP PRIMED DOMAINS</p>
-					</div>
-				</div>
-			
-				<div class="row">
-					<% if @total_running_jobs == 0 %>
+					<% if @total_running_jobs > 0 %>
+						<div class="row">
+							<div class="title_text">
+								<p>TOP PRIMED DOMAINS</p>
+							</div>
+						</div>
 						<div class="text-center crawling_gif"><%= image_tag 'preloader.gif' %></div>
+					<% elsif @total_running_jobs == 0 && @top_domains.count == 0 %>
+						<div class="row">
+							<div class="title_text">
+								<p>TOP PRIMED DOMAINS</p>
+							</div>
+						</div>
+						<div class="zero_top_domains text-center">0</div>
 					<% else %>
-						<p>DOMAINS</p>
+						<%= render 'top_domains' %>
 					<% end %>
 				</div>
 			
