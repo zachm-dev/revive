@@ -9,7 +9,6 @@ class ProcessLinks
     request = Typhoeus::Request.new(l, method: :head, followlocation: true)
     request.on_complete do |response|
       internal = l.include?("#{domain}") ? true : false
-      internal = true
       Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
     end
     request.run

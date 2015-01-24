@@ -1,6 +1,6 @@
 <div class="row">
 	
-	<% @sites.each do |s| %>
+	<% @crawls.each do |s| %>
 		
 		<% if s.pages.count != 0 %>
 			
@@ -11,7 +11,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading panel_pink_heading clearfix project_panel_heading">
 							<div class="pull-left">
-								<p><%= s.base_url %></p>
+								<p><%= s.name %></p>
 							</div>
 							<div class="pull-right">
 								<p><%= link_to "VIEW", crawl_path_path(s.id) %></p>

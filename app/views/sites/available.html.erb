@@ -4,12 +4,41 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="header_title_content">
-					<div class="header_glyph">
-						<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+					<!-- TABS -->
+					
+						<div class="tabbable-panel">
+						<div class="tabbable-line">
+							<ul class="nav nav-tabs ">
+			
+								<li>
+									<%= link_to crawl_path_path(@crawl.id) do %>
+									    <i class="glyphicon glyphicon-stats">
+											<span class="glyph_text">Dashboard</span>
+										</i>
+									<% end %>
+								</li>
+			
+								<li>
+									<%= link_to broken_path(@crawl.id) do %>
+									    <i class="glyphicon glyphicon-ban-circle">
+											<span class="glyph_text">Broken</span>
+										</i>
+									<% end %>
+								</li>
+								
+								<li class="active">
+									<%= link_to available_path(@crawl.id) do %>
+									    <i class="glyphicon glyphicon-ok">
+											<span class="glyph_text">Available</span>
+										</i>
+									<% end %>
+								</li>
+			
+							</ul>
+						</div>
 					</div>
-					<div class="header_text">
-						<p>Found Avalible Domains</p>
-					</div>
+					
+					<!-- TABS -->
 				</div>
 			</div>
 		</div>
@@ -24,7 +53,14 @@
 				<div class="row">
 					
 					<div class="panel panel-default">
-						<div class="panel-heading panel_pink_heading">
+						<div class="panel-heading panel_pink_heading panel_glyph_container">
+							
+							<div class="header_glyph">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+							</div>
+							<div class="header_text">
+								<p>Found Avalible Domains</p>
+							</div>
 							
 						</div>
 						<div class="panel-body">

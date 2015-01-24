@@ -2,6 +2,13 @@ class SitesController < ApplicationController
   before_filter :authorize
   
   def index
+    crawl = current_user.crawls.find(params[:id])
+    @sites = crawl.sites.all
+  end
+  
+  def show
+    @site = current_user.sites.find(params[:id])
+    @stats_chart = Crawl.site_stats(params[:id])
   end
   
   def all_urls
@@ -20,18 +27,20 @@ class SitesController < ApplicationController
   end
   
   def broken
-    @site = Site.find(params[:id])
-    @broken = @site.pages.where(status_code: '404').limit(50).uniq
+    #@site = Site.find(params[:id])
+    @crawl = Crawl.find(params[:id])
+    @broken = @crawl.pages.where(status_code: '404').limit(50).uniq
   end
 
   def available
-    @site = Site.find(params[:id])
-    if @site.pages.where(verified: true).count == 0
+    #@site = Site.find(params[:id])
+    @crawl = Crawl.find(params[:id])
+    if @crawl.pages.where(verified: true).count == 0
       @processing = 'true'
-      @available = @site.pages.where(status_code: '0', internal: false).limit(50).uniq
-      Namecheap.delay.check(@site.id)
+      @available = @crawl.pages.where(status_code: '0', internal: false).limit(50).uniq
+      Namecheap.delay.check(@crawl.id)
     else
-      @available = @site.pages.where(available: 'true')
+      @available = @crawl.pages.where(available: 'true')
     end
   end
   

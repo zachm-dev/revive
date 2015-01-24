@@ -2,13 +2,15 @@ class CrawlsController < ApplicationController
   before_filter :authorize
   
   def index
-    @sites = current_user.sites.all
+    #@sites = current_user.sites.all
+    @crawls = current_user.crawls.all
   end
   
   def show
     #@project = CobwebCrawlHelper.new(crawl_id: "8-8")
-    @project = current_user.sites.find(params[:id])
-    @stats_chart = Crawl.stats(params[:id])
+    #@project = current_user.sites.find(params[:id])
+    @project = current_user.crawls.find(params[:id])
+    @stats_chart = Crawl.crawl_stats(params[:id])
   end
 
   def new

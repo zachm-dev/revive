@@ -6,6 +6,7 @@ class Crawl < ActiveRecord::Base
   belongs_to :user
   has_many :sites
   has_many :pages, through: :sites
+  has_many :links, through: :sites
   
   def self.decision_maker(user_id)
     user = User.find(user_id)
@@ -121,13 +122,36 @@ class Crawl < ActiveRecord::Base
     
   end
   
-  def self.stats(site_id)
+  def self.crawl_stats(crawl_id)
+    crawl = Crawl.find(crawl_id)
+    internal = crawl.pages.where(internal: true).uniq.count
+    external = crawl.pages.where(internal: false).uniq.count
+    broken = crawl.pages.where(status_code: '404').uniq.count
+    available = crawl.pages.where(status_code: '0', internal: false).uniq.count
+    
+    LazyHighCharts::HighChart.new('graph') do |f|
+      #f.title(:text => "Population vs GDP For 5 Big Countries [2009]")
+      f.xAxis(:categories => ["Internal", "External", "Broken", "Available"])
+      f.series(:showInLegend => false , :data => [internal, external, broken, available])
+      #f.series(:name => "Population in Millions", :yAxis => 1, :data => [310, 127, 1340, 81, 65])
+
+      f.yAxis [
+        {:title => {:text => ""} }
+      ]
+
+      #f.legend(:align => 'right', :verticalAlign => 'top', :y => 75, :x => -50, :layout => 'vertical',)
+      f.chart({:defaultSeriesType=>"bar", backgroundColor: "#F4F4F2"})
+    end
+  end
+
+
+  def self.site_stats(site_id)
     site = Site.find(site_id)
     internal = site.pages.where(internal: true).uniq.count
     external = site.pages.where(internal: false).uniq.count
     broken = site.pages.where(status_code: '404').uniq.count
     available = site.pages.where(status_code: '0', internal: false).uniq.count
-    
+
     LazyHighCharts::HighChart.new('graph') do |f|
       #f.title(:text => "Population vs GDP For 5 Big Countries [2009]")
       f.xAxis(:categories => ["Internal", "External", "Broken", "Available"])

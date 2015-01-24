@@ -1,21 +1,4 @@
-<div class="main_page_container">
-	
-	<div class="container-fluid header_title_container">
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="header_title_content">
-					<div class="header_glyph">
-						<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-					</div>
-					<div class="header_text">
-						<p>Found Avalible Domains</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="container-fluid container_section">
+<div class="container-fluid container_section">
 	
 		<div class="row">
 		
@@ -24,7 +7,14 @@
 				<div class="row">
 					
 					<div class="panel panel-default">
-						<div class="panel-heading panel_pink_heading">
+						<div class="panel-heading panel_pink_heading panel_glyph_container">
+							
+							<div class="header_glyph">
+								<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+							</div>
+							<div class="header_text">
+								<p>Sites</p>
+							</div>
 							
 						</div>
 						<div class="panel-body">
@@ -36,22 +26,24 @@
 										<!-- <th></th> -->
 										<th>SITE</th>
 										<th class="text-center">URLS</th>
-										<th class="text-center">AVAILABLE</th>
+										<th class="text-center">BROKEN</th>
+										<th class="text-center">EXPIRED</th>
 										<th class="text-center">CRAWL STATUS</th>
 									</tr>
 								</thead>
 								
 								<tbody>
 									
-									<% @sites.each do |s| %>
+									<% @project.sites.each do |s| %>
 										
 										<tr>
 											<!-- <td>
 												<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
 												<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
 											</td> -->
-											<td><%= link_to s.base_url, site_path(s.id) %></td>
+											<td><%= s.base_url %></td>
 											<td class="text-center"><%= s.links.map(&:links).flatten.count %></td>
+											<td class="text-center"><%= s.pages.where(status_code: '404').count %></td>
 											<td class="text-center"><%= s.pages.where(status_code: '0').count %></td>
 											<td class="text-center"><%= s.gather_links_batch.status if s.gather_links_batch %></td>
 										</tr>
@@ -73,4 +65,3 @@
 	
 	</div>
 
-</div>
