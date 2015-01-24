@@ -7,6 +7,8 @@ class Crawl < ActiveRecord::Base
   has_many :sites
   has_many :pages, through: :sites
   has_many :links, through: :sites
+  has_many :gather_links_batches, through: :sites
+  has_many :process_links_batches, through: :links
   
   def self.decision_maker(user_id)
     user = User.find(user_id)

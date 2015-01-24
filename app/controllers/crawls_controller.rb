@@ -11,6 +11,9 @@ class CrawlsController < ApplicationController
     #@project = current_user.sites.find(params[:id])
     @project = current_user.crawls.find(params[:id])
     @stats_chart = Crawl.crawl_stats(params[:id])
+    gather_links_batches = @project.gather_links_batches.where(status: ["pending", "running"]).count
+    process_links_batches = @project.process_links_batches.where(status: ["pending", "running"]).count
+    @total_running_jobs = gather_links_batches + process_links_batches
   end
 
   def new

@@ -33,12 +33,11 @@ class SitesController < ApplicationController
   end
 
   def available
-    #@site = Site.find(params[:id])
     @crawl = Crawl.find(params[:id])
     if @crawl.pages.where(verified: true).count == 0
       @processing = 'true'
       @available = @crawl.pages.where(status_code: '0', internal: false).limit(50).uniq
-      Namecheap.delay.check(@crawl.id)
+      Namecheap.delay.check(crawl_id: @crawl.id)
     else
       @available = @crawl.pages.where(available: 'true')
     end
