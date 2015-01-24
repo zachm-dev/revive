@@ -42,9 +42,9 @@
 												<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
 											</td> -->
 											<td><%= s.base_url %></td>
-											<td class="text-center"><%= s.links.map(&:links).flatten.count %></td>
-											<td class="text-center"><%= s.pages.where(status_code: '404').count %></td>
-											<td class="text-center"><%= s.pages.where(status_code: '0').count %></td>
+											<td class="text-center"><%= s.links.map(&:links).flatten.uniq.count %></td>
+											<td class="text-center"><%= s.pages.where(status_code: '404').uniq.count %></td>
+											<td class="text-center"><%= s.pages.where(status_code: '0', internal: false).uniq.count %></td>
 											<td class="text-center"><%= s.gather_links_batch.status if s.gather_links_batch %></td>
 										</tr>
 										
