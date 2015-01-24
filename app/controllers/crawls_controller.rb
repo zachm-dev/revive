@@ -11,10 +11,10 @@ class CrawlsController < ApplicationController
     #@project = current_user.sites.find(params[:id])
     @project = current_user.crawls.find(params[:id])
     @stats_chart = Crawl.crawl_stats(params[:id])
-    gather_links_batches = @project.gather_links_batches.where(status: ["pending", "running"]).count
-    process_links_batches = @project.process_links_batches.where(status: ["pending", "running"]).count
+    @gather_links_batches = @project.gather_links_batches.where(status: ["pending", "running"]).count
+    @process_links_batches = @project.process_links_batches.where(status: ["pending", "running"]).count
     @top_domains = @project.pages.where(available: 'true').limit(5)
-    @total_running_jobs = gather_links_batches + process_links_batches
+    @total_running_jobs = @gather_links_batches + @process_links_batches
   end
 
   def new
