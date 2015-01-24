@@ -38,9 +38,17 @@ class GatherLinks
   end
   
   def self.sites(user_id, base_urls, options = {})
-    
+    beta = true
     name = options[:name]
-    maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
+    if beta == true
+      if options[:maxpages].empty?
+        maxpages = 10
+      else
+        maxpages = options[:maxpages].to_i > 500 ? 500 : options[:maxpages].to_i
+      end
+    else
+      maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
+    end
     new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
     
     if base_urls.include?("\r\n")
