@@ -5,8 +5,9 @@ Rails.application.routes.draw do
   
 
   #root 'dashboard#index'
-  root 'home#index'
+  #root 'home#index'
   #get 'home', to: 'home#index', as: 'home'
+  root 'sessions#new'
   get 'signup', to: 'users#new', as: 'signup'
   get 'login', to: 'sessions#new', as: 'login'
   get 'logout', to: 'sessions#destroy', as: 'logout'
