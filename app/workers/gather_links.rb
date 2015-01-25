@@ -24,45 +24,27 @@ class GatherLinks
     est_crawl_time = total_links_gathered / pages_per_second
     batch.update(finished_at: Time.now, status: "finished", pages_per_second: "#{pages_per_second}", total_links_gathered: "#{total_links_gathered}", est_crawl_time: "#{est_crawl_time}")
     puts "GatherLinks Just finished Batch #{options['bid']}"
-    Crawl.delay.decision_maker(user_id)
+    
+    if batch.site.crawl.gather_links_batches.where(status: 'pending').count > 0
+      Api.start_crawl(crawl_id: batch.site.crawl.id)
+    end
   end
   
-  def self.start(site_id)
-    site = Site.find(site_id)
+  def self.start(options = {})
+
+    if options["crawl_id"]
+      running_crawl = Crawl.find(options["crawl_id"])
+      site = running_crawl.gather_links_batches.where(status: 'pending').first.site
+    else
+      site = Site.find(options["site_id"])
+    end
+    
     batch = Sidekiq::Batch.new
     site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: batch.bid)
     batch.on(:complete, self, 'bid' => batch.bid)
     batch.jobs do
-      GatherLinks.perform_async(site_id)
+      GatherLinks.perform_async(site.id)
     end
-  end
-  
-  def self.sites(user_id, base_urls, options = {})
-    beta = true
-    name = options[:name]
-    if beta == true
-      if options[:maxpages].empty?
-        maxpages = 10
-      else
-        maxpages = options[:maxpages].to_i > 500 ? 500 : options[:maxpages].to_i
-      end
-    else
-      maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
-    end
-    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
-    
-    if base_urls.include?("\r\n")
-      urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
-    else
-      urls_array = base_urls.split(",")
-    end
-    
-    urls_array.each do |u|
-      new_site = new_crawl.sites.create(base_url: u.to_s, maxpages: maxpages)
-      new_site.create_gather_links_batch(status: "pending")
-      Crawl.delay.decision_maker(user_id)
-    end
-    
   end
   
 end

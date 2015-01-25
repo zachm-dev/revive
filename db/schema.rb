@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150123184609) do
+ActiveRecord::Schema.define(version: 20150125140553) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(version: 20150123184609) do
     t.datetime "updated_at"
     t.integer  "maxpages"
     t.integer  "user_id"
+    t.text     "app_url"
+    t.string   "app_name"
   end
 
   create_table "gather_links_batches", force: :cascade do |t|
@@ -35,6 +37,18 @@ ActiveRecord::Schema.define(version: 20150123184609) do
     t.string   "pages_per_second"
     t.string   "est_crawl_time"
     t.string   "total_links_gathered"
+  end
+
+  create_table "heroku_apps", force: :cascade do |t|
+    t.string   "name"
+    t.text     "url"
+    t.integer  "crawl_id"
+    t.string   "status"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.string   "batch_id"
   end
 
   create_table "links", force: :cascade do |t|

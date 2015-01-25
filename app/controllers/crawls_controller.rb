@@ -1,6 +1,6 @@
 class CrawlsController < ApplicationController
-  #before_filter :authorize
-  skip_before_action :verify_authenticity_token
+  before_action :authorize, :except => [:api_create]
+  skip_before_action :verify_authenticity_token, :only => [:api_create]
   
   def index
     #@sites = current_user.sites.all
@@ -25,8 +25,15 @@ class CrawlsController < ApplicationController
   def create
     #raise
     #GatherLinks.sites(current_user.id, params[:urls], params[:crawl])
-    #redirect_to crawls_path
+    Crawl.delay.save_new_crawl(current_user.id, params[:urls], params[:crawl])
+    redirect_to crawls_path
+  end
+  
+  def api_create
     @json = JSON.parse(request.body.read)
+    puts "here is the json hash #{@json["options"]}"
+    GatherLinks.start(@json["options"])
+    render :layout => false
   end
   
 end

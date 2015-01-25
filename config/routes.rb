@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   get 'sites/:id/available' => "sites#available", as: :available
   resources :sites
   resources :pages
+  post 'api_create', to: 'crawls#api_create'
   
   mount Sidekiq::Web, at: '/sidekiq'
   mount Sidekiq::Monitor::Engine => '/sidekiq_monitor'

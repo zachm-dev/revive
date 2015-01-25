@@ -7,18 +7,28 @@ class Heroku
   API_TOKEN = "ENV[:heroku_app_name]"
   
   def self.client
-    heroku = PlatformAPI.connect_oauth(API_TOKEN)
+    @heroku ||= PlatformAPI.connect_oauth(API_TOKEN)
+  end
+  
+  def client
+    @heroku_client ||= PlatformAPI.connect_oauth(API_TOKEN)
   end
   
   def self.formation_info(options = {})
     formation_type = options[:type].nil? ? "worker" : options[:type] 
+    app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     heroku = self.client
-    formation = heroku.formation.info(APP_NAME, formation_type)
+    formation = heroku.formation.info(app_name, formation_type)
   end
   
-  def self.formation_list
+  def self.app_list
+    client.app.list
+  end
+  
+  def self.formation_list(options = {})
     heroku = self.client
-    formation = heroku.formation.list(APP_NAME)
+    app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
+    formation = heroku.formation.list(app_name)
   end
   
   def self.get_dyno_stats(options = {})
@@ -49,16 +59,90 @@ class Heroku
     return memory_stats
   end
   
-  def self.scale_dyno(options = {})
+  def self.scale_dynos(options = {})
+    puts 'scaling dynos'
     heroku = self.client
-    current_quantity = Heroku.formation_info["quantity"]
+    dynos = options[:dynos].nil? ? ["worker"] : options[:dynos]
+    app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     increase_quantity = options[:quantity].nil? ? 1 : options[:quantity]
-    new_quantity = current_quantity + increase_quantity
-    dyno_type = options[:type].nil? ? "worker" : options[:type] 
-    heroku.formation.update(APP_NAME, dyno_type, {"quantity"=>new_quantity})
-    if !options[:user_id].nil?
-      Crawl.delay.decision_maker(options[:user_id])
+    
+    dynos.each do |type|
+      current_quantity = Heroku.formation_info(app_name: app_name, type: type)["quantity"]
+      new_quantity = current_quantity + increase_quantity
+      heroku.formation.update(app_name, type, {"quantity"=>new_quantity})
     end
+    # if !options[:user_id].nil?
+    #   Crawl.delay.decision_maker(options[:user_id])
+    # end
+  end
+  
+  def app_exists?(name)
+    client.app.list.collect do |app|
+      app if app['name'] == name
+    end.reject(&:nil?).any?
+  end
+  
+  def fork(from, to)
+    create_app(to)
+    copy_slug(from, to)
+    copy_config(from, to)
+    add_redis(to)
+    copy_rack_and_rails_env_again(from, to)
+    Heroku.scale_dynos(app_name: to, dynos: ["worker", "processlinks"])
+    puts 'done creating new app'
+  end
+  
+  def release(app_name)
+    client.release.list(app_name).last['slug']['id']
+  end
+  
+  def delete_app(name)
+    #logger.info "Deleting #{app_name}"
+    client.app.delete(name)
+  end
+  
+  def add_redis(to)
+    puts 'adding redis'
+    client.addon.create(to, plan: "redistogo:small")
+  end
+  
+  def config_vars(app_name)
+    client.config_var.info(app_name)
+  end
+  
+  def create_app(name)
+    # logger.info "Creating #{name}"
+    puts 'creating app'
+    client.app.create(name: name)
+  end
+  
+  def copy_config(from, to)
+    puts 'copying config'
+    from_congig_vars = config_vars(from)
+    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_BRONZE_URL', 'PGBACKUPS_URL', 'HEROKU_POSTGRESQL_COPPER_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
+    client.config_var.update(to, from_congig_vars)
+  end
+  
+  def copy_slug(from, to)
+    puts 'copying slug'
+    from_release_slug_id = release(from)
+    client.release.create(to, slug: from_release_slug_id)
+  end
+
+  def copy_rack_and_rails_env_again(from, to)
+    puts 'copying rack and rails env again'
+    env_to_update = get_original_env(from)
+    client.config_var.update(to, env_to_update) unless env_to_update.empty?
+  end
+  
+  def get_original_env(from)
+    environments = {}
+    %w(RACK_ENV RAILS_ENV).each do |var|
+      if client.config_var.info(from)[var]
+        environments[var] = client.config_var.info(from)[var]
+      end
+    end
+    environments
   end
   
 end
