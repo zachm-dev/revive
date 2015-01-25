@@ -32,7 +32,7 @@ class CrawlsController < ApplicationController
   def api_create
     @json = JSON.parse(request.body.read)
     puts "here is the json hash #{@json["options"]}"
-    GatherLinks.start(@json["options"])
+    GatherLinks.delay.start(@json["options"])
     render :layout => false
   end
   
