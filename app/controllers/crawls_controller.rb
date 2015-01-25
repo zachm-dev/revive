@@ -1,5 +1,6 @@
 class CrawlsController < ApplicationController
-  before_filter :authorize
+  #before_filter :authorize
+  skip_before_action :verify_authenticity_token
   
   def index
     #@sites = current_user.sites.all
@@ -23,8 +24,9 @@ class CrawlsController < ApplicationController
   
   def create
     #raise
-    GatherLinks.sites(current_user.id, params[:urls], params[:crawl])
-    redirect_to crawls_path
+    #GatherLinks.sites(current_user.id, params[:urls], params[:crawl])
+    #redirect_to crawls_path
+    @json = JSON.parse(request.body.read)
   end
   
 end
