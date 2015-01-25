@@ -26,7 +26,7 @@ class GatherLinks
     puts "GatherLinks Just finished Batch #{options['bid']}"
     
     if batch.site.crawl.gather_links_batches.where(status: 'pending').count > 0
-      Api.start_crawl(crawl_id: batch.site.crawl.id)
+      Api.delay.start_crawl(crawl_id: batch.site.crawl.id)
     end
   end
   

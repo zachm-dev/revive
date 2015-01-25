@@ -12,7 +12,7 @@ class Api
       uri = URI.parse("http://#{app_name}.herokuapp.com/api_create")
       puts 'production'
     end
-    
+        
     post_params = {
       :options => options
     }
