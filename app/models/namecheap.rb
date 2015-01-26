@@ -42,25 +42,37 @@ class Namecheap
     if options[:crawl_id]
       obj = Crawl.find(options[:crawl_id])
       get_pages = obj.pages.where(status_code: "0", internal: false)
+      app = obj.heroku_app
     elsif options[:site_id]
       obj = Site.find(options[:site_id])
       get_pages = obj.pages.where(status_code: "0", internal: false)
+      app = obj.crawl.heroku_app
     else
       get_pages = Page.where(status_code: "0", internal: false)
     end
     
-    if get_pages.count != 0
+    if get_pages.count != 0 && app && app.verified == nil || app.verified == "pending"
+      simple_urls = get_pages.where("simple_url IS NOT NULL")
       pages = get_pages.to_a.uniq{|p| p.url}
       parsed_links = []
-      pages.each do |p|
-        url = Domainatrix.parse("#{p.url}")
+      pages.each_with_index do |object, index| 
+        url = Domainatrix.parse("#{object.url}")
         parsed_url = url.domain + "." + url.public_suffix
-        parsed_links << parsed_url
-        Page.update(p.id, simple_url: "#{parsed_url}")
+        unless simple_urls.map(&:simple_url).include?(parsed_url)
+          parsed_links << parsed_url
+          Page.update(object.id, simple_url: "#{parsed_url}")
+        end
       end
+      
       urls_string = parsed_links.uniq.join(",")
-      return urls_string
+      if urls_string.empty?
+        app.update(verified: 'finished') if app
+        return ""
+      else
+        return urls_string
+      end
     else
+      app.update(verified: 'finished') if app
       return ""
     end
     

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150125140553) do
+ActiveRecord::Schema.define(version: 20150126161731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20150125140553) do
     t.datetime "started_at"
     t.datetime "finished_at"
     t.string   "batch_id"
+    t.string   "verified"
   end
 
   create_table "links", force: :cascade do |t|

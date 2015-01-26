@@ -44,7 +44,7 @@ class Crawl < ActiveRecord::Base
     end
     
     new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
-    new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id)
+    new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     save_new_sites = Crawl.save_new_sites(base_urls, new_crawl.id)
     Crawl.decision_maker(user_id)
   end
