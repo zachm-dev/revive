@@ -24,10 +24,6 @@ class GatherLinks
     est_crawl_time = total_links_gathered / pages_per_second
     batch.update(finished_at: Time.now, status: "finished", pages_per_second: "#{pages_per_second}", total_links_gathered: "#{total_links_gathered}", est_crawl_time: "#{est_crawl_time}")
     puts "GatherLinks Just finished Batch #{options['bid']}"
-    
-    if batch.site.crawl.gather_links_batches.where(status: 'pending').count > 0
-      Api.delay.start_crawl(crawl_id: batch.site.crawl.id)
-    end
   end
   
   def self.start(options = {})
@@ -39,10 +35,10 @@ class GatherLinks
       site = Site.find(options["site_id"])
     end
     
-    batch = Sidekiq::Batch.new
-    site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: batch.bid)
-    batch.on(:complete, self, 'bid' => batch.bid)
-    batch.jobs do
+    gather_links_batch = Sidekiq::Batch.new
+    site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
+    gather_links_batch.on(:complete, self, 'bid' => gather_links_batch.bid)
+    gather_links_batch.jobs do
       GatherLinks.perform_async(site.id)
     end
   end

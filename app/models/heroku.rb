@@ -88,7 +88,7 @@ class Heroku
     copy_config(from, to)
     add_redis(to)
     copy_rack_and_rails_env_again(from, to)
-    Heroku.scale_dynos(app_name: to, dynos: ["worker", "processlinks"])
+    Heroku.scale_dynos(app_name: to, quantity: 2, dynos: ["worker", "processlinks"])
     puts 'done creating new app'
   end
   
@@ -96,14 +96,14 @@ class Heroku
     client.release.list(app_name).last['slug']['id']
   end
   
-  def delete_app(name)
+  def delete_app(app_name)
     #logger.info "Deleting #{app_name}"
-    client.app.delete(name)
+    client.app.delete(app_name)
   end
   
   def add_redis(to)
     puts 'adding redis'
-    client.addon.create(to, plan: "redistogo:small")
+    client.addon.create(to, plan: "redistogo:smedium")
   end
   
   def config_vars(app_name)

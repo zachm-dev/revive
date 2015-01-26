@@ -36,13 +36,22 @@ class ProcessLinks
   def on_complete(status, options)
     batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
     if !batch.nil?
-      user_id = batch.link.site.crawl.user.id
+      user_id = batch.site.crawl.user.id
       total_time = Time.now - batch.started_at
       #pages_per_second = batch.link.site.pages.count / total_time
       #total_pages_processed = batch.link.site.pages.count
       #est_crawl_time = total_pages_processed / pages_per_second
       batch.update(finished_at: Time.now, status: "finished")
-      puts "ProcessLinks Just finished Batch #{options['bid']}"
+      if batch.site.crawl.gather_links_batches.where(status: "pending").count > 0
+        puts "Done processing links batch #{options['bid']} & starting gathering links for a new batch"
+        Api.delay.start_crawl(crawl_id: batch.site.crawl.id)
+      else
+        puts "ProcessLinks Just finished Batch #{options['bid']} and shutting down server"
+        batch.site.crawl.heroku_app.update(status: 'finished', finished_at: Time.now)
+        Crawl.decision_maker(user_id)
+        heroku = Heroku.new
+        heroku.delete_app(batch.site.crawl.heroku_app.name)
+      end
     end
   end
 
