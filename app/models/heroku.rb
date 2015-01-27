@@ -65,11 +65,12 @@ class Heroku
     dynos = options[:dynos].nil? ? ["worker"] : options[:dynos]
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     increase_quantity = options[:quantity].nil? ? 1 : options[:quantity]
+    size = options[:size].nil? ? '1X' : options[:size]
     
     dynos.each do |type|
       current_quantity = Heroku.formation_info(app_name: app_name, type: type)["quantity"]
       new_quantity = current_quantity + increase_quantity
-      heroku.formation.update(app_name, type, {"quantity"=>new_quantity})
+      heroku.formation.update(app_name, type, {"quantity"=>new_quantity, 'size'=>size})
     end
     # if !options[:user_id].nil?
     #   Crawl.delay.decision_maker(options[:user_id])
@@ -88,7 +89,7 @@ class Heroku
     copy_config(from, to)
     add_redis(to)
     copy_rack_and_rails_env_again(from, to)
-    Heroku.scale_dynos(app_name: to, quantity: 2, dynos: ["worker", "processlinks"])
+    Heroku.scale_dynos(app_name: to, quantity: 2, size: '2X', dynos: ["worker", "processlinks"])
     puts 'done creating new app'
   end
   

@@ -362,6 +362,33 @@ Licensed under MIT
 }
 
 
+///////// SIDE TABAS ///////// 
+
+.side_vertical_tabs {
+	border-bottom: none;
+}
+
+.side_vertical_tabs li {
+	margin-bottom: 2px !important;
+	width: 100%;
+}
+
+.side_vertical_tabs li.active > a {
+	background-color: #F4F4F2 !important;
+	border-left: #F4F4F2 !important;
+	border-bottom: 1px solid #dddddd !important;
+	border-right: 5px solid #FF4F78 !important;
+	color: #FF4F78 !important;
+}
+
+.side_vertical_tabs li > a:hover {
+	background-color: #F4F4F2 !important;
+	border-left: #F4F4F2 !important;
+	border-bottom: 1px solid #dddddd !important;
+	border-right: 1px solid #dddddd !important;
+	border-top: 1px solid #dddddd !important;
+}
+
 
 
 
