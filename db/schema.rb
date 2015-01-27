@@ -11,19 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150126161731) do
+ActiveRecord::Schema.define(version: 20150127053729) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "crawls", force: :cascade do |t|
-    t.string   "name",       limit: 255
+    t.string   "name",                limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "maxpages"
     t.integer  "user_id"
     t.text     "app_url"
     t.string   "app_name"
+    t.integer  "total_urls_found"
+    t.integer  "total_pages_crawled"
+    t.integer  "total_expired"
+    t.integer  "total_broken"
+    t.integer  "total_sites"
+    t.integer  "total_internal"
+    t.integer  "total_external"
   end
 
   create_table "gather_links_batches", force: :cascade do |t|

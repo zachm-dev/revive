@@ -64,7 +64,7 @@ class Crawl < ActiveRecord::Base
       new_site.create_gather_links_batch(status: "pending")
       #Crawl.delay.decision_maker(user_id)
     end
-    
+    crawl.update(total_sites: crawl.sites.count)
   end
   
   

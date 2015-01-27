@@ -22,6 +22,12 @@
 	
 		<%= render 'project_row' %>
 	
+
+		
+		<div class="will_paginate_container text-center">
+			<%= will_paginate @crawls, renderer: BootstrapPagination::Rails %>
+		</div>
+	
 	</div>
 
 </div>

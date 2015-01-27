@@ -5,7 +5,7 @@
 			SITES
 		</div>
 		<div class="stat_value">
-			<%= link_to s.sites.count, "#" %>
+			<%= link_to s.total_sites, "#" %>
 		</div>
 	</li>
 	
@@ -14,7 +14,7 @@
 			URLS
 		</div>
 		<div class="stat_value">
-			<%= link_to s.pages.uniq.count, all_urls_path(s.id) %>
+			<%= link_to s.total_pages_crawled, all_urls_path(s.id) %>
 		</div>
 	</li>
 	
@@ -23,7 +23,7 @@
 			BROKEN
 		</div>
 		<div class="stat_value">
-			<%= link_to s.pages.where(status_code: '404').uniq.count, broken_path(s.id) %>
+			<%= link_to s.total_broken, broken_path(s.id) %>
 		</div>
 	</li>
 	
@@ -32,7 +32,7 @@
 			AVAILABLE
 		</div>
 		<div class="stat_value">
-			<%= link_to s.pages.where(status_code: '0', internal: false).uniq.count, available_path(s.id) %>
+			<%= link_to s.total_expired, available_path(s.id) %>
 		</div>
 	</li>
 	

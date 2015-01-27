@@ -39,6 +39,11 @@ class ProcessLinks
     if !batch.nil?
       user_id = batch.site.crawl.user.id
       total_time = Time.now - batch.started_at
+      crawl = batch.site.crawl
+      total_pages_crawled = crawl.pages.uniq.count
+      total_expired = crawl.pages.where(internal: false, status_code: '0').uniq.count
+      total_broken = crawl.pages.where(status_code: '404').uniq.count
+      crawl.update(total_pages_crawled: total_pages_crawled, total_expired: total_expired, total_broken: total_broken)
       #pages_per_second = batch.link.site.pages.count / total_time
       #total_pages_processed = batch.link.site.pages.count
       #est_crawl_time = total_pages_processed / pages_per_second

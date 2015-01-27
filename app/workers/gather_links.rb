@@ -18,6 +18,9 @@ class GatherLinks
   def on_complete(status, options)
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").first
     user_id = batch.site.crawl.user.id
+    crawl = batch.site.crawl
+    total_urls_found = crawl.links.map(&:links).flatten.count
+    crawl.update(total_urls_found: total_urls_found)
     total_time = Time.now - batch.started_at
     pages_per_second = batch.site.links.count / total_time
     total_links_gathered = batch.site.links.map(&:links).flatten.count

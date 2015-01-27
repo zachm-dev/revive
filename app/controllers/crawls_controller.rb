@@ -4,7 +4,7 @@ class CrawlsController < ApplicationController
   
   def index
     #@sites = current_user.sites.all
-    @crawls = current_user.crawls.all
+    @crawls = current_user.crawls.page(params[:page]).per_page(4)
   end
   
   def show
