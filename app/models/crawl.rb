@@ -8,7 +8,7 @@ class Crawl < ActiveRecord::Base
   has_many :pages, through: :sites
   has_many :links, through: :sites
   has_many :gather_links_batches, through: :sites
-  has_many :process_links_batches, through: :links
+  has_many :process_links_batches, through: :sites
   has_one :heroku_app
   
   def self.decision_maker(user_id)

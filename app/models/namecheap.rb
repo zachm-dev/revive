@@ -51,25 +51,27 @@ class Namecheap
       get_pages = Page.where(status_code: "0", internal: false)
     end
     
-    if get_pages.count != 0 && app && app.verified == nil || app.verified == "pending"
-      simple_urls = get_pages.where("simple_url IS NOT NULL")
-      pages = get_pages.to_a.uniq{|p| p.url}
-      parsed_links = []
-      pages.each_with_index do |object, index| 
-        url = Domainatrix.parse("#{object.url}")
-        parsed_url = url.domain + "." + url.public_suffix
-        unless simple_urls.map(&:simple_url).include?(parsed_url)
-          parsed_links << parsed_url
-          Page.update(object.id, simple_url: "#{parsed_url}")
+    if get_pages.count != 0 && !app.nil?
+      if app.verified == nil || app.verified == 'pending'
+        simple_urls = get_pages.where("simple_url IS NOT NULL")
+        pages = get_pages.to_a.uniq{|p| p.url}
+        parsed_links = []
+        pages.each_with_index do |object, index| 
+          url = Domainatrix.parse("#{object.url}")
+          parsed_url = url.domain + "." + url.public_suffix
+          unless simple_urls.map(&:simple_url).include?(parsed_url)
+            parsed_links << parsed_url
+            Page.update(object.id, simple_url: "#{parsed_url}")
+          end
         end
-      end
       
-      urls_string = parsed_links.uniq.join(",")
-      if urls_string.empty?
-        app.update(verified: 'finished') if app
-        return ""
-      else
-        return urls_string
+        urls_string = parsed_links.uniq.join(",")
+        if urls_string.empty?
+          app.update(verified: 'finished') if app
+          return ""
+        else
+          return urls_string
+        end
       end
     else
       app.update(verified: 'finished') if app
