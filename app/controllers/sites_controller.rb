@@ -33,15 +33,15 @@ class SitesController < ApplicationController
   end
 
   def available
-    @crawl = Crawl.find(params[:id])
-    
-    if @crawl.heroku_app.nil? || @crawl.heroku_app.verified == 'pending' || @crawl.heroku_app.verified == nil
-      @processing = 'true'
-      @available = @crawl.pages.where(status_code: '0', internal: false).limit(50).uniq
-      Namecheap.delay.check(crawl_id: @crawl.id)
-    else
-      @available = @crawl.pages.where(available: 'true')
-    end
+    @crawl = Crawl.find(params[:id]).order('desc')
+    @available = @crawl.pages.where(available: 'true')
+    # if @crawl.heroku_app.nil? || @crawl.heroku_app.verified == 'pending' || @crawl.heroku_app.verified == nil
+    #   @processing = 'true'
+    #   @available = @crawl.pages.where(status_code: '0', internal: false).limit(50).uniq
+    #   Namecheap.delay.check(crawl_id: @crawl.id)
+    # else
+    #   @available = @crawl.pages.where(available: 'true')
+    # end
     
     # if @crawl.pages.where(verified: true).count == 0
     #   @processing = 'true'

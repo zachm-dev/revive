@@ -67,6 +67,20 @@ class Crawl < ActiveRecord::Base
     crawl.update(total_sites: crawl.sites.count)
   end
   
+  def self.update_all_crawl_stats(user_id)
+    user = User.find(user_id)
+    crawls = user.crawls.select('id')
+    crawls.each do |c|
+      Crawl.update_stats(c.id)
+    end
+  end
+  
+  def self.update_stats(crawl_id)
+    crawl = Crawl.find(crawl_id)
+    total_expired = crawl.pages.where(available: 'true').count
+    Crawl.update(crawl.id, total_expired: total_expired.to_i)
+  end
+  
   
   def self.crawl_stats(crawl_id)
     crawl = Crawl.find(crawl_id)

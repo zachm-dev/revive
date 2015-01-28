@@ -62,6 +62,7 @@ gem 'platform-api'
 gem 'librato-metrics'
 gem 'will_paginate', '~> 3.0.6'
 gem 'will_paginate-bootstrap'
+gem 'unirest'
 # Use unicorn as the app server
 # gem 'unicorn'
 

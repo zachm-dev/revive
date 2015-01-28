@@ -4,7 +4,8 @@ class CrawlsController < ApplicationController
   
   def index
     #@sites = current_user.sites.all
-    @crawls = current_user.crawls.page(params[:page]).per_page(4)
+    @crawls = current_user.crawls.order('created_at').page(params[:page]).per_page(4)
+    Crawl.delay.update_all_crawl_stats(current_user.id)
   end
   
   def show
@@ -16,7 +17,7 @@ class CrawlsController < ApplicationController
     @process_links_batches = @project.process_links_batches.where(status: ["pending", "running"]).count
     @top_domains = @project.pages.where(available: 'true').limit(5)
     @total_running_jobs = @gather_links_batches + @process_links_batches
-    
+
     if @project.heroku_app.nil? || @project.heroku_app.verified == nil || @project.heroku_app.verified == 'pending'
       Namecheap.delay.check(crawl_id: @project.id)
     end

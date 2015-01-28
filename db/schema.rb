@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150127053729) do
+ActiveRecord::Schema.define(version: 20150128110940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,25 @@ ActiveRecord::Schema.define(version: 20150127053729) do
     t.integer  "total_sites"
     t.integer  "total_internal"
     t.integer  "total_external"
+  end
+
+  create_table "expired_links", force: :cascade do |t|
+    t.string   "url"
+    t.string   "available"
+    t.text     "site_i"
+    t.integer  "site_id"
+    t.boolean  "internal"
+    t.text     "found_on"
+    t.text     "simple_url"
+    t.string   "citationflow"
+    t.string   "trustflow"
+    t.string   "trustmetric"
+    t.string   "refdomains"
+    t.string   "backlinks"
+    t.string   "pa"
+    t.string   "da"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "gather_links_batches", force: :cascade do |t|
@@ -91,6 +110,7 @@ ActiveRecord::Schema.define(version: 20150127053729) do
     t.string   "backlinks"
     t.string   "pa"
     t.string   "da"
+    t.string   "status"
   end
 
   create_table "process_links_batches", force: :cascade do |t|
@@ -142,6 +162,26 @@ ActiveRecord::Schema.define(version: 20150127053729) do
     t.string   "password_digest"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+  end
+
+  create_table "verify_majestic_batches", force: :cascade do |t|
+    t.integer  "site_id"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.string   "batch_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "verify_namecheap_batches", force: :cascade do |t|
+    t.integer  "page_id"
+    t.string   "batch_id"
+    t.string   "status"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "site_id"
   end
 
 end

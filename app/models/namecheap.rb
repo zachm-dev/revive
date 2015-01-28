@@ -17,21 +17,26 @@ class Namecheap
     end
     
     if !urls.empty?
-      RestClient.proxy = 'http://proxy:d9495893e1a6-4792-b778-0e541a5d1370@proxy-174-129-240-180.proximo.io'
-      res = RestClient.get("https://api.namecheap.com/xml.response?ApiUser=ENV['name_cheap_api_username']&ApiKey=ENV['name_cheap_api_key']&UserName=ENV['name_cheap_api_username']&ClientIp=ENV['name_cheap_client_ip']&Command=namecheap.domains.check&DomainList=#{urls}")
-      hash = Hash.from_xml(res)
-      hash["ApiResponse"]["CommandResponse"]["DomainCheckResult"].map do |r|
-        if obj
-          page = obj.pages.where("simple_url = ?", r['Domain']).first
-          Page.update(page.id, verified: true, available: r['Available'])
-          Majestic.get_info(class_name: class_name, obj_id: obj.id)
-          LinkScape.get_info(class_name: class_name, obj_id: obj.id)
-        else
-          page = Page.where("simple_url = ?", r['Domain']).first
-          Page.update(page.id, verified: true, available: r['Available'])
-          Majestic.get_info
-          LinkScape.get_info
+      urls.each do |urls_array|
+        uniq_urls = urls_array.uniq.join(",")
+        
+        RestClient.proxy = 'http://proxy:d9495893e1a6-4792-b778-0e541a5d1370@proxy-174-129-240-180.proximo.io'
+        res = RestClient.get("https://api.namecheap.com/xml.response?ApiUser=ENV['name_cheap_api_username']&ApiKey=ENV['name_cheap_api_key']&UserName=ENV['name_cheap_api_username']&ClientIp=ENV['name_cheap_client_ip']&Command=namecheap.domains.check&DomainList=#{uniq_urls}")
+        hash = Hash.from_xml(res)
+        hash["ApiResponse"]["CommandResponse"]["DomainCheckResult"].map do |r|
+          if obj
+            page = obj.pages.where("simple_url = ?", r['Domain']).first
+            Page.update(page.id, verified: true, available: r['Available'])
+            Majestic.get_info(class_name: class_name, obj_id: obj.id)
+            LinkScape.get_info(class_name: class_name, obj_id: obj.id)
+          else
+            page = Page.where("simple_url = ?", r['Domain']).first
+            Page.update(page.id, verified: true, available: r['Available'])
+            Majestic.get_info
+            LinkScape.get_info
+          end
         end
+        
       end
     end
 
@@ -56,16 +61,23 @@ class Namecheap
         simple_urls = get_pages.where("simple_url IS NOT NULL")
         pages = get_pages.to_a.uniq{|p| p.url}
         parsed_links = []
-        pages.each_with_index do |object, index| 
-          url = Domainatrix.parse("#{object.url}")
-          parsed_url = url.domain + "." + url.public_suffix
-          unless simple_urls.map(&:simple_url).include?(parsed_url)
-            parsed_links << parsed_url
-            Page.update(object.id, simple_url: "#{parsed_url}")
+        pages.each do |object| 
+          begin 
+            url = Domainatrix.parse("#{object.url}")
+            if !url.domain.empty? || !url.public_suffix.empty?
+              parsed_url = url.domain + "." + url.public_suffix
+              unless simple_urls.map(&:simple_url).include?(parsed_url)
+                parsed_links << parsed_url
+                Page.update(object.id, simple_url: "#{parsed_url}")
+              end
+            end
+          rescue
+            nil
           end
         end
       
-        urls_string = parsed_links.uniq.join(",")
+        #urls_string = parsed_links.uniq.join(",")
+        urls_string = parsed_links.each_slice(30).to_a
         if urls_string.empty?
           app.update(verified: 'finished') if app
           return ""

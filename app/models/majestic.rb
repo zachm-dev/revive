@@ -25,5 +25,6 @@ class Majestic
     end
     
   end
+
   
 end
