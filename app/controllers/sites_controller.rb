@@ -33,7 +33,7 @@ class SitesController < ApplicationController
   end
 
   def available
-    @crawl = Crawl.find(params[:id]).order('desc')
+    @crawl = Crawl.find(params[:id])
     @available = @crawl.pages.where(available: 'true')
     # if @crawl.heroku_app.nil? || @crawl.heroku_app.verified == 'pending' || @crawl.heroku_app.verified == nil
     #   @processing = 'true'
