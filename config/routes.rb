@@ -2,12 +2,10 @@ require 'sidekiq/pro/web'
 
 Rails.application.routes.draw do
 
-  
-
   #root 'dashboard#index'
-  #root 'home#index'
-  #get 'home', to: 'home#index', as: 'home'
-  root 'sessions#new'
+  root 'home#index'
+  get 'home', to: 'home#index', as: 'home'
+  #root 'sessions#new'
   get 'signup', to: 'users#new', as: 'signup'
   get 'login', to: 'sessions#new', as: 'login'
   get 'logout', to: 'sessions#destroy', as: 'logout'
@@ -27,6 +25,8 @@ Rails.application.routes.draw do
   resources :sites
   resources :pages
   post 'api_create', to: 'crawls#api_create'
+  get 'checkout', to: 'checkout#index', as: :checkout
+  resources :checkout
   
   mount Sidekiq::Web, at: '/sidekiq'
   mount Sidekiq::Monitor::Engine => '/sidekiq_monitor'

@@ -1,0 +1,283 @@
+// Place all the styles related to the checkout controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+//CSS RESET
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+/*	font-size: 100%;
+	font: inherit;*/
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+////////////// CSS RESET ///////////////////////////////
+
+
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+@font-face {
+    font-family: 'walkway';
+    src: font_url('Walkway.ttf') format('truetype');
+}
+
+body, html {
+	width: 100%;
+	background: #fff;
+}
+
+.home_main_container {
+	width: 100%;
+	min-width: 970px;
+	overflow-x: hidden;
+}
+
+.home_section_container {
+	width: 100%;
+	clear: both;
+}
+
+.home_middle_container {
+	margin: 0px auto;
+	width: 970px;
+	clear: both;
+}
+
+.section_title_container {
+	margin-top: 20px;
+}
+
+.step_circle {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	text-align: center;
+	color: #3A4752;
+	background-color: #fff;
+	border: 2px solid #3A4752;
+	line-height: 30px;
+	font-family: helvetica;
+	font-size: 18px;
+	float: left;
+	margin-right: 15px;
+	font-weight: bold;
+}
+
+.step_title_text {
+	font-family: helvetica;
+	font-size: 20px;
+	line-height: 36px;
+	font-weight: bold;
+	color: #3A4752;
+}
+
+.form_field_section {
+	margin-top: 20px;
+}
+
+.form_label {
+	color: #3A4752;
+}
+
+.form_field input {
+	height: 40px;
+	width: 100%;
+	margin-top: 5px;
+	border: none;
+	border: 2px solid #F3F4F7;
+	border-radius: 5px;
+}
+
+.cc_logos {
+	margin-top: 20px;
+}
+
+.cc_logos img {
+	width: 100%;
+}
+
+.home_buy_button_container {
+	margin-top: 10px;
+}
+
+.home_buy_button_container a {
+	display: block;
+	width: 850px;
+	padding: 30px 30px;
+	border: 1px solid #000;
+	margin: 0px auto;
+	font-family: walkway;
+	color: #000;
+	font-size: 35px;
+	font-weight: lighter;
+	
+}
+
+.home_trust_logos_container {
+	margin-top: 10px;
+	margin: 0px auto;
+}
+
+.green_btn_container {
+	margin: 20px auto;
+	width: 100%;
+}
+
+.green_btn_container a {
+	color: #fff;
+	font-size: 30px;
+	font-weight: lighter;
+	padding: 15px 0px;
+	background-color: #FF3B61;
+	border: 3px solid #FF3B61;
+	
+}
+
+.green_btn_container a:hover {
+	background-color: #fff;
+	color: #FF3B61;
+	border: 3px solid #FF3B61;
+	
+}
+
+.trust_logo_headline p {
+	padding-top: 10px;
+	font-weight: bold;
+}
+
+//.right_checkout_section {
+//	padding: 10px 0px 0px 0px;
+//}
+
+.colorgraph {
+  height: 5px;
+  border-top: 0;
+  background: #c4e17f;
+  border-radius: 5px;
+  background-image: -webkit-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+  background-image: -moz-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+  background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+  background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+}
+
+.whats_included_list li {
+	margin-bottom: 20px;
+	font-family: helvetica;
+}
+
+.whats_included_list li .glyphicon {
+	margin-right: 10px;
+}
+
+.satisfaction_checkout_section img {
+	width: 300px;
+}
+
+.privacy_securty_section img {
+	width: 100px;
+}
+
+.checkout_header {
+	height: 75px;
+	width: 100%;
+	background-color: #FF3B61;
+}
+
+.checkout_header_logo img {
+	padding-top: 10px;
+	height: 60px;
+}
+
+.checkout_header_phone {
+	font-family: helvetica;
+	color: #fff;
+	font-size: 16px;
+	padding-top: 25px;
+	font-weight: lighter;
+}
+
+.checkout_main_container {
+	margin-bottom: 50px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

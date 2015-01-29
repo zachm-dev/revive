@@ -102,7 +102,13 @@ body, html {
 
 .home_nav_container {
 	background-color: #fff;
-	margin-top: -10px;
+	padding: 0px 0px 0px 0px !important;
+	height: 50px !important;
+//	margin-top: -10px;
+}
+
+.home_nav_container img {
+	height: 50px !important;
 }
 
 .home_links_container {
@@ -451,6 +457,12 @@ body, html {
 
 .white-text {
 	color: #fff;
+}
+
+.home_top_nav_container {
+	height: 50px;
+	border: none;
+	background-color: #fff;
 }
 
 

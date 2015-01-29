@@ -1,0 +1,357 @@
+<div class="home_main_container">
+	
+	<div class="home_section_container checkout_header">
+	
+		<div class="home_middle_container">
+			
+			<div class="checkout_header_logo pull-left">
+				<%= image_tag 'revive_big_logo.jpg' %>
+			</div>
+			
+			<div class="checkout_header_phone pull-right">
+				<p>Need Support? support@revive.com</p>
+			</div>
+			
+		</div>
+	
+	</div>
+	
+	
+	<div class="home_section_container checkout_main_container">
+		<div class="home_middle_container">
+			<div class='row'>
+				
+				<div class="col-xs-8">
+					
+					<%= form_tag '#', method: 'get' do %>
+						
+						
+						<div class="form_section">
+							<div class='section_title_container'>
+								<div class="step_circle">1</div>
+								<div class="step_title_text">Contact Information</div>
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-6'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :first_name, "First Name" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :first_name, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+								<div class='col-xs-6'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :last_name, "Last Name" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :last_name, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-6'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :email, "Email" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :email, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+								<div class='col-xs-6'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :phone, "Phone" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :phone, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+						
+						<div class="form_section">
+							<div class='section_title_container'>
+								<div class="step_circle">2</div>
+								<div class="step_title_text">Billing Details</div>
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-12'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :address_1, "Address 1" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :address_1, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-12'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :address_2, "Address 2" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :address_2, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-4'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :city, "City" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :city, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+								<div class='col-xs-4'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :state, "State" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :state, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+								<div class='col-xs-4'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :zip, "Zip Code" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :zip, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-12'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :country, "Country" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :country, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+							
+						</div>
+						
+						<div class="form_section">
+							<div class='section_title_container'>
+								<div class="step_circle">3</div>
+								<div class="step_title_text">Payment Information</div>
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-8'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :card_number, "Credit Card Number" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :card_number, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+								<div class='col-xs-4'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :ccv, "CVC / CVV" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :ccv, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+							
+							<div class='row'>
+								
+								<div class='col-xs-8'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :month, "Exp. Month" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :month, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+								<div class='col-xs-4'>
+									<div class="form_field_section">
+									    <div class="form_label">
+									    	<%= label_tag :year, "Exp. Year" %>
+									    </div>
+									    <div class="form_field">
+									    	<%= text_field_tag :year, nil, name: nil %>
+									    </div>
+									</div>
+								</div>
+								
+							</div>
+							
+							
+							<div class="green_btn_container">
+								<%= link_to "Check Prices", '#', class: 'btn btn-success btn-lg btn-block' %>
+							</div>
+	
+							<div class="row trust_logos">
+								<div class="col-xs-6">
+									<div class="row">
+										<div class="col-xs-2">
+											<div class="trust_logo_headline_img">
+												<%= image_tag "http://www.leadpages.net/wp-content/themes/leadpages2014/images/new/homepage/30-badge.png" %>
+											</div>
+										</div>
+										<div class="col-xs-10">
+											<div class="trust_logo_headline pull-left">
+												<p>30 DAY MONEY-BACK GUARANTEE</p>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-xs-6">
+									<div class="row">
+										<div class="col-xs-5">
+											<div class="trust_logo_headline_img pull-right">
+												<%= image_tag "http://www.leadpages.net/wp-content/themes/leadpages2014/images/new/homepage/secure-lock.png" %>
+											</div>
+										</div>
+										<div class="col-xs-7">
+											<div class="trust_logo_headline pull-left">
+												<p>SECURE CHECKOUT</p>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							
+						</div>
+						
+					
+					<% end %>
+					
+				</div>
+				
+				<div class="col-xs-4">
+					
+					<div class='right_checkout_section'>
+						<div class="page-header">
+						  <h1>What's Included</h1>
+						</div>
+						
+						<ul class="nav nav-list whats_included_list">
+							<li class="pull-left">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								There is no limit to the amount of domains you can find with Source Revive
+							</li>
+							
+							<li class="pull-left">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								You are allowed an overkill of up to 10  active domain scan projects at a time
+							</li>
+							
+							<li class="pull-left">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								We handle all the expensive data processing and proxies from our cloud servers.
+							</li>
+							
+							<li class="pull-left">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								We continue to upgrade and improve this system and keep it prestine.
+							</li>
+						</ul>
+						
+						<hr class="colorgraph">
+					</div>
+					
+					<div class='right_checkout_section'>
+						  <h1>100% Guarantee</h1>
+
+						
+						<div class="satisfaction_checkout_section">
+							<%= image_tag 'https://www.leadpages.net/wp-content/themes/leadpages2014/images/new/homepage/30-day-badge.png' %>
+						</div>
+						
+						<hr class="colorgraph">
+						
+					</div>
+					
+					<div class='right_checkout_section'>
+						  <h1>Privacy / Security</h1>
+						  <h4><small>We will not share or trade online information that you provide us (including e-mail addresses). All personal information you submit is encrypted and secure.</small></h4>
+						
+						  <div class="row text-center">
+						  	
+							<div class="col-xs-6">
+								<div class="satisfaction_checkout_section privacy_securty_section pull-left">
+									<%= image_tag 'https://www.safesitecertified.org/members/identity.html?seal=3&member=fa1a21df&location=Traffic_&_Conversion_Summit&size=3&seal_text=115&url=www.trafficandconversionsummit.com/order/recordings/' %>
+								</div>
+							</div>
+							
+							<div class="col-xs-6">
+								<div class="satisfaction_checkout_section privacy_securty_section">
+									<%= image_tag 'https://www.safesitecertified.org/members/identity.html?seal=2&member=fa1a21df&location=Traffic_&_Conversion_Summit&size=3&seal_text=115&url=www.trafficandconversionsummit.com/order/recordings/' %>
+								</div>
+							</div>
+							
+						  </div>
+						
+
+						
+						<hr class="colorgraph">
+						
+					</div>
+					
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+</div>
