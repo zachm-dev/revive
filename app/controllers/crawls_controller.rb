@@ -41,4 +41,9 @@ class CrawlsController < ApplicationController
     render :layout => false
   end
   
+  def stop_crawl
+    Crawl.delay.stop_crawl(params[:id])
+    redirect_to crawl_path_path(params[:id])
+  end
+  
 end

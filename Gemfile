@@ -1,3 +1,4 @@
+source 'https://code.stripe.com'
 ""
 source 'https://rubygems.org'
 ruby "2.2.0"
@@ -62,7 +63,9 @@ gem 'platform-api'
 gem 'librato-metrics'
 gem 'will_paginate', '~> 3.0.6'
 gem 'will_paginate-bootstrap'
+gem "select2-rails"
 gem 'unirest'
+gem 'stripe', :source => 'https://code.stripe.com/'
 # Use unicorn as the app server
 # gem 'unicorn'
 

@@ -23,7 +23,7 @@
 				
 				<div class="col-xs-8">
 					
-					<%= form_tag '#', method: 'get' do %>
+					<%= form_tag Subscription.new, id: 'new_subscription' do %>
 						
 						
 						<div class="form_section">
@@ -176,14 +176,28 @@
 						</div>
 						
 						<div class="form_section">
+							
+							<%= hidden_field_tag :stripe_card_token %>
+							
 							<div class='section_title_container'>
 								<div class="step_circle">3</div>
 								<div class="step_title_text">Payment Information</div>
 							</div>
 							
+							<div class="row">
+								<div class="col-xs-12">
+									<div id="stripe_error">
+									  <noscript>
+										  JavaScript is not enabled and is required for this form. First enable it in your web browser settings.
+									  </noscript>
+									</div>
+								</div>
+							</div>
+							
 							<div class='row'>
-								
+
 								<div class='col-xs-8'>
+									
 									<div class="form_field_section">
 									    <div class="form_label">
 									    	<%= label_tag :card_number, "Credit Card Number" %>
@@ -197,10 +211,10 @@
 								<div class='col-xs-4'>
 									<div class="form_field_section">
 									    <div class="form_label">
-									    	<%= label_tag :ccv, "CVC / CVV" %>
+									    	<%= label_tag :card_code, "CVC / CVV" %>
 									    </div>
 									    <div class="form_field">
-									    	<%= text_field_tag :ccv, nil, name: nil %>
+									    	<%= text_field_tag :card_code, nil, name: nil %>
 									    </div>
 									</div>
 								</div>
@@ -212,10 +226,11 @@
 								<div class='col-xs-8'>
 									<div class="form_field_section">
 									    <div class="form_label">
-									    	<%= label_tag :month, "Exp. Month" %>
+									    	<%= label_tag :card_month, "Exp. Month" %>
 									    </div>
 									    <div class="form_field">
-									    	<%= text_field_tag :month, nil, name: nil %>
+									    	<%#= text_field_tag :card_month, nil, name: nil %>
+											<%= select_month nil, {add_month_numbers: true}, {class: 'selectpicker', name: nil, id: "card_month"} %>
 									    </div>
 									</div>
 								</div>
@@ -223,19 +238,30 @@
 								<div class='col-xs-4'>
 									<div class="form_field_section">
 									    <div class="form_label">
-									    	<%= label_tag :year, "Exp. Year" %>
+									    	<%= label_tag :card_year, "Exp. Year" %>
 									    </div>
 									    <div class="form_field">
-									    	<%= text_field_tag :year, nil, name: nil %>
+									    	<%#= text_field_tag :card_year, nil, name: nil %>
+											<%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}, {name: nil, id: "card_year", class: 'selectpicker', data: {width: '100%'}} %>
 									    </div>
 									</div>
 								</div>
 								
 							</div>
 							
+							<div class="line_break"></div>
 							
-							<div class="green_btn_container">
-								<%= link_to "Check Prices", '#', class: 'btn btn-success btn-lg btn-block' %>
+							<div class="panel panel-default order_total_container">
+								<div class="panel-heading">
+									<div class="row">
+										<div class="pull-left order_toatal_text">Your Order Total:</div>
+										<div class="pull-right order_toatal_price">$197.00</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="checkout_form_submit_btn">
+								<%= submit_tag "Submit Order", class: 'btn btn-success btn-lg btn-block checkout_form_submit_btn' %>
 							</div>
 	
 							<div class="row trust_logos">

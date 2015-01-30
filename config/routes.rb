@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get 'projects/' => "crawls#index", as: :projects
   get 'projects/new' => "crawls#new", as: :new_project
   get 'projects/:id' => "crawls#show", as: :crawl_path
+  get 'stop_crawl/:id' => 'crawls#stop_crawl', as: :stop_crawl
   resources :crawls
   get 'domains/:id' => "sites#index", as: :domains
   get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
@@ -27,6 +28,7 @@ Rails.application.routes.draw do
   post 'api_create', to: 'crawls#api_create'
   get 'checkout', to: 'checkout#index', as: :checkout
   resources :checkout
+  resources :subscriptions
   
   mount Sidekiq::Web, at: '/sidekiq'
   mount Sidekiq::Monitor::Engine => '/sidekiq_monitor'

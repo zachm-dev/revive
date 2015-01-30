@@ -11,6 +11,18 @@ class Crawl < ActiveRecord::Base
   has_many :process_links_batches, through: :sites
   has_one :heroku_app
   
+  def self.stop_crawl(crawl_id)
+    crawl = Crawl.find(crawl_id)
+    heroku_app = crawl.heroku_app
+    if heroku_app
+      heroku_app.update(status: 'finished')
+      heroku = Heroku.new
+      if heroku.app_exists?(heroku_app.name)
+        heroku.delete_app(heroku_app.name)
+      end
+    end
+  end
+  
   def self.decision_maker(user_id)
     
     user = User.find(user_id)
