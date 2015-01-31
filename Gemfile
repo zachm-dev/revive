@@ -66,6 +66,7 @@ gem 'will_paginate-bootstrap'
 gem "select2-rails"
 gem 'unirest'
 gem 'stripe', :source => 'https://code.stripe.com/'
+gem 'premailer-rails'
 # Use unicorn as the app server
 # gem 'unicorn'
 

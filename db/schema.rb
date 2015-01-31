@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150130083734) do
+ActiveRecord::Schema.define(version: 20150130231445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,9 @@ ActiveRecord::Schema.define(version: 20150130083734) do
     t.integer  "total_sites"
     t.integer  "total_internal"
     t.integer  "total_external"
+    t.integer  "moz_da"
+    t.integer  "majestic_tf"
+    t.integer  "notify_me_after"
   end
 
   create_table "expired_links", force: :cascade do |t|
@@ -155,6 +158,7 @@ ActiveRecord::Schema.define(version: 20150130083734) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "maxpages"
+    t.boolean  "notified"
   end
 
   create_table "subscriptions", force: :cascade do |t|

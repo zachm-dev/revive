@@ -10,10 +10,10 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require_tree .
- *= require_self
  *= require select2
  *= require select2-bootstrap
+ *= require_tree .
+ *= require_self
  */
 
 // RESET
@@ -393,11 +393,20 @@ Licensed under MIT
 
 ///// PAGINATION //////
 
-.will_paginate_container {
-	position: absolute;
-	margin: 0px auto;
-	bottom: 0px;
-	left: 30%;
+//.will_paginate_container {
+//	position: absolute;
+//	margin: 0px auto;
+//	bottom: 0px;
+//	left: 30%;
+//}
+
+.pagination > .active > span {
+	background-color: #FF4F78 !important;
+	border-color: #FF4F78 !important;
+}
+
+.pagination > li > a {
+	color: #FF4F78 !important;
 }
 
 
