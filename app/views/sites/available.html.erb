@@ -86,7 +86,7 @@
 									
 									<% if @processing %>
 										
-										<% @available.each do |i| %>
+										<% @pages.each do |i| %>
 											<tr>
 												<!-- <td>
 													<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
@@ -106,7 +106,7 @@
 										
 									<% else %>
 									
-										<% @available.each do |i| %>
+										<% @pages.each do |i| %>
 											<tr>
 												<!-- <td>
 													<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
@@ -130,6 +130,10 @@
 								</tbody>
 								
 							</table>
+							
+							<div class="will_paginate_container text-center">
+								<%= will_paginate @pages, renderer: BootstrapPagination::Rails %>
+							</div>
 							
 						</div>
 					</div>

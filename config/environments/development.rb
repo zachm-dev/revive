@@ -25,7 +25,7 @@ Rails.application.configure do
      password: 'ENV['send_grid_password']',
      authentication: 'plain',
      enable_starttls_auto: true}
-   Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+   Rails.application.routes.default_url_options[:host] = 'http://lvh.me:3000'
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -46,5 +46,5 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   
-  config.action_controller.asset_host = "localhost:3000"
+  config.action_controller.asset_host = "http://lvh.me:3000"
 end

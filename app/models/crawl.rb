@@ -44,6 +44,9 @@ class Crawl < ActiveRecord::Base
     user = User.find(user_id)
     beta = true
     name = options[:name]
+    moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
+    majestic_tf = options[:majestic_tf].nil? ? 501 : options[:majestic_tf].to_
+    notify_me_after = options[:notify_me_after].nil? ? 0 : options[:notify_me_after].to_i
     
     if beta == true
       if options[:maxpages].nil?
