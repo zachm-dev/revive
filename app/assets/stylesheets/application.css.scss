@@ -195,11 +195,18 @@ html, body  {
 }
 
 .pink_form_submit_btn_container {
-	margin-top: 15px;
+	margin-top: 35px;
 }
 
 .pink_form_submit_btn {
 	background-color: #FF4F78;
+	color: #fff;
+	width: 100%;
+	padding: 15px 0px;
+}
+
+.teal_form_submit_btn {
+	background-color: #2ccad4;
 	color: #fff;
 	width: 100%;
 	padding: 15px 0px;
@@ -375,12 +382,18 @@ Licensed under MIT
 	width: 100%;
 }
 
+.side_vertical_tabs li > a {
+	color: #222;
+}
+
 .side_vertical_tabs li.active > a {
 	background-color: #F4F4F2 !important;
 	border-left: #F4F4F2 !important;
 	border-bottom: 1px solid #dddddd !important;
 	border-right: 5px solid #FF4F78 !important;
+//	border-right: 5px solid #2CCAD4 !important;
 	color: #FF4F78 !important;
+//	color: #2CCAD4 !important;
 }
 
 .side_vertical_tabs li > a:hover {
