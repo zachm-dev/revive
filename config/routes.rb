@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   resources :users
   resources :sessions
   resources :dashboard
+  get 'crawls/keyword/new' => 'crawls#new_keyword_crawl', as: :new_keyword_crawl
+  post 'crawls/keyword/create' => 'crawls#create_keyword_crawl', as: :create_keyword_crawl
   get 'projects/' => "crawls#index", as: :projects
   get 'projects/new' => "crawls#new", as: :new_project
   get 'projects/:id' => "crawls#show", as: :crawl_path

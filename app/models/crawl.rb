@@ -11,6 +11,8 @@ class Crawl < ActiveRecord::Base
   has_many :process_links_batches, through: :sites
   has_one :heroku_app
   
+  GOOGLE_PARAMS = ['site:.gov', 'links', 'resources', 'intitle:links', 'intitle:resources', 'intitle:sites', 'intitle:websites', 'inurl:links', 'inurl:resources', 'inurl:sites', 'inurl:websites', '"useful links"', '"useful resources"', '"useful sites"', '"useful websites"', '"recommended links"', '"recommended resources"', '"recommended sites"', '"recommended websites"', '"suggested links"', '"suggested resources"', '"suggested sites"', '"suggested websites"', '"more links"', '"more resources"', '"more sites"', '"more websites"', '"favorite links"', '"favorite resources"', '"favorite sites"', '"favorite websites"', '"related links"', '"related resources"', '"related sites"', '"related websites"', 'intitle:"useful links"', 'intitle:"useful resources"', 'intitle:"useful sites"', 'intitle:"useful websites"', 'intitle:"recommended links"', 'intitle:"recommended resources"', 'intitle:"recommended sites"', 'intitle:"recommended websites"', 'intitle:"suggested links"', 'intitle:"suggested resources"', 'intitle:"suggested sites"', 'intitle:"suggested websites"', 'intitle:"more links"', 'intitle:"more resources"', 'intitle:"more sites"', 'intitle:"more websites"', 'intitle:"favorite links"', 'intitle:"favorite resources"', 'intitle:"favorite sites"', 'intitle:"favorite websites"', 'intitle:"related links"', 'intitle:"related resources"', 'intitle:"related sites"', 'intitle:"related websites"', 'inurl:"useful links"', 'inurl:"useful resources"', 'inurl:"useful sites"', 'inurl:"useful websites"', 'inurl:"recommended links"', 'inurl:"recommended resources"', 'inurl:"recommended sites"', 'inurl:"recommended websites"', 'inurl:"suggested links"', 'inurl:"suggested resources"', 'inurl:"suggested sites"', 'inurl:"suggested websites"', 'inurl:"more links"', 'inurl:"more resources"', 'inurl:"more sites"', 'inurl:"more websites"', 'inurl:"favorite links"', 'inurl:"favorite resources"', 'inurl:"favorite sites"', 'inurl:"favorite websites"', 'inurl:"related links"', 'inurl:"related resources"', 'inurl:"related sites"', 'inurl:"related websites"', 'list of links', 'list of resources', 'list of sites', 'list of websites', 'list of blogs', 'list of forums']
+  
   def self.stop_crawl(crawl_id)
     crawl = Crawl.find(crawl_id)
     heroku_app = crawl.heroku_app
@@ -45,7 +47,7 @@ class Crawl < ActiveRecord::Base
     beta = true
     name = options[:name]
     moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
-    majestic_tf = options[:majestic_tf].nil? ? 501 : options[:majestic_tf].to_
+    majestic_tf = options[:majestic_tf].nil? ? 501 : options[:majestic_tf].to_i
     notify_me_after = options[:notify_me_after].nil? ? 0 : options[:notify_me_after].to_i
     
     if beta == true
@@ -64,6 +66,49 @@ class Crawl < ActiveRecord::Base
     Crawl.decision_maker(user_id)
   end
   
+  def self.save_new_keyword_crawl(user_id, keyword, options = {})
+    user = User.find(user_id)
+    beta = true
+    name = options[:name]
+    moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
+    majestic_tf = options[:majestic_tf].nil? ? 501 : options[:majestic_tf].to_i
+    notify_me_after = options[:notify_me_after].nil? ? 0 : options[:notify_me_after].to_i
+    
+    if beta == true
+      if options[:maxpages].nil?
+        maxpages = 10
+      else
+        maxpages = options[:maxpages].to_i > 500 ? 500 : options[:maxpages].to_i
+      end
+    else
+      maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
+    end
+    
+    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
+    save_new_sites = Crawl.search_keyword_urls(keyword, new_crawl.id)
+  end
+  
+  def self.search_keyword_urls(keyword, crawl_id)
+    puts "this is the keyword #{keyword}"
+    crawl = Crawl.find(crawl_id)
+    uri = URI.parse(URI.encode("https://www.google.com/search?num=100&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{keyword}+intitle:links&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
+    page = Nokogiri::HTML(open(uri))  
+    urls_array = [] 
+    page.css('h3.r').map do |link|
+      url = link.children[0].attributes['href'].value
+      if url.include?('url?q')
+        split_url = url.split("=")[1]
+        if split_url.include?('&')
+          remove_and_from_url = split_url.split("&")[0]
+          urls_array << remove_and_from_url
+        end
+      end
+    end
+    urls_array.each do |u|
+      new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id)
+    end
+  end
+  
   def self.save_new_sites(base_urls, crawl_id)
     
     crawl = Crawl.find(crawl_id)
@@ -77,7 +122,7 @@ class Crawl < ActiveRecord::Base
     urls_array.each do |u|
       new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id)
       new_site.create_gather_links_batch(status: "pending")
-      #Crawl.delay.decision_maker(user_id)
+      Crawl.delay.decision_maker(user_id)
     end
     crawl.update(total_sites: crawl.sites.count)
   end

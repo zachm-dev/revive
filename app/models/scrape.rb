@@ -67,6 +67,20 @@ class Scrape
   #   #puts "start Sidekiq"
   # end
   
+  def self.test
+    uri = URI.parse(URI.encode("https://www.google.com/search?num=100&rlz=1C5CHFA_enUS561US561&es_sm=119&q=weight+protein+intitle:links&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
+    page = Nokogiri::HTML(open(uri))   
+    page.css('h3.r').map do |link|
+      url = link.children[0].attributes['href'].value
+      if url.include?('url?q')
+        split_url = url.split("=")[1]
+        if split_url.include?('&')
+          remove_and_from_url = split_url.split("&")[0]
+        end
+      end
+    end
+  end
+  
   private
   
   def self.print_statistics(statistics)

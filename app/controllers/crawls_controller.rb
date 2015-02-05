@@ -34,6 +34,16 @@ class CrawlsController < ApplicationController
     redirect_to crawls_path
   end
   
+  def new_keyword_crawl
+    @project = current_user.crawls.new
+  end
+  
+  def create_keyword_crawl
+    # raise
+    Crawl.delay.save_new_keyword_crawl(current_user.id, params[:crawl][:keyword], params[:crawl])
+    redirect_to crawls_path
+  end
+  
   def api_create
     @json = JSON.parse(request.body.read)
     puts "here is the json hash #{@json["options"]}"
