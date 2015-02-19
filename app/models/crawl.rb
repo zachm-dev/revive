@@ -85,13 +85,21 @@ class Crawl < ActiveRecord::Base
     end
     
     new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
-    save_new_sites = Crawl.search_keyword_urls(keyword, new_crawl.id)
+    Crawl::GOOGLE_PARAMS.each do |param|
+      begin
+        save_new_sites = Crawl.search_keyword_urls(keyword, new_crawl.id, google_param: param)
+      rescue
+        puts 'failed to save'
+      end
+    end
   end
   
-  def self.search_keyword_urls(keyword, crawl_id)
+  def self.search_keyword_urls(keyword, crawl_id, options = {})
     puts "this is the keyword #{keyword}"
     crawl = Crawl.find(crawl_id)
-    uri = URI.parse(URI.encode("https://www.google.com/search?num=100&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{keyword}+intitle:links&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
+    if !options[:google_param].nil?
+      uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{keyword}+#{options[:google_param]}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
+    end
     page = Nokogiri::HTML(open(uri))  
     urls_array = [] 
     page.css('h3.r').map do |link|
