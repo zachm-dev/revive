@@ -28,7 +28,7 @@ class CrawlsController < ApplicationController
   end
   
   def create
-    raise
+    # raise
     #GatherLinks.sites(current_user.id, params[:urls], params[:crawl])
     Crawl.delay.save_new_crawl(current_user.id, params[:urls], params[:crawl])
     redirect_to crawls_path

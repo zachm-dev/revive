@@ -26,7 +26,7 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.decision_maker(user_id)
-    
+    puts 'making a decision'
     user = User.find(user_id)
     
     number_of_pending_crawls = user.heroku_apps.where(status: "pending").count
@@ -85,36 +85,9 @@ class Crawl < ActiveRecord::Base
     end
     
     new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
-    Crawl::GOOGLE_PARAMS.each do |param|
-      begin
-        save_new_sites = Crawl.search_keyword_urls(keyword, new_crawl.id, google_param: param)
-      rescue
-        puts 'failed to save'
-      end
-    end
-  end
-  
-  def self.search_keyword_urls(keyword, crawl_id, options = {})
-    puts "this is the keyword #{keyword}"
-    crawl = Crawl.find(crawl_id)
-    if !options[:google_param].nil?
-      uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{keyword}+#{options[:google_param]}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
-    end
-    page = Nokogiri::HTML(open(uri))  
-    urls_array = [] 
-    page.css('h3.r').map do |link|
-      url = link.children[0].attributes['href'].value
-      if url.include?('url?q')
-        split_url = url.split("=")[1]
-        if split_url.include?('&')
-          remove_and_from_url = split_url.split("&")[0]
-          urls_array << remove_and_from_url
-        end
-      end
-    end
-    urls_array.each do |u|
-      new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id)
-    end
+    new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
+    
+    SaveSitesFromGoogle.start_batch(keyword, new_crawl.id)
   end
   
   def self.save_new_sites(base_urls, crawl_id)
@@ -130,7 +103,7 @@ class Crawl < ActiveRecord::Base
     urls_array.each do |u|
       new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id)
       new_site.create_gather_links_batch(status: "pending")
-      Crawl.delay.decision_maker(user_id)
+      Crawl.delay.decision_maker(new_site.crawl.user.id)
     end
     crawl.update(total_sites: crawl.sites.count)
   end
