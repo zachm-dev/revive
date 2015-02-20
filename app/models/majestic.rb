@@ -12,7 +12,7 @@ class Majestic
       pages = Page.where(available: 'true').map(&:simple_url)
     end
 
-    m = MajesticSeo::Api::Client.new
+    m = MajesticSeo::Api::Client.(api_key: ENV['majestic_api_key'], environment: ENV['majestic_env'])
     res = m.get_index_item_info(pages)
     
     res.items.map do |r|
@@ -26,5 +26,4 @@ class Majestic
     
   end
 
-  
 end

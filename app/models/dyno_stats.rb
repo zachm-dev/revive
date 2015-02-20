@@ -1,7 +1,7 @@
 class DynoStats
   
-  LIBRATO_EMAIL = "ENV['librato_email']"
-  LIBRATO_KEY = "ENV['librato_key']"
+  LIBRATO_EMAIL = ENV['librato_email']
+  LIBRATO_KEY = ENV['librato_key']
   
   def initialize
     librato = Librato::Metrics.authenticate(LIBRATO_EMAIL, LIBRATO_KEY)

@@ -105,6 +105,8 @@ GEM
     faraday (0.8.9)
       multipart-post (~> 1.2.0)
     ffi (1.9.6)
+    figaro (1.0.0)
+      thor (~> 0.14)
     foreman (0.77.0)
       dotenv (~> 1.0.2)
       thor (~> 0.19.1)
@@ -297,6 +299,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   domainatrix
   faraday_middleware!
+  figaro
   foreman
   jbuilder (~> 2.0)
   jquery-rails

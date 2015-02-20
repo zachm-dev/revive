@@ -67,6 +67,9 @@ gem "select2-rails"
 gem 'unirest'
 gem 'stripe', :source => 'https://code.stripe.com/'
 gem 'premailer-rails'
+
+gem 'figaro' # Manage Secrets
+
 # Use unicorn as the app server
 # gem 'unicorn'
 

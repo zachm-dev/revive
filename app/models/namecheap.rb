@@ -17,11 +17,15 @@ class Namecheap
     end
     
     if !urls.empty?
+      name_cheap_api_username = ENV['name_cheap_api_username']
+      name_cheap_api_key = ENV['name_cheap_api_key']
+      name_cheap_client_ip = ENV['name_cheap_client_ip']
+
       urls.each do |urls_array|
         uniq_urls = urls_array.uniq.join(",")
         
         RestClient.proxy = 'http://proxy:d9495893e1a6-4792-b778-0e541a5d1370@proxy-174-129-240-180.proximo.io'
-        res = RestClient.get("https://api.namecheap.com/xml.response?ApiUser=ENV['name_cheap_api_username']&ApiKey=ENV['name_cheap_api_key']&UserName=ENV['name_cheap_api_username']&ClientIp=ENV['name_cheap_client_ip']&Command=namecheap.domains.check&DomainList=#{uniq_urls}")
+        res = RestClient.get("https://api.namecheap.com/xml.response?ApiUser=#{name_cheap_api_username}&ApiKey=#{name_cheap_api_key}&UserName=#{name_cheap_api_username}&ClientIp=#{name_cheap_client_ip}&Command=namecheap.domains.check&DomainList=#{uniq_urls}")
         hash = Hash.from_xml(res)
         hash["ApiResponse"]["CommandResponse"]["DomainCheckResult"].map do |r|
           if obj

@@ -3,9 +3,9 @@ require 'platform-api'
 class Heroku
   attr_accessor :api_token, :app_name, :log_url
   
-  APP_NAME = "ENV[:heroku_app_name]"
-  API_TOKEN = "ENV[:heroku_app_name]"
-  
+  APP_NAME = ENV['heroku_app_name']
+  API_TOKEN = ENV['heroku_api_token']
+
   def self.client
     @heroku ||= PlatformAPI.connect_oauth(API_TOKEN)
   end

@@ -22,11 +22,11 @@ class Site < ActiveRecord::Base
   def self.save_moz_data(options = {})
     crawl = Crawl.find(options[:crawl_id].to_i)
     sites = crawl.sites.select('id, domain').each_slice(90)
-    
+
     sites.each do |site_array|
       ids = site_array.map(&:id)
       domains = site_array.map(&:domain)
-      client = Linkscape::Client.new(:accessID => "ENV['linkscape_accessid']", :secret => "ENV['linkscape_secret']")
+      client = Linkscape::Client.new(:accessID => ENV['linkscape_accessid'], :secret => ENV['linkscape_secret'])
       response = client.urlMetrics(domains, :cols => :all)
       
       ids.each do |id|

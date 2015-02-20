@@ -68,8 +68,8 @@ Rails.application.configure do
      address: 'smtp.sendgrid.net',
      port: 587,
      domain: 'sourcerevive.net',
-     user_name: 'ENV['send_grid_username']',
-     password: 'ENV['send_grid_password']',
+     user_name: ENV[:send_grid_username],
+     password: ENV[:send_grid_password],
      authentication: 'plain',
      enable_starttls_auto: true}
    Rails.application.routes.default_url_options[:host] = 'http://sourcerevive.net'
