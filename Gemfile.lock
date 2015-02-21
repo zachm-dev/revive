@@ -19,7 +19,6 @@ GIT
       ruby-progressbar
 
 GEM
-  remote: https://d2f9cbdf:591a085a@gems.contribsys.com/
   remote: https://rubygems.org/
   remote: https://code.stripe.com/
   specs:
