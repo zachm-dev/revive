@@ -15,3 +15,12 @@
 /log/*.log
 /tmp
 .elasticbeanstalk/
+
+# Ignore Jetbrains
+/.idea 
+
+# Ignore application configuration
+/config/application.yml
+
+# Ignore OSX Cache Files
+.DS_Store
