@@ -30,7 +30,7 @@ class DynoStats
       memory_stats = Heroku.memory_stats(type: 'processlinks', app_name: app_name)
       puts "memory stats for heroku app #{app_name} are #{memory_stats}"
       if memory_stats.include?("red")
-        Heroku.scale_dyno(user_id: user.id, type: 'processlinks', app_name: app_name)
+        Heroku.scale_dynos(app_name: app_name, dynos: ['processlinks'])
       end
       heroku_app.update(updated_at: Time.now)
     end
