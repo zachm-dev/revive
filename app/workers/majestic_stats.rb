@@ -5,7 +5,7 @@ class MajesticStats
     puts 'majestic perform on perform'
     page = Page.find(page_id)
     
-    m = MajesticSeo::Api::Client.new
+    m = MajesticSeo::Api::Client.new.(api_key: ENV['majestic_api_key'], environment: ENV['majestic_env'])
     res = m.get_index_item_info([page.simple_url])
     
     res.items.each do |r|
