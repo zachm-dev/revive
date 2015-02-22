@@ -29,14 +29,12 @@ class Site < ActiveRecord::Base
       client = Linkscape::Client.new(:accessID => ENV['linkscape_accessid'], :secret => ENV['linkscape_secret'])
       response = client.urlMetrics(domains, :cols => :all)
       
-      ids.each do |id|
-        response.data.each do |r|
-          url = Domainatrix.parse("#{r[:uu]}")
-          parsed_url = 'www.' + url.domain + "." + url.public_suffix
-          site = Site.where(id: id, domain: parsed_url).first
-          if !site.nil?
-            Site.update(site.id, da: r[:pda].to_f, pa: r[:upa].to_f)
-          end
+      response.data.each do |r|
+        url = Domainatrix.parse("#{r[:uu]}")
+        parsed_url = 'www.' + url.domain + "." + url.public_suffix
+        site = crawl.sites.where(domain: parsed_url).first
+        if !site.nil?
+          Site.update(site.id, da: r[:pda].to_f, pa: r[:upa].to_f)
         end
       end
           

@@ -103,7 +103,7 @@ class Crawl < ActiveRecord::Base
     urls_array.each do |u|
       new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id)
       new_site.create_gather_links_batch(status: "pending")
-      Crawl.delay.decision_maker(new_site.crawl.user.id)
+      # Crawl.delay.decision_maker(new_site.crawl.user.id)
     end
     crawl.update(total_sites: crawl.sites.count)
   end

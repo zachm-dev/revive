@@ -10,9 +10,19 @@ class ProcessLinks
     request = Typhoeus::Request.new(l, method: :head, followlocation: true)
     request.on_complete do |response|
       internal = l.include?("#{domain}") ? true : false
-      Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+      if internal == true
+        if "#{response.code}" == '404'
+          Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+        end
+      elsif internal == false
+        Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+      end
     end
-    request.run
+    begin
+      request.run
+    rescue
+      nil
+    end
   end
   
   def self.decision_maker(site_id)

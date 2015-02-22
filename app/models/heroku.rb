@@ -35,7 +35,8 @@ class Heroku
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
     formation = self.formation_info(type: dyno_type)
     quantity = formation["quantity"]
-    librato = DynoStats.new
+    app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
+    librato = DynoStats.new(app_name: app_name)
     stats = {}
     quantity.times do |index|
       puts "#{dyno_type}.#{index+1}"
@@ -49,7 +50,8 @@ class Heroku
   
   def self.memory_stats(options = {})
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
-    stats = self.get_dyno_stats(type: dyno_type)
+    app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
+    stats = self.get_dyno_stats(type: dyno_type, app_name: app_name)
     memory_stats = []
     stats.count.times do |index|
       memory_total = stats["#{dyno_type}.#{index+1}"][:memory_total]["value"]
@@ -88,8 +90,11 @@ class Heroku
     copy_slug(from, to)
     copy_config(from, to)
     add_redis(to)
+    add_librato(to)
     copy_rack_and_rails_env_again(from, to)
-    Heroku.scale_dynos(app_name: to, quantity: 2, size: '2X', dynos: ["worker", "processlinks"])
+    enable_log_runtime_metrics(to)
+    Heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
+    # restart_app(to)
     puts 'done creating new app'
   end
   
@@ -102,9 +107,24 @@ class Heroku
     client.app.delete(app_name)
   end
   
+  def restart_app(app_name)
+    puts 'restarting app'
+    client.dyno.restart_all(app_name)
+  end
+  
   def add_redis(to)
     puts 'adding redis'
     client.addon.create(to, plan: "redistogo:smedium")
+  end
+  
+  def add_librato(to)
+    puts 'adding librato'
+    client.addon.create(to, plan: "librato:nickel")
+  end
+  
+  def enable_log_runtime_metrics(app_name)
+    puts 'enabling log runtime metrics'
+    client.app_feature.update(app_name, 'log-runtime-metrics', {'enabled'=>true})
   end
   
   def config_vars(app_name)

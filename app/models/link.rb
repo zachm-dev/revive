@@ -16,9 +16,10 @@ class Link < ActiveRecord::Base
   def start_processing
     #link = Link.find(link_id)
     #links = link.links
-
+    
     site = Site.find(site_id)
     domain = Domainatrix.parse(site.base_url).domain
+    DynoStats.delay.last_checked?(site_id: site.id)
     
     if site.process_links_batch.nil?
       process_links_batch = Sidekiq::Batch.new

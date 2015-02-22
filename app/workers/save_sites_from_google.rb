@@ -34,9 +34,8 @@ class SaveSitesFromGoogle
     sites = Site.find(ids)
     sites.each do |site|
       site.create_gather_links_batch(status: "pending")
-      puts 'about to decide what to do next'
     end
-    Crawl.delay.decision_maker(site.crawl.user.id)
+    # Crawl.delay.decision_maker(site.crawl.user.id)
   end
   
   def self.start_batch(keyword, crawl_id)

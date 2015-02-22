@@ -8,7 +8,7 @@ class MajesticStats
     m = MajesticSeo::Api::Client.new
     res = m.get_index_item_info([page.simple_url])
     
-    res.items.map do |r|
+    res.items.each do |r|
       puts "majestic block perform #{r.response['CitationFlow']}"
       Page.update(page.id, citationflow: r.response['CitationFlow'], trustflow: r.response['TrustFlow'], trustmetric: r.response['TrustMetric'], refdomains: r.response['RefDomains'], backlinks: r.response['ExtBackLinks'])
     end
@@ -30,7 +30,7 @@ class MajesticStats
     m = MajesticSeo::Api::Client.new
     res = m.get_index_item_info([page.simple_url])
     
-    res.items.map do |r|
+    res.items.each do |r|
       puts "majestic block start #{r.response['CitationFlow']}"
       Page.update(page.id, citationflow: r.response['CitationFlow'], trustflow: r.response['TrustFlow'], trustmetric: r.response['TrustMetric'], refdomains: r.response['RefDomains'], backlinks: r.response['ExtBackLinks'])
     end

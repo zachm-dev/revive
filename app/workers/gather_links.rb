@@ -33,16 +33,21 @@ class GatherLinks
 
     if options["crawl_id"]
       running_crawl = Crawl.find(options["crawl_id"])
-      site = running_crawl.gather_links_batches.where(status: 'pending').first.site
+      gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
+      if gather_links_batch
+        site = gather_links_batch.site
+      end
     else
-      site = Site.find(options["site_id"])
+      site = Site.where(id: options["site_id"]).first
     end
     
-    gather_links_batch = Sidekiq::Batch.new
-    site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
-    gather_links_batch.on(:complete, self, 'bid' => gather_links_batch.bid)
-    gather_links_batch.jobs do
-      GatherLinks.perform_async(site.id)
+    if site
+      gather_links_batch = Sidekiq::Batch.new
+      site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
+      gather_links_batch.on(:complete, self, 'bid' => gather_links_batch.bid)
+      gather_links_batch.jobs do
+        GatherLinks.perform_async(site.id)
+      end
     end
   end
   
