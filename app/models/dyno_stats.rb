@@ -14,7 +14,9 @@ class DynoStats
   
   def metrics(options = {})
     metrics = Librato::Metrics.get_measurements "#{options[:metric]}".to_sym, :count => 1, source: "#{options[:source]}", resolution: 60
-    return metrics["#{options[:source]}"][0]
+    if metrics
+      return metrics["#{options[:source]}"][0]
+    end
   end
   
   def self.last_checked?(options = {})
