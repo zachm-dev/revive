@@ -27,10 +27,15 @@ class DynoStats
     heroku_app_last_update = heroku_app.updated_at
     
     if (Time.now - heroku_app_last_update) > 60
-      memory_stats = Heroku.memory_stats(type: 'processlinks', app_name: app_name)
-      puts "memory stats for heroku app #{app_name} are #{memory_stats}"
-      if memory_stats.include?("red")
-        Heroku.scale_dynos(app_name: app_name, dynos: ['processlinks'])
+      dynos = []
+      ["processlinks", "worker"].each do |dyno|
+        memory_stats = Heroku.memory_stats(type: dyno, app_name: app_name)
+        if memory_stats.include?("red")
+          dynos << dyno
+        end
+      end
+      unless dynos.empty?
+        Heroku.scale_dynos(app_name: app_name, dynos: dynos)
       end
       heroku_app.update(updated_at: Time.now)
     end
