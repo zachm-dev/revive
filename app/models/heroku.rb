@@ -39,7 +39,7 @@ class Heroku
     librato = DynoStats.new(app_name: app_name)
     stats = {}
     quantity.times do |index|
-      puts "getting dyno stats for #{dyno_type}.#{index+1}"
+      puts "getting the dyno stats for #{dyno_type}.#{index+1}"
       memory_total = librato.metrics(metric: "memory_total", source: "#{dyno_type}.#{index+1}")
       resident_memory = librato.metrics(metric: "memory_rss", source: "#{dyno_type}.#{index+1}")
       swap_memory = librato.metrics(metric: "memory_swap", source: "#{dyno_type}.#{index+1}")
