@@ -20,7 +20,6 @@ GIT
 
 GEM
   remote: https://rubygems.org/
-  remote: https://d2f9cbdf:591a085a@gems.contribsys.com/
   remote: https://code.stripe.com/
   specs:
     actionmailer (4.2.0)

@@ -1,6 +1,5 @@
 source 'https://code.stripe.com'
 source 'https://rubygems.org'
-source 'https://d2f9cbdf:591a085a@gems.contribsys.com/'
 ruby "2.2.0"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -43,7 +42,7 @@ gem 'autoprefixer-rails'
 gem 'nokogiri'
 #gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
 #gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
-gem 'sidekiq-pro'
+
 gem 'sinatra', require: false
 gem 'slim'
 gem 'lazy_high_charts'
@@ -77,9 +76,18 @@ gem 'premailer-rails'
 
 gem 'figaro' # Manage Secrets
 
-# group :production do
-#   gem 'sidekiq-pro', :source => ENV.fetch('sidekiq_url')
-# end
+if ENV['RACK_ENV'] == 'development'
+  group :development do
+    gem 'sidekiq-pro'
+  end
+end
+
+
+if ENV['RACK_ENV'] == 'production'
+  group :production do
+    gem 'sidekiq-pro', :source => ENV['sidekiq_url']
+  end
+end
 
 # Use unicorn as the app server
 # gem 'unicorn'
