@@ -14,6 +14,7 @@ class DynoStats
   
   def metrics(options = {})
     metrics = Librato::Metrics.get_measurements "#{options[:metric]}".to_sym, :count => 1, source: "#{options[:source]}", resolution: 60
+    puts "the metrics are #{metrics}"
     return metrics["#{options[:source]}"][0]
   end
   
@@ -35,6 +36,7 @@ class DynoStats
         end
       end
       unless dynos.empty?
+        puts 'checked app dyno stats and scaling dynos'
         Heroku.scale_dynos(app_name: app_name, dynos: dynos)
       end
       heroku_app.update(updated_at: Time.now)

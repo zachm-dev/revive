@@ -77,6 +77,10 @@ gem 'premailer-rails'
 
 gem 'figaro' # Manage Secrets
 
+group :production do
+  gem 'sidekiq-pro', :source => "#{ENV['sidekiq_url']}"
+end
+
 # Use unicorn as the app server
 # gem 'unicorn'
 

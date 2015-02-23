@@ -39,12 +39,13 @@ class Heroku
     librato = DynoStats.new(app_name: app_name)
     stats = {}
     quantity.times do |index|
-      puts "#{dyno_type}.#{index+1}"
+      puts "getting dyno stats for #{dyno_type}.#{index+1}"
       memory_total = librato.metrics(metric: "memory_total", source: "#{dyno_type}.#{index+1}")
       resident_memory = librato.metrics(metric: "memory_rss", source: "#{dyno_type}.#{index+1}")
       swap_memory = librato.metrics(metric: "memory_swap", source: "#{dyno_type}.#{index+1}")
       stats["#{dyno_type}.#{index+1}"] = {memory_total: memory_total, resident_memory: resident_memory, swap_memory: swap_memory}
     end
+    puts "the dyno stats for #{dyno_type} are #{stats}"
     stats
   end
   
@@ -58,6 +59,7 @@ class Heroku
       status = memory_total > 400 ? "red" : "green"
       memory_stats << status
     end
+    puts "the memory stats for #{dyno_type} are #{memory_stats}"
     return memory_stats
   end
   
