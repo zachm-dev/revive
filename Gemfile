@@ -81,7 +81,7 @@ if ENV['RACK_ENV'] == 'development'
 end
 
 if ENV['RACK_ENV'] == 'production'
-  gem 'sidekiq-pro', :source => ENV['sidekiq_url']
+  gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
 end
 
 # Use unicorn as the app server
