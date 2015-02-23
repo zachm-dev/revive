@@ -59,7 +59,7 @@ class Heroku
       status = memory_total > 400 ? "red" : "green"
       memory_stats << status
     end
-    puts "the memory stats for #{dyno_type} are #{memory_stats}"
+    puts "memory stats for #{dyno_type} are #{memory_stats}"
     return memory_stats
   end
   
