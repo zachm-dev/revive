@@ -1,9 +1,5 @@
 <div class="main_page_container">
 	
-
-	
-	
-	
 	<div class="container-fluid header_title_container">
 		<div class="row">
 			<div class="col-xs-12">
@@ -13,7 +9,7 @@
 					<div class="tabbable-panel">
 						<div class="tabbable-line">
 							<ul class="nav nav-tabs ">
-								<li class="active">
+								<li>
 									<%= link_to crawls_path do %>
 									    <i class="glyphicon glyphicon-folder-open">
 											<span class="glyph_text">Projects</span>
@@ -21,7 +17,7 @@
 									<% end %>
 								</li>
 		
-								<li>
+								<li class="active">
 									<%= link_to pending_crawls_path do %>
 									    <i class="glyphicon glyphicon-exclamation-sign">
 											<span class="glyph_text">Pending</span>
@@ -44,24 +40,39 @@
 					</div>
 				
 					<!-- TABS -->
-
 				</div>
 			</div>
 		</div>
 	</div>
 	
-	
-
-	<div class="container-fluid container_section">
-	
-		<%= render 'project_row' %>
-	
-
-		
-		<div class="will_paginate_container text-center">
-			<%= will_paginate @crawls, renderer: BootstrapPagination::Rails %>
+	<div class="container-fluid container_section pending_crawls_list_container">
+		<div class="row">
+			<div class='col-xs-12'>
+				
+				<ul id="pending_crawls" data-update-url="<%= sort_pending_crawls_url %>">
+					
+					<div class="page-header">
+					  <h3>Click and drag to sort the order</h3>
+					</div>
+					
+					<% @crawls.each do |c| %>
+						
+						<%= content_tag_for :li, c do %>
+							<div class='row'>
+								<div class='handle_div'>
+									<span class="handle glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+								</div>
+								<div class='name'>
+									<%= c.crawl.name %>
+								</div>
+							</div>
+						<% end %>
+						
+					<% end %>
+				</ul>
+				
+			</div>
 		</div>
-	
 	</div>
 
 </div>
