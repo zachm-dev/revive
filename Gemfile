@@ -76,12 +76,10 @@ gem 'premailer-rails'
 
 gem 'figaro' # Manage Secrets
 
-if ENV['RACK_ENV'] == 'development'
-  gem 'sidekiq-pro'
-end
-
 if ENV['RACK_ENV'] == 'production'
   gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
+else
+  gem 'sidekiq-pro'
 end
 
 # Use unicorn as the app server

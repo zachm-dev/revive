@@ -33,7 +33,7 @@ Rails.application.routes.draw do
   resources :subscriptions
   
   mount Sidekiq::Web, at: '/sidekiq'
-  mount Sidekiq::Monitor::Engine => '/sidekiq_monitor'
+  # mount Sidekiq::Monitor::Engine => '/sidekiq_monitor'
   #mount PgHero::Engine, at: "pghero"
   
   get '*path' => redirect('/dashboard')
