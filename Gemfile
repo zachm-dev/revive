@@ -42,7 +42,6 @@ gem 'autoprefixer-rails'
 gem 'nokogiri'
 #gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
 #gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
-
 gem 'sinatra', require: false
 gem 'slim'
 gem 'lazy_high_charts'
@@ -62,7 +61,7 @@ gem 'rest-client'
 gem "faraday_middleware", :git => 'git://github.com/Agiley/faraday_middleware.git'
 gem "majestic_seo_api"
 gem "linkscape"
-gem 'sidekiq_monitor'
+# gem 'sidekiq_monitor'
 #gem 'newrelic_rpm'
 gem 'platform-api'
 #gem 'clockwork'
@@ -80,9 +79,8 @@ if ENV['RACK_ENV'] == 'development'
   gem 'sidekiq-pro'
 end
 
-
 if ENV['RACK_ENV'] == 'production'
-  gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
+  gem 'sidekiq-pro', :source => ENV['sidekiq_url']
 end
 
 # Use unicorn as the app server
