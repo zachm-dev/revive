@@ -43,7 +43,6 @@ gem 'autoprefixer-rails'
 gem 'nokogiri'
 #gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
 #gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
-gem 'sidekiq-pro'
 gem 'sinatra', require: false
 gem 'slim'
 gem 'lazy_high_charts'
@@ -76,6 +75,10 @@ gem 'stripe', :source => 'https://code.stripe.com/'
 gem 'premailer-rails'
 
 gem 'figaro' # Manage Secrets
+
+group :development do
+  gem 'sidekiq-pro'
+end
 
 group :production do
   gem 'sidekiq-pro', :source => "#{ENV['sidekiq_url']}"
