@@ -25,3 +25,6 @@
 
 # Ignore OSX Cache Files
 .DS_Store
+
+# Ignore dump.rdb
+dump.rdb
