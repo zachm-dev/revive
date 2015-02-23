@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150223205928) do
+ActiveRecord::Schema.define(version: 20150223223350) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20150223205928) do
     t.string   "batch_id"
     t.string   "verified"
     t.integer  "pos"
+    t.integer  "position"
   end
 
   create_table "links", force: :cascade do |t|
