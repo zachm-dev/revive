@@ -74,6 +74,7 @@ gem "select2-rails"
 gem 'unirest'
 gem 'stripe', :source => 'https://code.stripe.com/'
 gem 'premailer-rails'
+gem 'acts_as_list'
 
 gem 'figaro' # Manage Secrets
 gem 'thin' # Use Thin Server

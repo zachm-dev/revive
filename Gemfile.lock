@@ -57,6 +57,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    acts_as_list (0.6.0)
+      activerecord (>= 3.0)
     addressable (2.3.6)
     aggregate (0.2.2)
     arel (6.0.0)
@@ -288,6 +290,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts_as_list
   autoprefixer-rails
   bcrypt (~> 3.1.7)
   bootstrap-sass (~> 3.3.1)
