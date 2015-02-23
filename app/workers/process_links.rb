@@ -73,7 +73,6 @@ class ProcessLinks
 
 
   def self.start(link_id)
-    DynoStats.delay.last_checked?(site_id: site.id)
     link = Link.find(link_id)
     links = link.links
     site = Site.find(link.site_id)
