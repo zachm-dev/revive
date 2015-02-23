@@ -42,6 +42,7 @@ gem 'autoprefixer-rails'
 gem 'nokogiri'
 #gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
 #gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
+
 gem 'sinatra', require: false
 gem 'slim'
 gem 'lazy_high_charts'
