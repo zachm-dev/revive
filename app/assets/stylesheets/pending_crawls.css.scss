@@ -1,0 +1,35 @@
+// Place all the styles related to the pending_crawls controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+.pending_crawls_list_container {
+	margin-top: 0px !important;
+}
+
+#pending_crawls {
+	color: #666;
+}
+
+#pending_crawls .page-header {
+	margin: 0px !important;
+}
+
+#pending_crawls li {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ddd;
+}
+
+#pending_crawls li:hover {
+	background-color: #F9F9F9;
+}
+
+.handle_div {
+	float: left;
+	margin-right: 20px;
+}
+
+#pending_crawls .handle {
+	cursor: move;
+	color: #FF4F78;
+}

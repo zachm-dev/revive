@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   get 'projects/:id' => "crawls#show", as: :crawl_path
   get 'stop_crawl/:id' => 'crawls#stop_crawl', as: :stop_crawl
   resources :crawls
+  resources :pending_crawls do
+    collection {post :sort}
+  end
   get 'domains/:id' => "sites#index", as: :domains
   get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
   get 'sites/:id/internal' => "sites#internal", as: :internal
