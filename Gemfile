@@ -85,7 +85,7 @@ end
 
 if ENV['RACK_ENV'] == 'production'
   group :production do
-    gem 'sidekiq-pro', :source => ENV['sidekiq_url']
+    gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
   end
 end
 
