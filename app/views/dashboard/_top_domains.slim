@@ -12,7 +12,6 @@
             table.table.table-hover.table-striped
               thead
                 tr
-                  /! <th></th
                   th DOMAIN
                   th DA
                   th PA
@@ -22,42 +21,19 @@
                   th RD
                   th BL
                   th FOUND ON
-              //tbody
-                | <% if @processing %
-
-                | <% @pages.each do |i| %
-                tr
-                  /!
-                    | <td
-                    | <span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span
-                    | <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span
-                    | </td
-                  td = i.url
-                  td -
-                  td -
-                  td -
-                  td -
-                  td -
-                  td -
-                  td -
-                  td <%= i.found_on %
-                | <% end %
-
-                | <% else %
-
-                | <% @pages.each do |i| %
-                tr
-                  /!
-                    | <td
-                    | <span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span
-                    | <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span
-                    | </td
-                  /td www.<%= i.simple_url
-                  td = number_with_precision(i.da, precision: 0)
-                  td = number_with_precision(i.pa, precision: 0)
-                  td = i.trustflow
-                  td = i.citationflow
-                  td = number_with_precision(i.trustflow.to_f/i.citationflow.to_f)
-                  td = i.refdomains
-                  td = i.backlinks
-                  td = i.found_on
+              tbody
+                - @domains.each do |d|
+                  tr
+                    / | <td
+                    / | <span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span
+                    / | <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span
+                    / | </td
+            		td = d.simple_url
+                    td = number_with_precision(d.da, precision: 2)
+                    td = number_with_precision(d.pa, precision: 0)
+                    td = d.trustflow
+                    td = d.citationflow
+                    td = number_with_precision(d.trustflow.to_f/d.citationflow.to_f)
+                    td = d.refdomains
+                    td = d.backlinks
+                    td = d.found_on

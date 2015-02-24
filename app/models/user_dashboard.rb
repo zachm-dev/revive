@@ -5,9 +5,11 @@ class UserDashboard < ActiveRecord::Base
   def self.update_crawl_stats(dashboard_id, options={})
     puts "updating user dashboard #{dashboard_id} with metrics #{options}"
     dash = UserDashboard.find(dashboard_id)
+    top_domains = Crawl.find(options[:crawl_id]).pages.where('internal = ? AND pa IS NOT NULL', false).order(da: :desc).limit(10).map(&:id)
     dash.update(domains_crawled: dash.domains_crawled.to_i + options[:domains_crawled].to_i, 
                 domains_broken: dash.domains_broken.to_i + options[:domains_broken].to_i, 
-                domains_expired: dash.domains_expired.to_i + options[:domains_expired].to_i)
+                domains_expired: dash.domains_expired.to_i + options[:domains_expired].to_i,
+                top_domains: top_domains)
   end
   
   def self.add_pending_crawl(dashboard_id, options={})

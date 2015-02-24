@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224141046) do
+ActiveRecord::Schema.define(version: 20150224153505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -185,9 +185,10 @@ ActiveRecord::Schema.define(version: 20150224141046) do
     t.integer  "domains_expired"
     t.integer  "pending_crawlers"
     t.integer  "running_crawlers"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.integer  "done_crawlers"
+    t.text     "top_domains",      default: [],              array: true
   end
 
   add_index "user_dashboards", ["user_id"], name: "index_user_dashboards_on_user_id", using: :btree

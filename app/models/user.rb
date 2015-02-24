@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   has_one :user_dashboard
   has_many :crawls
   has_many :sites, through: :crawls
+  has_many :pages, through: :sites
   has_many :gather_links_batches, through: :sites
   has_many :process_links_batches, through: :sites
   has_many :heroku_apps, through: :crawls
