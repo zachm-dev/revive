@@ -60,20 +60,20 @@
               .panel-body
                 .row
                   .title_text
-                    p URLS FOUND
+                    p DOMAINS CRAWLED
                   .row
                     .stat_circle_container.glyph_pink
-                      | 10
+                      = @user_dashboard.domains_crawled.to_i
           // <%= @project.links.map(&:links).flatten.count %
           .col-xs-3.text-center
             .panel
               .panel-body
                 .row
                   .title_text
-                    p DOMAINS CRAWLED
+                    p BROKEN DOMAINS FOUND
                 .row
                   .stat_circle_container.glyph_blue
-                    | 20
+                    = @user_dashboard.domains_broken.to_i
           // <%= @project.pages.uniq.count %
           .col-xs-3.text-center
             .panel
@@ -83,17 +83,17 @@
                     p EXPIRED DOMAINS FOUND
                 .row
                   .stat_circle_container.glyph_blue
-                    | 30
+                    = @user_dashboard.domains_expired.to_i
           // <%= @project.pages.where(internal: false, status_code: '0').uniq.count %
           .col-xs-3.text-center
             .panel
               .panel-body
                 .row
                   .title_text
-                    p Running / Done
+                    p Pending / Running / Done
                 .row
                   .stat_circle_container.glyph_pink
-                    |4 / 8
+                    |2 / 4 / 8
     /- if @total_running_jobs == 0
     /  p DONE
     /else
