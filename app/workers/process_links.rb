@@ -58,7 +58,7 @@ class ProcessLinks
       user.user_dashboard.update(
           domains_crawled: dash.domains_crawled.to_i + total_pages_crawled.to_i,
           domains_expired: dash.domains_expired.to_i + total_expired.to_i,
-        domains_broken: dash.domains_broken.to_i + total_broken.to_i)z
+        domains_broken: dash.domains_broken.to_i + total_broken.to_i)
       #g UserDashboard.where(user_id: user_id).increment(domains_crawled: total_pages_crawled, domains_expired: total_expired, domains_broken: total_broken)
       #pages_per_second = batch.link.site.pages.count / total_time
       #total_pages_processed = batch.link.site.pages.count
