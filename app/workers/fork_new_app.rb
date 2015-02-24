@@ -14,6 +14,7 @@ class ForkNewApp
     puts "heroku app is created with the following id #{options['bid']}"
     if !batch.nil?
       batch.update(status: "running")
+      UserDashboard.add_running_crawl(batch.crawl.user.user_dashboard.id)
       Api.delay.start_crawl(crawl_id: batch.crawl_id)
     end
   end

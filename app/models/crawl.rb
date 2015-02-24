@@ -62,6 +62,7 @@ class Crawl < ActiveRecord::Base
     
     new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
+    UserDashboard.add_pending_crawl(user.user_dashboard.id)
     save_new_sites = Crawl.save_new_sites(base_urls, new_crawl.id)
     Crawl.decision_maker(user_id)
   end
@@ -86,6 +87,7 @@ class Crawl < ActiveRecord::Base
     
     new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
+    UserDashboard.add_pending_crawl(user.user_dashboard.id)
     SaveSitesFromGoogle.start_batch(keyword, new_crawl.id)
   end
   

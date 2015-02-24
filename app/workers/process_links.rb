@@ -55,7 +55,7 @@ class ProcessLinks
       total_expired = crawl.pages.where(internal: false, status_code: '0').uniq.count
       total_broken = crawl.pages.where(status_code: '404').uniq.count
       crawl.update(total_pages_crawled: total_pages_crawled, total_expired: total_expired, total_broken: total_broken)
-      UserDashboard.update_stats(user.user_dashboard.id, domains_crawled: total_pages_crawled, domains_broken: total_broken, domains_expired: total_expired)
+      UserDashboard.update_crawl_stats(user.user_dashboard.id, domains_crawled: total_pages_crawled, domains_broken: total_broken, domains_expired: total_expired)
       #pages_per_second = batch.link.site.pages.count / total_time
       #total_pages_processed = batch.link.site.pages.count
       #est_crawl_time = total_pages_processed / pages_per_second
@@ -64,6 +64,7 @@ class ProcessLinks
       if batch.site.crawl.process_links_batches.where(status: 'running').count == 0
         puts "Finished ProcessLinks for crawl #{crawl.id} and shutting down server"
         batch.site.crawl.heroku_app.update(status: 'finished', finished_at: Time.now)
+        UserDashboard.add_finished_crawl(user.user_dashboard.id)
         Crawl.decision_maker(user_id)
         heroku = Heroku.new
         heroku.delete_app(batch.site.crawl.heroku_app.name)

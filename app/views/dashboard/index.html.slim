@@ -13,7 +13,7 @@
         .panel.panel-success
           h1 Getting Started
           .panel-body
-            | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores dolores est ex maxime similique sit vero! Ad atque, blanditiis commodi deserunt dolore explicabo, iusto laudantium magni molestias nam neque tenetur.
+            | Lorem ipsum dolo/r sit amet, consectetur adipisicing elit. Asperiores dolores est ex maxime similique sit vero! Ad atque, blanditiis commodi deserunt dolore explicabo, iusto laudantium magni molestias nam neque tenetur.
           .panel-body
             = link_to 'Start Crawling', new_crawl_path, class:'btn btn-lg btn-success'
 
@@ -63,7 +63,7 @@
                     p DOMAINS CRAWLED
                   .row
                     .stat_circle_container.glyph_pink
-                      = @user_dashboard.domains_crawled.to_i
+                      = @dashboard.domains_crawled.to_i
           // <%= @project.links.map(&:links).flatten.count %
           .col-xs-3.text-center
             .panel
@@ -73,7 +73,7 @@
                     p BROKEN DOMAINS FOUND
                 .row
                   .stat_circle_container.glyph_blue
-                    = @user_dashboard.domains_broken.to_i
+                    = @dashboard.domains_broken.to_i
           // <%= @project.pages.uniq.count %
           .col-xs-3.text-center
             .panel
@@ -83,7 +83,7 @@
                     p EXPIRED DOMAINS FOUND
                 .row
                   .stat_circle_container.glyph_blue
-                    = @user_dashboard.domains_expired.to_i
+                    = @dashboard.domains_expired.to_i
           // <%= @project.pages.where(internal: false, status_code: '0').uniq.count %
           .col-xs-3.text-center
             .panel
@@ -93,7 +93,11 @@
                     p Pending / Running / Done
                 .row
                   .stat_circle_container.glyph_pink
-                    |2 / 4 / 8
+                    = @dashboard.pending_crawlers.to_i
+					|  / 
+					= @dashboard.running_crawlers.to_i 
+					|  / 
+					= @dashboard.done_crawlers.to_i 
     /- if @total_running_jobs == 0
     /  p DONE
     /else
