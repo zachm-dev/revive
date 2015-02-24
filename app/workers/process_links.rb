@@ -55,7 +55,7 @@ class ProcessLinks
       total_expired = crawl.pages.where(internal: false, status_code: '0').uniq.count
       total_broken = crawl.pages.where(status_code: '404').uniq.count
       crawl.update(total_pages_crawled: total_pages_crawled, total_expired: total_expired, total_broken: total_broken)
-      UserDashboard.update_crawl_stats(user.user_dashboard.id, domains_crawled: total_pages_crawled, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)
+      UserDashboard.update_crawl_stats(user.id, domains_crawled: total_pages_crawled, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)
       #pages_per_second = batch.link.site.pages.count / total_time
       #total_pages_processed = batch.link.site.pages.count
       #est_crawl_time = total_pages_processed / pages_per_second
