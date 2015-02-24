@@ -1,6 +1,7 @@
 class GatherLinks
   
   include Sidekiq::Worker
+  sidekiq_options retry: false
   #sidekiq_options :queue => :gather_links
   
   def perform(site_id)
@@ -18,17 +19,19 @@ class GatherLinks
   def on_complete(status, options)
     puts "GatherLinks Just finished Batch #{options['bid']}"
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").first
-    user_id = batch.site.crawl.user.id
-    crawl = batch.site.crawl
-    total_urls_found = crawl.links.map(&:links).flatten.count
-    crawl.update(total_urls_found: total_urls_found)
-    total_time = Time.now - batch.started_at
-    pages_per_second = batch.site.links.count / total_time
-    total_links_gathered = batch.site.links.map(&:links).flatten.count
-    est_crawl_time = total_links_gathered / pages_per_second
-    batch.update(finished_at: Time.now, status: "finished", pages_per_second: "#{pages_per_second}", total_links_gathered: "#{total_links_gathered}", est_crawl_time: "#{est_crawl_time}")
-    puts 'checking if there are more sites to crawl'
-    GatherLinks.delay.start('crawl_id' => crawl.id)
+    if !batch.nil?
+      user_id = batch.site.crawl.user.id
+      crawl = batch.site.crawl
+      total_urls_found = crawl.links.map(&:links).flatten.count
+      crawl.update(total_urls_found: total_urls_found)
+      total_time = Time.now - batch.started_at
+      pages_per_second = batch.site.links.count / total_time
+      total_links_gathered = batch.site.links.map(&:links).flatten.count
+      est_crawl_time = total_links_gathered / pages_per_second
+      batch.update(finished_at: Time.now, status: "finished", pages_per_second: "#{pages_per_second}", total_links_gathered: "#{total_links_gathered}", est_crawl_time: "#{est_crawl_time}")
+      puts 'checking if there are more sites to crawl'
+      GatherLinks.delay.start('crawl_id' => crawl.id)
+    end
   end
   
   def self.start(options = {})

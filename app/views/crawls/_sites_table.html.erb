@@ -35,7 +35,7 @@
 								
 								<tbody>
 									
-									<% @project.sites.each do |s| %>
+									<% @sites.each do |s| %>
 										
 										<tr>
 											<!-- <td>
@@ -46,8 +46,8 @@
 											<td class="text-center"><%= s.links.map(&:links).flatten.uniq.count %></td>
 											<td class="text-center"><%= s.pages.where(status_code: '404').uniq.count %></td>
 											<td class="text-center"><%= s.pages.where(status_code: '0', internal: false).uniq.count %></td>
-											<td class="text-center"><%= @gather_links_batches == 0 ? "DONE" : "RUNNING" %></td>
-											<td class="text-center"><%= @process_links_batches == 0 ? "DONE" : "RUNNING" %></td>
+											<td class="text-center"><%= s.gather_links_batch.status %></td>
+											<td class="text-center"><%= s.process_links_batch.status %></td>
 										</tr>
 										
 									<% end %>

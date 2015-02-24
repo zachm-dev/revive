@@ -53,14 +53,18 @@ class Heroku
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     stats = self.get_dyno_stats(type: dyno_type, app_name: app_name)
-    memory_stats = []
-    stats.count.times do |index|
-      memory_total = stats["#{dyno_type}.#{index+1}"][:memory_total]["value"]
-      status = memory_total > 400 ? "red" : "green"
-      memory_stats << status
+    
+    if !stats.empty?
+      memory_stats = []
+      stats.count.times do |index|
+        memory_total = stats["#{dyno_type}.#{index+1}"][:memory_total]["value"]
+        status = memory_total > 400 ? "red" : "green"
+        memory_stats << status
+      end
+      puts "memory stats for #{dyno_type} are #{memory_stats}"
+      return memory_stats
     end
-    puts "memory stats for #{dyno_type} are #{memory_stats}"
-    return memory_stats
+
   end
   
   def self.scale_dynos(options = {})
