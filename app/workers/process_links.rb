@@ -47,13 +47,19 @@ class ProcessLinks
   def on_complete(status, options)
     batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
     if !batch.nil?
-      user_id = batch.site.crawl.user.id
+      user = batch.site.crawl.user
+      user_id = user.id
       total_time = Time.now - batch.started_at
       crawl = batch.site.crawl
       total_pages_crawled = crawl.pages.uniq.count
       total_expired = crawl.pages.where(internal: false, status_code: '0').uniq.count
       total_broken = crawl.pages.where(status_code: '404').uniq.count
       crawl.update(total_pages_crawled: total_pages_crawled, total_expired: total_expired, total_broken: total_broken)
+      user.user_dashboard.update(
+          domains_crawled: dash.domains_crawled.to_i + total_pages_crawled.to_i,
+          domains_expired: dash.domains_expired.to_i + total_expired.to_i,
+        domains_broken: dash.domains_broken.to_i + total_broken.to_i)z
+      #g UserDashboard.where(user_id: user_id).increment(domains_crawled: total_pages_crawled, domains_expired: total_expired, domains_broken: total_broken)
       #pages_per_second = batch.link.site.pages.count / total_time
       #total_pages_processed = batch.link.site.pages.count
       #est_crawl_time = total_pages_processed / pages_per_second
