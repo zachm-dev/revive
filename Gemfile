@@ -75,6 +75,7 @@ gem 'stripe', :source => 'https://code.stripe.com/'
 gem 'premailer-rails'
 
 gem 'figaro' # Manage Secrets
+gem 'thin' # Use Thin Server
 
 if ENV['RACK_ENV'] == 'production'
   gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
