@@ -1,0 +1,104 @@
+.main_page_container
+  .container-fluid.header_title_container
+    .row
+      .col-xs-12
+        .header_title_content
+          .header_glyph
+            span.glyphicon.glyphicon-stats aria-hidden="true"
+          .header_text
+            p This Weeks Daily Activity
+  .container-fluid.container_section
+    - if current_user.crawls.count <= 3
+      .col-lg-8.col-lg-offset-2.text-center
+        .panel.panel-success
+          h1 Getting Started
+          .panel-body
+            | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores dolores est ex maxime similique sit vero! Ad atque, blanditiis commodi deserunt dolore explicabo, iusto laudantium magni molestias nam neque tenetur.
+          .panel-body
+            = link_to 'Start Crawling', new_crawl_path, class:'btn btn-lg btn-success'
+
+  //.row
+      .col-xs-7
+        .row
+          .title_text
+            p DOMAINS FOUND THIS WEEK
+        .row
+      .col-xs-5
+        .row
+          .title_number
+            p 14
+          .title_text
+            p DOMAINS FOUND THIS WEEK
+        .row
+  //.container-fluid.container_section
+    .row
+      .col-xs-7
+        .row
+          .col-xs-4.nopadding
+            .row
+              .title_text
+                p ACTIVE PROJECTS
+            .row
+          .col-xs-4.nopadding
+            .row
+              .title_text
+                p URLS SCANNED TODAY
+            .row
+          .col-xs-4.nopadding
+            .row
+              .title_text
+                p DOMAINS FOUND TODAY
+            .row
+
+  // New
+  .container-fluid.container_section
+    .row
+      .col-xs-12
+        .row
+          .col-xs-3.text-center
+            .panel
+              .panel-body
+                .row
+                  .title_text
+                    p URLS FOUND
+                  .row
+                    .stat_circle_container.glyph_pink
+                      | 10
+          // <%= @project.links.map(&:links).flatten.count %
+          .col-xs-3.text-center
+            .panel
+              .panel-body
+                .row
+                  .title_text
+                    p DOMAINS CRAWLED
+                .row
+                  .stat_circle_container.glyph_blue
+                    | 20
+          // <%= @project.pages.uniq.count %
+          .col-xs-3.text-center
+            .panel
+              .panel-body
+                .row
+                  .title_text
+                    p EXPIRED DOMAINS FOUND
+                .row
+                  .stat_circle_container.glyph_blue
+                    | 30
+          // <%= @project.pages.where(internal: false, status_code: '0').uniq.count %
+          .col-xs-3.text-center
+            .panel
+              .panel-body
+                .row
+                  .title_text
+                    p Running / Done
+                .row
+                  .stat_circle_container.glyph_pink
+                    |4 / 8
+    /- if @total_running_jobs == 0
+    /  p DONE
+    /else
+    /  p RUNNING
+
+    // Top Domains
+
+    = render 'top_domains'

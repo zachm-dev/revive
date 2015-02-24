@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   get 'logout', to: 'sessions#destroy', as: 'logout'
   resources :users
   resources :sessions
-  resources :dashboard
+  get :dashboard, to: 'dashboard#index'
   get 'crawls/keyword/new' => 'crawls#new_keyword_crawl', as: :new_keyword_crawl
   post 'crawls/keyword/create' => 'crawls#create_keyword_crawl', as: :create_keyword_crawl
   get 'projects/' => "crawls#index", as: :projects
