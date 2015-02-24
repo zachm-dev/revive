@@ -86,7 +86,6 @@ class Crawl < ActiveRecord::Base
     
     new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
-    
     SaveSitesFromGoogle.start_batch(keyword, new_crawl.id)
   end
   

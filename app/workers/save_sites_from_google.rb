@@ -27,6 +27,7 @@ class SaveSitesFromGoogle
   
   def on_complete(status, options)
     puts 'finished saving sites from google'
+    crawl = Crawl.find(options['crawl_id'])
     Site.save_url_domains(crawl_id: options['crawl_id'])
     Site.save_moz_data(crawl_id: options['crawl_id'])
     # Site.save_majestic_data(crawl_id: options['crawl_id'])
@@ -35,7 +36,7 @@ class SaveSitesFromGoogle
     sites.each do |site|
       site.create_gather_links_batch(status: "pending")
     end
-    # Crawl.delay.decision_maker(site.crawl.user.id)
+    Crawl.delay.decision_maker(crawl.user.id)
   end
   
   def self.start_batch(keyword, crawl_id)
