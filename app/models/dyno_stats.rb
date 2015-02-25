@@ -30,6 +30,7 @@ class DynoStats
     heroku_app_last_update = heroku_app.updated_at
     
     if (Time.now - heroku_app_last_update) > 60
+      puts 'more than a minute has passed since the dyno stats were checked'
       dynos = []
       ["processlinks", "worker"].each do |dyno|
         memory_stats = Heroku.memory_stats(type: dyno, app_name: app_name)
