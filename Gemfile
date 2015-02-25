@@ -1,5 +1,5 @@
-source 'https://code.stripe.com'
 source 'https://rubygems.org'
+
 ruby "2.2.0"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -17,80 +17,93 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails', '~> 4.0.0'
 
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer',  platforms: :ruby
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails'
-gem 'jquery-ui-rails'
+gem 'jquery-rails' # $jQuery
+gem 'jquery-ui-rails'# $jQuery UI
 
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks'
+gem 'turbolinks' # AJAXED Page Gets
 
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.0'
+gem 'jbuilder', '~> 2.0' # Build JSON APIs with ease
 
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0',          group: :doc
 
-# Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-gem 'spring',        group: :development
 
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'autoprefixer-rails'
-# gem 'polipus'
-# gem 'hwacha'
 gem 'nokogiri'
-#gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
-#gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
-
-gem 'sinatra', require: false
 gem 'slim'
 gem 'lazy_high_charts'
-gem "passenger", '4.0.57'
-gem 'foreman'
-#gem 'rubber'
-#gem "puma"
-gem 'rubyretriever', github: 'darzuaga/rubyretriever', :branch => "master"
-gem "domainatrix"
-gem "typhoeus"
-#gem 'namecheap'
-gem 'rails_12factor', group: :production
+
+gem 'sinatra', require: false
+gem 'rubyretriever', github: 'darzuaga/rubyretriever', :branch => 'master'
+gem 'domainatrix'
+gem 'typhoeus'
 
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 gem 'rest-client'
-gem "faraday_middleware", :git => 'git://github.com/Agiley/faraday_middleware.git'
-gem "majestic_seo_api"
-gem "linkscape"
-# gem 'sidekiq_monitor'
-#gem 'newrelic_rpm'
-gem 'platform-api'
-#gem 'clockwork'
-gem 'librato-metrics'
+gem 'faraday_middleware', :git => 'git://github.com/Agiley/faraday_middleware.git'
 gem 'will_paginate', '~> 3.0.6'
 gem 'will_paginate-bootstrap'
-gem "select2-rails"
+gem 'select2-rails'
 gem 'unirest'
-gem 'stripe', :source => 'https://code.stripe.com/'
 gem 'premailer-rails'
 gem 'acts_as_list'
 
+## Apis
+gem 'stripe', :source => 'https://code.stripe.com/'
+gem 'majestic_seo_api'
+gem 'linkscape'
+gem 'platform-api'
+gem 'librato-metrics'
+
+
+
+group :development do
+  # Server Thing
+  gem 'spring',  group: :development
+
+  # Debuggers
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'pry'
+  gem 'pry-byebug'
+  gem 'awesome_print'
+end
+
+# Server Things
 gem 'figaro' # Manage Secrets
 gem 'thin' # Use Thin Server
+gem 'passenger', '4.0.57'
+gem 'foreman'
 
+# If production use sidekiq pro url
 if ENV['RACK_ENV'] == 'production'
   gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
+  gem 'rails_12factor', group: :production
 else
   gem 'sidekiq-pro'
 end
 
-# Use unicorn as the app server
-# gem 'unicorn'
+# Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+# gem 'polipus'
+# gem 'hwacha'
+#gem 'cobweb', github: 'darzuaga/cobweb', :branch => "passing-options-hash-to-page"
+#gem 'sidekiq', :git => 'https://github.com/mperham/sidekiq.git'
+#gem 'rubber'
+#gem "puma"
+#gem 'namecheap'
+# gem 'sidekiq_monitor'
+#gem 'newrelic_rpm'
+#gem 'clockwork'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+# gem 'therubyracer',  platforms: :ruby
 
-# Use debugger
-# gem 'debugger', group: [:development, :test]
+
+
+
+
 

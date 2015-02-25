@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150225062243) do
+ActiveRecord::Schema.define(version: 20150225011916) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,7 +82,6 @@ ActiveRecord::Schema.define(version: 20150225062243) do
     t.string   "verified"
     t.integer  "pos"
     t.integer  "position"
-    t.boolean  "shutdown"
   end
 
   create_table "links", force: :cascade do |t|
@@ -132,7 +131,6 @@ ActiveRecord::Schema.define(version: 20150225062243) do
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
     t.float    "price"
-    t.integer  "crawls_per_day"
   end
 
   create_table "process_links_batches", force: :cascade do |t|
@@ -170,16 +168,6 @@ ActiveRecord::Schema.define(version: 20150225062243) do
   add_index "sidekiq_jobs", ["retry"], name: "index_sidekiq_jobs_on_retry", using: :btree
   add_index "sidekiq_jobs", ["started_at"], name: "index_sidekiq_jobs_on_started_at", using: :btree
   add_index "sidekiq_jobs", ["status"], name: "index_sidekiq_jobs_on_status", using: :btree
-
-  create_table "sidekiq_stats", force: :cascade do |t|
-    t.integer  "workers_size"
-    t.integer  "enqueued"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.integer  "try_count"
-    t.integer  "processed"
-    t.integer  "heroku_app_id"
-  end
 
   create_table "sites", force: :cascade do |t|
     t.integer  "crawl_id"
@@ -225,6 +213,15 @@ ActiveRecord::Schema.define(version: 20150225062243) do
     t.string   "password_digest"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "phone"
+    t.string   "address_1"
+    t.string   "address_2"
+    t.string   "city"
+    t.string   "zip"
+    t.string   "state"
+    t.string   "country"
   end
 
   create_table "verify_majestic_batches", force: :cascade do |t|

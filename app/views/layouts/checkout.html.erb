@@ -7,7 +7,7 @@
   <%= csrf_meta_tags %>
   <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
 </head>
-<body>
+<body id="<%=params[:controller]%>" class="<%=params[:action]%>">
 
 	<%= yield %>
 
