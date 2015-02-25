@@ -37,6 +37,8 @@ class SubscriptionsController < ApplicationController
         # @subscription.user.update(user_params) if user_params.present?
         @subscription.user.update(user_params)
         format.html { redirect_to '/dashboard', notice: 'Subscription Successful. Welcome to Revive!' }
+      elsif plan.present? == false
+        format.html { redirect_to '/dashboard', error: 'Invalid Plan ID' }
       else
         format.html { redirect_to new_subscriptions_path, error: 'Subscription Failed.'}
       end
