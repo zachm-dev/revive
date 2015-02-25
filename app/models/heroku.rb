@@ -91,17 +91,22 @@ class Heroku
     end.reject(&:nil?).any?
   end
   
-  def fork(from, to)
-    create_app(to)
-    copy_slug(from, to)
-    copy_config(from, to)
-    add_redis(to)
-    add_librato(to)
-    copy_rack_and_rails_env_again(from, to)
-    enable_log_runtime_metrics(to)
-    Heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
-    # restart_app(to)
-    puts 'done creating new app'
+  def fork(from, to, heroku_app_id)
+    app = HerokuApp.where(id: heroku_app_id).first
+    if app && app.status == 'pending'
+      # check if there are any pending crawls before forking a new app from the user
+      create_app(to)
+      copy_slug(from, to)
+      copy_config(from, to)
+      add_redis(to)
+      add_librato(to)
+      copy_rack_and_rails_env_again(from, to)
+      enable_log_runtime_metrics(to)
+      Heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
+      Heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
+      # restart_app(to)
+      puts 'done creating new app'
+    end
   end
   
   def release(app_name)
@@ -109,6 +114,7 @@ class Heroku
   end
   
   def delete_app(app_name)
+    puts "deleting app #{app_name}"
     #logger.info "Deleting #{app_name}"
     client.app.delete(app_name)
   end

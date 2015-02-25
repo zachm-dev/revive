@@ -43,7 +43,7 @@ class Crawl < ActiveRecord::Base
         end
       end
     else
-      puts 'decision: exceeded crawls at the same time'
+      puts 'decision: exceeded crawls that can be performed at the same time'
     end
 
     # number_of_pending_crawls = user.heroku_apps.where(status: "pending").count

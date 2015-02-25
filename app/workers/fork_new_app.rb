@@ -6,7 +6,7 @@ class ForkNewApp
     heroku = Heroku.new
     number_of_apps_running = Heroku.app_list.count
     heroku_app.update(name: "revivecrawler#{number_of_apps_running+1}")
-    heroku.fork(Heroku::APP_NAME, "revivecrawler#{number_of_apps_running+1}")
+    heroku.fork(Heroku::APP_NAME, "revivecrawler#{number_of_apps_running+1}", heroku_app_id)
   end
   
   def on_complete(status, options)
@@ -16,6 +16,7 @@ class ForkNewApp
       batch.update(status: "running")
       UserDashboard.add_running_crawl(batch.crawl.user.user_dashboard.id)
       Api.delay.start_crawl(crawl_id: batch.crawl_id)
+      SidekiqStats.delay.start(batch.id)
     end
   end
   
