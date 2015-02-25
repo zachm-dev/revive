@@ -17,8 +17,13 @@ class SubscriptionsController < ApplicationController
 
   def create
 
-    @subscription = current_user.subscription.new(stripe_card_token: params['stripeToken'])
+    @subscription = Subscription.new(user: current_user, stripe_card_token: params['stripeToken'])
 
+    # Plan
+    plan = Plan.find_by_name(subscription_params[:plan_id])
+    @subscription.plan = plan
+
+    # User Info
     user_params = subscription_params[:user]
 
     # Set stripe stuff.
@@ -27,13 +32,13 @@ class SubscriptionsController < ApplicationController
 
     respond_to do |format|
 
-      if @subscription.save_with_stripe!
+      if plan.present? && @subscription.save_with_stripe!
         # After Successful billing update stripe user with billing details if they are present
         # @subscription.user.update(user_params) if user_params.present?
         @subscription.user.update(user_params)
         format.html { redirect_to '/dashboard', notice: 'Subscription Successful. Welcome to Revive!' }
       else
-        format.html { redirect_to new_subscription_path, error: 'Subscription Failed.'}
+        format.html { redirect_to new_subscriptions_path, error: 'Subscription Failed.'}
       end
 
     end

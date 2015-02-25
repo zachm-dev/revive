@@ -31,10 +31,10 @@ Rails.application.routes.draw do
   end
 
   # Crawls
-  resources :crawls, path: :projects, as: :projects
-  # get 'projects/' => "crawls#index", as: :projects
-  # get 'projects/new' => "crawls#new", as: :new_project
-  # get 'projects/:id' => "crawls#show", as: :crawl_path
+  resources :crawls
+  get 'projects/' => "crawls#index", as: :projects
+  get 'projects/new' => "crawls#new", as: :new_project
+  get 'projects/:id' => "crawls#show", as: :crawl_path
   get 'stop_crawl/:id' => 'crawls#stop_crawl', as: :stop_crawl
   get 'crawls/keyword/new' => 'crawls#new_keyword_crawl', as: :new_keyword_crawl
   post 'crawls/keyword/create' => 'crawls#create_keyword_crawl', as: :create_keyword_crawl
