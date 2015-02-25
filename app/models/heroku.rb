@@ -93,7 +93,7 @@ class Heroku
   
   def fork(from, to, heroku_app_id)
     app = HerokuApp.where(id: heroku_app_id).first
-    if app && app.status == 'pending'
+    if app && app.status != 'running'
       # check if there are any pending crawls before forking a new app from the user
       create_app(to)
       copy_slug(from, to)
