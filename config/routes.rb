@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   get 'home', to: 'home#index', as: 'home'
   get :dashboard, to: 'dashboard#index'
 
-
   get 'domains/:id' => "sites#index", as: :domains
 
   resource :subscriptions
@@ -21,14 +20,11 @@ Rails.application.routes.draw do
 
   # Sites
   resources :sites do
-    member do
-      get 'urls' => "sites#all_urls", as: :all_urls
-      get 'internal' => "sites#internal", as: :internal
-      get 'external' => "sites#external", as: :external
-      get 'broken' => "sites#broken", as: :broken
-      get 'available' => "sites#available", as: :available
-    end
-  end
+  get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
+  get 'sites/:id/internal' => "sites#internal", as: :internal
+  get 'sites/:id/external' => "sites#external", as: :external
+  get 'sites/:id/broken' => "sites#broken", as: :broken
+  get 'sites/:id/available' => "sites#available", as: :available
 
   # Crawls
   resources :crawls
