@@ -53,7 +53,7 @@ class Heroku
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     stats = self.get_dyno_stats(type: dyno_type, app_name: app_name)
-    
+    puts "here are the stats #{stats}"
     if !stats.empty?
       memory_stats = []
       stats.count.times do |index|

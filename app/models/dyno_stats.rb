@@ -21,7 +21,7 @@ class DynoStats
   end
   
   def self.last_checked?(options = {})
-    puts "checking heroku app last update for site with id #{options[:site_id]}"
+    puts "checking heroku app last update for site with id #{options}"
     if options[:site_id]
       site = Site.find(options[:site_id].to_i)
       heroku_app = site.crawl.heroku_app
@@ -37,6 +37,7 @@ class DynoStats
       puts 'more than a minute has passed since the dyno stats were checked'
       dynos = []
       ["processlinks", "worker"].each do |dyno|
+        puts "about to get memory stats for the #{dyno} on the app #{app_name}"
         memory_stats = Heroku.memory_stats(type: dyno, app_name: app_name)
         if memory_stats.include?("red")
           dynos << dyno
