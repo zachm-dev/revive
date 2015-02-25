@@ -32,10 +32,12 @@ class Heroku
   end
   
   def self.get_dyno_stats(options = {})
+    puts "dyno stats method"
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
-    formation = self.formation_info(type: dyno_type)
-    quantity = formation["quantity"]
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
+    formation = self.formation_info(type: dyno_type, app_name: options[:app_name])
+    puts "here is the dyno formation"
+    quantity = formation["quantity"]
     librato = DynoStats.new(app_name: app_name)
     stats = {}
     quantity.times do |index|
@@ -51,7 +53,9 @@ class Heroku
   
   def self.memory_stats(options = {})
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
+    puts "here is the dyno type #{dyno_type}"
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
+    puts "here is the app name #{app_name}"
     stats = self.get_dyno_stats(type: dyno_type, app_name: app_name)
     puts "here are the stats #{stats}"
     if !stats.empty?
