@@ -2,44 +2,51 @@ require 'sidekiq/pro/web'
 
 Rails.application.routes.draw do
 
-  #root 'dashboard#index'
   root 'home#index'
   get 'home', to: 'home#index', as: 'home'
-  #root 'sessions#new'
+  get :dashboard, to: 'dashboard#index'
+
+
+  get 'domains/:id' => "sites#index", as: :domains
+
+  resource :subscriptions
+  resources :pages
+
+  # Users
+  resources :users
+  resources :sessions
   get 'signup', to: 'users#new', as: 'signup'
   get 'login', to: 'sessions#new', as: 'login'
   get 'logout', to: 'sessions#destroy', as: 'logout'
-  resources :users
-  resources :sessions
-  get :dashboard, to: 'dashboard#index'
+
+  # Sites
+  resources :sites do
+    member do
+      get 'urls' => "sites#all_urls", as: :all_urls
+      get 'internal' => "sites#internal", as: :internal
+      get 'external' => "sites#external", as: :external
+      get 'broken' => "sites#broken", as: :broken
+      get 'available' => "sites#available", as: :available
+    end
+  end
+
+  # Crawls
+  resources :crawls, path: :projects, as: :projects
+  # get 'projects/' => "crawls#index", as: :projects
+  # get 'projects/new' => "crawls#new", as: :new_project
+  # get 'projects/:id' => "crawls#show", as: :crawl_path
+  get 'stop_crawl/:id' => 'crawls#stop_crawl', as: :stop_crawl
   get 'crawls/keyword/new' => 'crawls#new_keyword_crawl', as: :new_keyword_crawl
   post 'crawls/keyword/create' => 'crawls#create_keyword_crawl', as: :create_keyword_crawl
-  get 'projects/' => "crawls#index", as: :projects
-  get 'projects/new' => "crawls#new", as: :new_project
-  get 'projects/:id' => "crawls#show", as: :crawl_path
-  get 'stop_crawl/:id' => 'crawls#stop_crawl', as: :stop_crawl
-  resources :crawls
+  post 'api_create', to: 'crawls#api_create'
+
   resources :pending_crawls do
     collection {post :sort}
   end
-  get 'domains/:id' => "sites#index", as: :domains
-  get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
-  get 'sites/:id/internal' => "sites#internal", as: :internal
-  get 'sites/:id/external' => "sites#external", as: :external
-  get 'sites/:id/broken' => "sites#broken", as: :broken
-  get 'sites/:id/available' => "sites#available", as: :available
-  resources :sites
-  resources :pages
-  post 'api_create', to: 'crawls#api_create'
-  get 'checkout', to: 'checkout#index', as: :checkout
-  resources :checkout
-  resources :subscriptions
-  
+
   mount Sidekiq::Web, at: '/sidekiq'
-  # mount Sidekiq::Monitor::Engine => '/sidekiq_monitor'
-  #mount PgHero::Engine, at: "pghero"
-  
-  get '*path' => redirect('/dashboard')
+
+  # get '*path' => redirect('/dashboard')
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
