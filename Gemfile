@@ -70,11 +70,11 @@ gem 'figaro' # Manage Secrets
 gem 'thin' # Use Thin Server
 gem 'passenger', '4.0.57'
 gem 'foreman'
+gem 'rails_12factor', group: :production
 
 # If production use sidekiq pro url
 if ENV['RACK_ENV'] == 'production'
   gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
-  gem 'rails_12factor', group: :production
 else
   gem 'sidekiq-pro'
 end
