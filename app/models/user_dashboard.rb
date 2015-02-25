@@ -3,7 +3,7 @@ class UserDashboard < ActiveRecord::Base
   validates_uniqueness_of :user_id
 
   def self.update_crawl_stats(user_id, options={})
-    puts "updating user dashboard #{dashboard_id} with metrics #{options}"
+    puts "updating user dashboard with metrics #{options}"
     user = User.find(user_id)
     dash = user.user_dashboard
     top_domains = user.pages.where('internal = ? AND pages.pa IS NOT NULL', false).order(da: :desc).limit(10).map(&:id)

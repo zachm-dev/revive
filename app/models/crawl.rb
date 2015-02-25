@@ -27,17 +27,34 @@ class Crawl < ActiveRecord::Base
   
   def self.decision_maker(user_id)
     puts 'making a decision'
+    
     user = User.find(user_id)
+    plan = user.subscription.plan
     
     number_of_pending_crawls = user.heroku_apps.where(status: "pending").count
     number_of_running_crawls = user.heroku_apps.where(status: "running").count
     
-    if number_of_pending_crawls > 0 #&& number_of_running_crawls < 1
-      number_of_apps_running = Heroku.app_list.count
-      if number_of_apps_running < 95
-        ForkNewApp.start(user_id)
+    if number_of_running_crawls < plan.crawls_at_the_same_time
+      if number_of_pending_crawls > 0
+        number_of_apps_running = Heroku.app_list.count
+        if number_of_apps_running < 99
+          puts 'decision: starting new crawl'
+          ForkNewApp.start(user_id)
+        end
       end
+    else
+      puts 'decision: exceeded crawls at the same time'
     end
+
+    # number_of_pending_crawls = user.heroku_apps.where(status: "pending").count
+    # number_of_running_crawls = user.heroku_apps.where(status: "running").count
+    #
+    # if number_of_pending_crawls > 0 #&& number_of_running_crawls < 1
+    #   number_of_apps_running = Heroku.app_list.count
+    #   if number_of_apps_running < 95
+    #     ForkNewApp.start(user_id)
+    #   end
+    # end
     
   end
   

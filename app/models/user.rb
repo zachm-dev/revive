@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email
 
   has_one :user_dashboard
+  has_one :subscription
   has_many :crawls
   has_many :sites, through: :crawls
   has_many :pages, through: :sites
