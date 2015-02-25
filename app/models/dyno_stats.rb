@@ -21,10 +21,11 @@ class DynoStats
   end
   
   def self.last_checked?(options = {})
-    puts 'checking heroku app last update'
+    puts "checking heroku app last update for site with id #{options[:site_id]}"
     if options[:site_id]
       site = Site.find(options[:site_id].to_i)
       heroku_app = site.crawl.heroku_app
+      puts "dyno stats for app #{heroku_app.name}"
     end
     app_name = heroku_app.name
     heroku_app_last_update = heroku_app.updated_at
