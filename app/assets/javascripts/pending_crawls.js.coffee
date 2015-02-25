@@ -2,8 +2,8 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-jQuery ->
-	$("#pending_crawls").sortable
+$(document).on 'ready page:load', ->
+	$(".pending-crawls-container").sortable
 		axis: 'y'
 		handle: '.handle'
 		update: ->

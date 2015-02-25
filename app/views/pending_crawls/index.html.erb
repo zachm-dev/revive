@@ -33,7 +33,7 @@
 									<% end %>
 								</li> -->
 								<div class="header_button pull-right">
-									<p><%= link_to "CREATE NEW", new_project_path, class: 'btn btn-success btn-sm', 'data-no-turbolink': true %></p>
+									<p><%= link_to "CREATE NEW", new_project_path, class: 'btn btn-success btn-sm' %></p>
 								</div>
 							</ul>
 						</div>
@@ -45,16 +45,15 @@
 		</div>
 	</div>
 	
-	<div class="container-fluid container_section pending_crawls_list_container">
+	<div class="container-fluid container_section pending-crawls-list-container">
 		<div class="row">
 			<div class='col-xs-12'>
-				
-				<ul id="pending_crawls" data-update-url="<%= sort_pending_crawls_url %>">
-					
-					<div class="page-header">
-					  <h3>Click and drag to sort the order</h3>
-					</div>
-					
+
+        <div class="page-header">
+          <h3>Click and drag to sort the order</h3>
+        </div>
+        <ul class="pending-crawls-container" data-update-url="<%= sort_pending_crawls_url %>">
+
 					<% @crawls.each do |c| %>
 						
 						<%= content_tag_for :li, c do %>

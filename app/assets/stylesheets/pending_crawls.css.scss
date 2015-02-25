@@ -2,34 +2,39 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.pending_crawls_list_container {
-	margin-top: 0px !important;
+.pending-crawls-list-container {
+  margin-top: 0px !important;
 }
 
-#pending_crawls {
-	color: #666;
+.pending-crawls-container {
+
+  color: #666;
+
+  li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #F9F9F9;
+    .handle_div {
+      float: left;
+      margin-right: 20px;
+      .handle {
+        cursor: move;
+        color: #FF4F78;
+      }
+    }
+    &:hover {
+      color: white;
+      background-color: #FF4F78;
+      .handle_div {
+        .handle {
+          @extend .handle;
+          color: white;
+        }
+      }
+    }
+  }
 }
 
-#pending_crawls .page-header {
-	margin: 0px !important;
-}
-
-#pending_crawls li {
-	padding-top: 10px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid #ddd;
-}
-
-#pending_crawls li:hover {
-	background-color: #F9F9F9;
-}
-
-.handle_div {
-	float: left;
-	margin-right: 20px;
-}
-
-#pending_crawls .handle {
-	cursor: move;
-	color: #FF4F78;
+.page-header {
+  margin: 0px !important;
 }
