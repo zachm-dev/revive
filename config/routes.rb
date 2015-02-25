@@ -19,7 +19,8 @@ Rails.application.routes.draw do
   get 'logout', to: 'sessions#destroy', as: 'logout'
 
   # Sites
-  resources :sites do
+
+  resources :sites
   get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
   get 'sites/:id/internal' => "sites#internal", as: :internal
   get 'sites/:id/external' => "sites#external", as: :external
