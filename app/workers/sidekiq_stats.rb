@@ -5,7 +5,7 @@ class SidekiqStats
   
   def perform(heroku_app_id)
     puts 'getting sidekiq stats'
-    SidekiqStats.delay.start(heroku_app_id)
+    SidekiqStats.delay.start(heroku_app_id: heroku_app_id)
     stats = Sidekiq::Stats.new
     if stats.enqueued < 100
       app = HerokuApp.find(heroku_app_id)
@@ -40,8 +40,16 @@ class SidekiqStats
     end
   end
   
-  def self.start(heroku_app_id)
+  def self.start(options={})
     puts 'scheduling sidekiq stat'
+    
+    if options["crawl_id"]
+      crawl = Crawl.find(options["crawl_id"])
+      heroku_app_id = crawl.heroku_app.id
+    else
+      heroku_app_id = options[:heroku_app_id].to_i
+    end
+    
     SidekiqStats.perform_in(1.minute, heroku_app_id)
   end
   

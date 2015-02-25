@@ -16,7 +16,6 @@ class ForkNewApp
       batch.update(status: "running")
       UserDashboard.add_running_crawl(batch.crawl.user.user_dashboard.id)
       Api.delay.start_crawl(crawl_id: batch.crawl_id)
-      SidekiqStats.delay.start(batch.id)
     end
   end
   
