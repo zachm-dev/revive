@@ -27,7 +27,7 @@ class DynoStats
       heroku_app = site.crawl.heroku_app
       puts "dyno stats for app #{heroku_app.name}"
     elsif options[:heroku_app_id]
-      heroku_app = HerokuApp.find(options[:heroku_app_id].id)
+      heroku_app = HerokuApp.find(options[:heroku_app_id].to_i)
       puts "dyno stats for app #{heroku_app.name}"
     end
     app_name = heroku_app.name
