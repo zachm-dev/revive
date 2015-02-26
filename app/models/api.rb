@@ -38,7 +38,7 @@ class Api
       uri = URI.parse("http://localhost:3000/fetch_new_crawl")
       puts 'local done'
     else
-      uri = URI.parse("http://#{sourcerevive}.herokuapp.com/fetch_new_crawl")
+      uri = URI.parse("http://sourcerevive.herokuapp.com/fetch_new_crawl")
       puts 'production done'
     end
     
