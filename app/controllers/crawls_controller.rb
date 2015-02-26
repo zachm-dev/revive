@@ -1,6 +1,6 @@
 class CrawlsController < ApplicationController
   before_action :authorize, :except => [:api_create]
-  skip_before_action :verify_authenticity_token, :only => [:api_create]
+  skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl]
   
   def index
     #@sites = current_user.sites.all
@@ -50,6 +50,12 @@ class CrawlsController < ApplicationController
     puts "here is the json hash #{@json["options"]}"
     GatherLinks.delay.start(@json["options"])
     SidekiqStats.delay.start(@json["options"])
+    render :layout => false
+  end
+  
+  def fetch_new_crawl
+    @json = JSON.parse(request.body.read)
+    Crawl.delay.decision_maker(@json["options"]["user_id"].to_i)
     render :layout => false
   end
   

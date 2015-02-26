@@ -118,9 +118,12 @@ class Heroku
   end
   
   def delete_app(app_name)
-    puts "deleting app #{app_name}"
+    puts "delete app method for the app #{app_name}"
     #logger.info "Deleting #{app_name}"
-    client.app.delete(app_name)
+    if "#{app_name}".include?('revivecrawler')
+      puts "DANGER THE APP #{app_name} IS BEING DELETED"
+      client.app.delete(app_name)
+    end
   end
   
   def restart_app(app_name)
