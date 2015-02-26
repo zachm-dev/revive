@@ -1,5 +1,5 @@
 class CrawlsController < ApplicationController
-  before_action :authorize, :except => [:api_create]
+  before_action :authorize, :except => [:api_create, :fetch_new_crawl]
   skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl]
   
   def index
