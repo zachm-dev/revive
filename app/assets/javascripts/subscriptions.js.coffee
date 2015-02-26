@@ -32,7 +32,7 @@ $(document).on 'ready page:load', ->
       $form = $('.card')
       if (response.error)
         # Show the errors on the form
-        $form.find('.payment-errors').addClass('text-error').text(response.error.message)
+        $form.find('.payment-errors').addClass('alert alert-danger').text(response.error.message)
       else
         # Disable
         disableButton($(this))
