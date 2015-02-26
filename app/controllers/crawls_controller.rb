@@ -5,7 +5,7 @@ class CrawlsController < ApplicationController
   def index
     #@sites = current_user.sites.all
     @crawls = current_user.crawls.order('created_at').page(params[:page]).per_page(4)
-    Crawl.delay.update_all_crawl_stats(current_user.id)
+    # Crawl.delay.update_all_crawl_stats(current_user.id)
   end
   
   def show
