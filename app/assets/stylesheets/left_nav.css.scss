@@ -15,18 +15,14 @@ ul .left_nav_link_container {
   width: 100%;
   text-align: center;
   padding: 20px 0;
-  a {
-    color: #555555;
-  }
-  &.active {
-    a {
-      color: #ff4f78;
-    }
-  }
+}
+
+.left_nav_container a {
+  color: #555555;
 }
 
 .left_nav_container a:hover {
-  color: #ff4f78;
+  color: #e61f5b;
 }
 
 .left_nav_container .glyph_text {
