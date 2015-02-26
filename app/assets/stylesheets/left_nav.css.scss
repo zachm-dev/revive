@@ -1,32 +1,33 @@
 .left_nav_bg {
-	background-color: #222;
+  background-color: #222;
 }
 
 .left_nav_container {
-	width: 100px;
+  width: 100px;
+  padding: 0px;
 }
 
 ul .left_nav_link_container {
-	width: 100%;
+  width: 100%;
 }
 
 .left_nav_container li {
-	width: 100%;
-	text-align: center;
-	padding: 20px 0;
+  width: 100%;
+  text-align: center;
+  padding: 20px 0;
 }
 
 .left_nav_container a {
-	color: #555555;
+  color: #555555;
 }
 
 .left_nav_container a:hover {
-	color: #e61f5b;
+  color: #e61f5b;
 }
 
 .left_nav_container .glyph_text {
-	width: 100%;
-	display: inline-block;
-	padding-top: 5px;
+  width: 100%;
+  display: inline-block;
+  padding-top: 5px;
 }
 
