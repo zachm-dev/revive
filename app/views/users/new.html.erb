@@ -1,19 +1,19 @@
 <div class="signup_form_container">
-	
+
 	<h1>Sign Up</h1>
-	
+
 	<%= form_for @user do |f| %>
-		
+
 		<div class="field_container">
-			
+
 			<div class="field_label">
 				<%= f.label :email %>
 			</div>
-			
+
 			<div class="field">
 				<%= f.text_field :email, class: "form-control" %>
 			</div>
-			
+
 		</div>
 
 		<div class="field_container">
