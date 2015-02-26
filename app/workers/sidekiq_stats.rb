@@ -30,10 +30,13 @@ class SidekiqStats
           puts 'app has stalled and shutting down'
           app.update(status: 'finished', finished_at: Time.now, shutdown: true)
           user = app.crawl.user
+          Api.fetch_new_crawl(user_id: user.id)
           UserDashboard.add_finished_crawl(user.user_dashboard.id)
-          Crawl.decision_maker(user.id)
-          heroku = Heroku.new
-          heroku.delete_app(app.name)
+          # Crawl.decision_maker(user.id)
+          if app.name.include?('revivecrawler')
+            heroku = Heroku.new
+            heroku.delete_app(app.name)
+          end
         end
       end
       

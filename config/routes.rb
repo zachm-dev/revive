@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   get 'crawls/keyword/new' => 'crawls#new_keyword_crawl', as: :new_keyword_crawl
   post 'crawls/keyword/create' => 'crawls#create_keyword_crawl', as: :create_keyword_crawl
   post 'api_create', to: 'crawls#api_create'
+  post 'fetch_new_crawl', to: 'crawls#fetch_new_crawl'
 
   resources :pending_crawls do
     collection {post :sort}

@@ -64,10 +64,13 @@ class ProcessLinks
       if batch.site.crawl.process_links_batches.where(status: 'running').count == 0
         puts "Finished ProcessLinks for crawl #{crawl.id} and shutting down server"
         batch.site.crawl.heroku_app.update(status: 'finished', finished_at: Time.now)
+        Api.fetch_new_crawl(user_id: user_id)
         UserDashboard.add_finished_crawl(user.user_dashboard.id)
-        Crawl.decision_maker(user_id)
-        heroku = Heroku.new
-        heroku.delete_app(batch.site.crawl.heroku_app.name)
+        # Crawl.decision_maker(user_id)
+        if batch.site.crawl.heroku_app.name.include?('revivecrawler')
+          heroku = Heroku.new
+          heroku.delete_app(batch.site.crawl.heroku_app.name)
+        end
       end
     end
   end
