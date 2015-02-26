@@ -8,6 +8,8 @@ module ApplicationHelper
       when 'error'
         'alert-danger' # Red
       when 'alert'
+        'alert-danger' # Red
+      when 'warn'
         'alert-warning' # Yellow
       when 'notice'
         'alert-info' # Blue

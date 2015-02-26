@@ -36,11 +36,11 @@ class SubscriptionsController < ApplicationController
         # After Successful billing update stripe user with billing details if they are present
         # @subscription.user.update(user_params) if user_params.present?
         @subscription.user.update(user_params)
-        format.html { redirect_to '/dashboard', notice: 'Subscription Successful. Welcome to Revive!' }
+        format.html { redirect_to '/dashboard', flash:{success: 'Subscription Successful. Welcome to Revive!' } }
       elsif plan.present? == false
-        format.html { redirect_to '/dashboard', error: 'Invalid Plan ID' }
+        format.html { redirect_to new_subscriptions_path, flash:{error: 'Invalid Plan ID' } }
       else
-        format.html { redirect_to new_subscriptions_path, error: 'Subscription Failed.'}
+        format.html { redirect_to new_subscriptions_path, flash:{error: 'Subscription Failed.'} }
       end
 
     end
@@ -50,9 +50,9 @@ class SubscriptionsController < ApplicationController
   def destroy
     respond_to do |format|
       if @subscription.unsubscribe_with_stripe
-        format.html { redirect_to dashboard_path, success: 'Successfully Canceled Subscription. We will miss you ' + "#{current_user.first_name}! :(" }
+        format.html { redirect_to dashboard_path, flash:{success: 'Successfully Canceled Subscription. We will miss you ' + "#{current_user.first_name}! :(" }}
       else
-        format.html { redirect_to dashboard_path, error: 'Subscription Cancel Failed.'}
+        format.html { redirect_to dashboard_path,  flash:{success: 'Subscription Cancel Failed.'} }
       end
     end
   end
