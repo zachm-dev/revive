@@ -66,7 +66,6 @@ gem 'librato-metrics'
 ##############
 
 gem 'figaro' # Manage Secrets
-gem 'thin' # Use Thin Server
 gem 'passenger', '4.0.57'
 gem 'foreman'
 gem 'rails_12factor', group: :production
@@ -75,5 +74,6 @@ gem 'rails_12factor', group: :production
 if ENV['RACK_ENV'] == 'production'
   gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
 else
+  gem 'thin' # Use Thin Server
   gem 'sidekiq-pro'
 end
