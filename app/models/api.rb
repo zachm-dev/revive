@@ -7,10 +7,10 @@ class Api
     
     if Rails.env.development?
       uri = URI.parse("http://localhost:3000/api_create")
-      puts 'local start'
+      puts "production start #{app_name}"
     else
       uri = URI.parse("http://#{app_name}.herokuapp.com/api_create")
-      puts 'production start'
+      puts "production start #{app_name}"
     end
         
     post_params = {
