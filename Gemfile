@@ -1,3 +1,4 @@
+source 'https://code.stripe.com'
 source 'https://rubygems.org'
 
 ruby '2.2.0'
@@ -56,7 +57,7 @@ end
 # APIs
 ##############
 
-gem 'stripe', :source => 'https://code.stripe.com/'
+gem 'stripe'
 gem 'majestic_seo_api'
 gem 'linkscape'
 gem 'platform-api'
