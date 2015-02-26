@@ -37,14 +37,14 @@ class DynoStats
       puts 'more than a minute has passed since the dyno stats were checked'
       dynos = []
       ["processlinks", "worker"].each do |dyno|
-        puts "about to get memory stats for the #{dyno} on the app #{app_name}"
         memory_stats = Heroku.memory_stats(type: dyno, app_name: app_name)
+        puts "the memory stats for the #{dyno} dyno on the app #{app_name} are #{memory_stats}"
         if memory_stats.include?("red")
           dynos << dyno
         end
       end
       unless dynos.empty?
-        puts 'checked app dyno stats and scaling dynos'
+        puts "checked app dyno stats and scaling dynos #{dynos}"
         Heroku.scale_dynos(app_name: app_name, dynos: dynos)
       end
       heroku_app.update(updated_at: Time.now)

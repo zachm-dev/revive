@@ -36,7 +36,7 @@ class Heroku
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     formation = self.formation_info(type: dyno_type, app_name: options[:app_name])
-    puts "here is the dyno formation"
+    puts "here is the dyno formation #{formation}"
     quantity = formation["quantity"]
     librato = DynoStats.new(app_name: app_name)
     stats = {}
@@ -62,7 +62,7 @@ class Heroku
       memory_stats = []
       stats.count.times do |index|
         memory_total = stats["#{dyno_type}.#{index+1}"][:memory_total]["value"]
-        status = memory_total > 400 ? "red" : "green"
+        status = memory_total > 350 ? "red" : "green"
         memory_stats << status
       end
       puts "memory stats for #{dyno_type} are #{memory_stats}"

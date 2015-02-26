@@ -122,11 +122,7 @@
 					
 						<div class="row">
 							<div class="stat_circle_container glyph_pink">
-								<% if @total_running_jobs == 0 %>
-									<p>DONE</p>
-								<% else %>
-									<p>RUNNING</p>
-								<% end %>
+								<%= @project.heroku_app.status %>
 							</div>
 						</div>
 					
