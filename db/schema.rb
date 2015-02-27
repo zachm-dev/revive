@@ -11,11 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150302082501) do
+ActiveRecord::Schema.define(version: 20150227010456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "hstore"
 
   create_table "crawls", force: :cascade do |t|
     t.string   "name",                limit: 255
@@ -36,11 +35,6 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.integer  "majestic_tf"
     t.integer  "notify_me_after"
     t.string   "keyword"
-    t.string   "status"
-    t.text     "base_urls",                       default: [], array: true
-    t.string   "crawl_type"
-    t.string   "base_keyword"
-    t.boolean  "notified"
   end
 
   create_table "expired_links", force: :cascade do |t|
@@ -80,8 +74,8 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.text     "url"
     t.integer  "crawl_id"
     t.string   "status"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.datetime "started_at"
     t.datetime "finished_at"
     t.string   "batch_id"
@@ -89,20 +83,14 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.integer  "pos"
     t.integer  "position"
     t.boolean  "shutdown"
-    t.string   "librato_user"
-    t.string   "librato_token"
-    t.hstore   "formation"
   end
 
   create_table "links", force: :cascade do |t|
     t.integer  "site_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.text     "links",                    array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text     "links",                   array: true
     t.text     "found_on"
-    t.string   "status"
-    t.integer  "links_count"
-    t.boolean  "started"
   end
 
   create_table "pages", force: :cascade do |t|
@@ -122,15 +110,14 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.boolean  "verified"
     t.text     "simple_url"
     t.string   "available"
+    t.string   "citationflow"
+    t.string   "trustflow"
+    t.string   "trustmetric"
+    t.string   "refdomains"
+    t.string   "backlinks"
+    t.string   "pa"
+    t.string   "da"
     t.string   "status"
-    t.boolean  "bookmarked"
-    t.float    "citationflow"
-    t.float    "trustflow"
-    t.float    "trustmetric"
-    t.float    "pa"
-    t.float    "da"
-    t.integer  "refdomains"
-    t.integer  "backlinks"
   end
 
   create_table "plans", force: :cascade do |t|
@@ -146,7 +133,6 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.datetime "updated_at",              null: false
     t.float    "price"
     t.integer  "crawls_per_day"
-    t.integer  "crawls_per_hour"
   end
 
   create_table "process_links_batches", force: :cascade do |t|
@@ -207,14 +193,6 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.float    "pa"
     t.float    "tf"
     t.float    "cf"
-    t.integer  "total_urls_found"
-    t.integer  "total_pages_crawled"
-    t.integer  "total_expired"
-    t.integer  "total_broken"
-    t.integer  "total_internal"
-    t.integer  "total_external"
-    t.string   "gather_status"
-    t.string   "processing_status"
   end
 
   create_table "subscriptions", force: :cascade do |t|
@@ -245,8 +223,8 @@ ActiveRecord::Schema.define(version: 20150302082501) do
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.string   "first_name"
     t.string   "last_name"
     t.string   "phone"
@@ -256,9 +234,6 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.string   "zip"
     t.string   "state"
     t.string   "country"
-    t.datetime "last_crawl"
-    t.integer  "crawls_this_hour"
-    t.datetime "first_crawl"
   end
 
   create_table "verify_majestic_batches", force: :cascade do |t|
