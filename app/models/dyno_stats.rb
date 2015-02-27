@@ -1,15 +1,10 @@
 class DynoStats
   
-  # LIBRATO_EMAIL = ENV['librato_email']
-  # LIBRATO_KEY = ENV['librato_key']
-  
   def initialize(options={})
-    app_name = options[:app_name].nil? ? Heroku::APP_NAME : options[:app_name]
-    heroku = Heroku.client
-    config_vars = heroku.config_var.info(app_name)
-    librato_email = config_vars['LIBRATO_USER']
-    librato_key = config_vars['LIBRATO_TOKEN']
-    librato = Librato::Metrics.authenticate(librato_email, librato_key)
+    heroku_app = HerokuApp.find(options[:heroku_app_id])
+    librato_user = heroku_app.librato_user
+    librato_token = heroku_app.librato_token
+    @librato = Librato::Metrics.authenticate(librato_user, librato_token)
   end
   
   def metrics(options = {})
@@ -37,7 +32,7 @@ class DynoStats
       puts 'more than a minute has passed since the dyno stats were checked'
       dynos = []
       ["processlinks", "worker"].each do |dyno|
-        memory_stats = Heroku.memory_stats(type: dyno, app_name: app_name)
+        memory_stats = Heroku.memory_stats(type: dyno, app_name: app_name, heroku_app_id: heroku_app.id)
         puts "the memory stats for the #{dyno} dyno on the app #{app_name} are #{memory_stats}"
         if memory_stats.include?("red")
           dynos << dyno
