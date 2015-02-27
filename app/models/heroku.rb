@@ -6,12 +6,8 @@ class Heroku
   APP_NAME = ENV['heroku_app_name']
   API_TOKEN = ENV['heroku_api_token']
 
-  def self.client
+  def initialize
     @heroku ||= PlatformAPI.connect_oauth(API_TOKEN)
-  end
-  
-  def client
-    @heroku_client ||= PlatformAPI.connect_oauth(API_TOKEN)
   end
   
   def self.formation_info(options = {})
@@ -21,8 +17,8 @@ class Heroku
     formation = heroku.formation.info(app_name, formation_type)
   end
   
-  def self.app_list
-    client.app.list
+  def app_list
+    @heroku.app.list
   end
   
   def self.formation_list(options = {})
@@ -73,7 +69,7 @@ class Heroku
   
   def self.scale_dynos(options = {})
     puts 'scaling dynos'
-    heroku = self.client
+    heroku = Heroku.new
     dynos = options[:dynos].nil? ? ["worker"] : options[:dynos]
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     increase_quantity = options[:quantity].nil? ? 1 : options[:quantity]
@@ -90,31 +86,32 @@ class Heroku
   end
   
   def app_exists?(name)
-    client.app.list.collect do |app|
+    @heroku.app.list.collect do |app|
       app if app['name'] == name
     end.reject(&:nil?).any?
   end
   
-  def fork(from, to, heroku_app_id)
+  def self.fork(from, to, heroku_app_id)
     app = HerokuApp.where(id: heroku_app_id).first
     if app && app.status != 'running'
+      heroku = Heroku.new
       # check if there are any pending crawls before forking a new app from the user
-      create_app(to)
-      copy_slug(from, to)
-      copy_config(from, to)
-      add_redis(to)
-      add_librato(to)
-      copy_rack_and_rails_env_again(from, to)
-      enable_log_runtime_metrics(to)
-      Heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
-      Heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
+      heroku.create_app(to)
+      heroku.copy_slug(from, to)
+      heroku.copy_config(from, to)
+      heroku.add_redis(to)
+      heroku.add_librato(to)
+      heroku.copy_rack_and_rails_env_again(from, to)
+      heroku.enable_log_runtime_metrics(to)
+      # Heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
+      # Heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       # restart_app(to)
       puts 'done creating new app'
     end
   end
   
   def release(app_name)
-    client.release.list(app_name).last['slug']['id']
+    @heroku.release.list(app_name).last['slug']['id']
   end
   
   def delete_app(app_name)
@@ -122,64 +119,65 @@ class Heroku
     #logger.info "Deleting #{app_name}"
     if "#{app_name}".include?('revivecrawler')
       puts "DANGER THE APP #{app_name} IS BEING DELETED"
-      client.app.delete(app_name)
+      @heroku.app.delete(app_name)
     end
   end
   
   def restart_app(app_name)
     puts 'restarting app'
-    client.dyno.restart_all(app_name)
+    @heroku.dyno.restart_all(app_name)
   end
   
   def add_redis(to)
     puts 'adding redis'
-    client.addon.create(to, plan: "redistogo:smedium")
+    @heroku.addon.create(to, plan: "redistogo:smedium")
   end
   
   def add_librato(to)
     puts 'adding librato'
-    client.addon.create(to, plan: "librato:nickel")
+    @heroku.addon.create(to, plan: "librato:nickel")
   end
   
   def enable_log_runtime_metrics(app_name)
     puts 'enabling log runtime metrics'
-    client.app_feature.update(app_name, 'log-runtime-metrics', {'enabled'=>true})
+    @heroku.app_feature.update(app_name, 'log-runtime-metrics', {'enabled'=>true})
   end
   
   def config_vars(app_name)
-    client.config_var.info(app_name)
+    @heroku.config_var.info(app_name)
   end
   
   def create_app(name)
     # logger.info "Creating #{name}"
     puts 'creating app'
-    client.app.create(name: name)
+    @heroku.app.create(name: name)
   end
   
   def copy_config(from, to)
     puts 'copying config'
     from_congig_vars = config_vars(from)
     from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_BRONZE_URL', 'PGBACKUPS_URL', 'HEROKU_POSTGRESQL_COPPER_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
-    client.config_var.update(to, from_congig_vars)
+    @heroku.config_var.update(to, from_congig_vars)
   end
   
   def copy_slug(from, to)
     puts 'copying slug'
     from_release_slug_id = release(from)
-    client.release.create(to, slug: from_release_slug_id)
+    @heroku.release.create(to, slug: from_release_slug_id)
   end
 
   def copy_rack_and_rails_env_again(from, to)
     puts 'copying rack and rails env again'
     env_to_update = get_original_env(from)
-    client.config_var.update(to, env_to_update) unless env_to_update.empty?
+    @heroku.config_var.update(to, env_to_update) unless env_to_update.empty?
   end
   
   def get_original_env(from)
     environments = {}
     %w(RACK_ENV RAILS_ENV).each do |var|
-      if client.config_var.info(from)[var]
-        environments[var] = client.config_var.info(from)[var]
+      conf_var = @heroku.config_var.info(from)[var]
+      if conf_var
+        environments[var] = conf_var
       end
     end
     environments

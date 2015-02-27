@@ -1,12 +1,10 @@
 class ForkNewApp
   include Sidekiq::Worker
   
-  def perform(heroku_app_id)
+  def perform(heroku_app_id, number_of_apps_running)
     heroku_app = HerokuApp.find(heroku_app_id)
-    heroku = Heroku.new
-    number_of_apps_running = Heroku.app_list.count
-    heroku_app.update(name: "revivecrawler#{number_of_apps_running+1}")
-    heroku.fork(Heroku::APP_NAME, "revivecrawler#{number_of_apps_running+1}", heroku_app_id)
+    heroku_app.update(name: "revivecrawler#{number_of_apps_running}")
+    Heroku.fork(Heroku::APP_NAME, "revivecrawler#{number_of_apps_running+1}", heroku_app_id)
   end
   
   def on_complete(status, options)
@@ -19,7 +17,7 @@ class ForkNewApp
     end
   end
   
-  def self.start(user_id)
+  def self.start(user_id, number_of_apps_running)
     user = User.find(user_id)
     crawl_to_start = user.heroku_apps.where(status: 'pending').order(:position).first
     
@@ -29,7 +27,7 @@ class ForkNewApp
     batch.on(:complete, ForkNewApp, 'bid' => batch.bid)
 
     batch.jobs do
-      ForkNewApp.perform_async(crawl_to_start.id)
+      ForkNewApp.perform_async(crawl_to_start.id, number_of_apps_running)
     end
   end
   
