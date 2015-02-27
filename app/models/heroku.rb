@@ -10,21 +10,19 @@ class Heroku
     @heroku ||= PlatformAPI.connect_oauth(API_TOKEN)
   end
   
-  def self.formation_info(options = {})
+  def formation_info(options = {})
     formation_type = options[:type].nil? ? "worker" : options[:type] 
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
-    heroku = self.client
-    formation = heroku.formation.info(app_name, formation_type)
+    formation = @heroku.formation.info(app_name, formation_type)
   end
   
   def app_list
     @heroku.app.list
   end
   
-  def self.formation_list(options = {})
-    heroku = self.client
+  def formation_list(options = {})
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
-    formation = heroku.formation.list(app_name)
+    formation = @heroku.formation.list(app_name)
   end
   
   def self.get_dyno_stats(options = {})
@@ -67,22 +65,18 @@ class Heroku
 
   end
   
-  def self.scale_dynos(options = {})
+  def scale_dynos(options = {})
     puts 'scaling dynos'
-    heroku = Heroku.new
     dynos = options[:dynos].nil? ? ["worker"] : options[:dynos]
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     increase_quantity = options[:quantity].nil? ? 1 : options[:quantity]
     size = options[:size].nil? ? '1X' : options[:size]
     
     dynos.each do |type|
-      current_quantity = Heroku.formation_info(app_name: app_name, type: type)["quantity"]
+      current_quantity = formation_info(app_name: app_name, type: type)["quantity"]
       new_quantity = current_quantity + increase_quantity
-      heroku.formation.update(app_name, type, {"quantity"=>new_quantity, 'size'=>size})
+      @heroku.formation.update(app_name, type, {"quantity"=>new_quantity, 'size'=>size})
     end
-    # if !options[:user_id].nil?
-    #   Crawl.delay.decision_maker(options[:user_id])
-    # end
   end
   
   def app_exists?(name)
@@ -103,8 +97,8 @@ class Heroku
       heroku.add_librato(to)
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
-      # Heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
-      # Heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
+      heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
+      heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       # restart_app(to)
       puts 'done creating new app'
     end
