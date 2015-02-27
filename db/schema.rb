@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150227045555) do
+ActiveRecord::Schema.define(version: 20150227103439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "hstore"
 
   create_table "crawls", force: :cascade do |t|
     t.string   "name",                limit: 255
@@ -85,6 +86,7 @@ ActiveRecord::Schema.define(version: 20150227045555) do
     t.boolean  "shutdown"
     t.string   "librato_user"
     t.string   "librato_token"
+    t.hstore   "formation"
   end
 
   create_table "links", force: :cascade do |t|
