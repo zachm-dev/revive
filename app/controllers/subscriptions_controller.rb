@@ -6,13 +6,15 @@ class SubscriptionsController < ApplicationController
   end
 
   def new
-    render layout: 'checkout'
+    @subscription = Subscription.new
     # For ~> checkout
     # If the user already has a plan just redirect to dash
     # in the future this will redirect to account and billing.
-    # if current_user.subscription.plan_id.present?
-    #   redirect_to dashboard_path
-    # end
+    if current_user.subscription.active?
+      redirect_to '/account#subscription'
+    else
+      render layout: 'checkout'
+    end
   end
 
   def create
@@ -40,12 +42,15 @@ class SubscriptionsController < ApplicationController
       elsif plan.present? == false
         format.html { redirect_to new_subscriptions_path, flash:{error: 'Invalid Plan ID' } }
       else
-        format.html { redirect_to new_subscriptions_path, flash:{error: 'Subscription Failed.'} }
+        format.html { render action: :new, layout: 'checkout' }
       end
 
     end
 
   end
+
+
+  # Unsubscribe From Stripe
 
   def destroy
     respond_to do |format|

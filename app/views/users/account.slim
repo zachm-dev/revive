@@ -34,7 +34,7 @@
                     = f.submit class:'btn btn-success btn-block'
     // Billing
     .row
-      .panel-container
+      #subscription.panel-container
         .panel.panel-default
           .panel-heading
             h3.panel-title Billing Details
@@ -95,57 +95,67 @@
                     = f.submit 'Update Billing Details', class:'btn btn-block btn-success'
 
 
-    //
-    /.row
-    /  .panel-container
-    /    .panel.panel-default
-    /      .panel-heading
-    /        h3.panel-title Subscription Plan
-    /      .panel-body
-    /        h3 = @plan.name
-    /        .row
-    /          .col-lg-4
-    /            .panel
-    /              .panel-heading pages_per_crawl:
-    /              .panel-body = @plan.pages_per_crawl
-    /          .col-lg-4
-    /            | expired_domains:
-    /            = @plan.expired_domains
-    /          .col-lg-4
-    /            | broken_domains:
-    /            = @plan.broken_domains
-    /        b
-    /          | crawls_at_the_same_time:
-    /        br
-    /        = @plan.crawls_at_the_same_time
-    /        b
-    /          | reserve_period:
-    /        br
-    /        = @plan.reserve_period
-    /        b
-    /          | crawl_speed:
-    /        br
-    /        = @plan.crawl_speed
-    /        b
-    /          | marketplace:
-    /        br
-    /        = @plan.marketplace
-    /        b
-    /          | created_at:
-    /        br
-    /        = @plan.created_at
-    /        b
-    /          | updated_at:
-    /        br
-    /        = @plan.updated_at
-    /        b
-    /          | price:
-    /        br
-    /        = @plan.price
-    /        b
-    /          | crawls_per_day:
-    /        br
-    /        = @plan.crawls_per_day
-    /
+    // Subscription
+    .row
+      .panel-container
+        .panel class="#{@user.subscription.active? ? 'panel-success' : 'panel-danger'}"
+          .panel-heading
+            .row
+              .col-sm-6
+                h3.panel-title Subscription Plan
+              .col-sm-6
+                h3.pull-right.panel-title =@current_user.subscription.status.capitalize
+          .panel-body
+            h3 = @plan.name
+            .row
+              .col-lg-4
+                .row
+                  .col-lg-12 pages_per_crawl:
+                .row
+                  .col-lg-12 = @plan.pages_per_crawl
+              .col-lg-4
+                | expired_domains:
+                = @plan.expired_domains
+              .col-lg-4
+                | broken_domains:
+                = @plan.broken_domains
+            b
+              | crawls_at_the_same_time:
+            br
+            = @plan.crawls_at_the_same_time
+            b
+              | reserve_period:
+            br
+            = @plan.reserve_period
+            b
+              | crawl_speed:
+            br
+            = @plan.crawl_speed
+            b
+              | marketplace:
+            br
+            = @plan.marketplace
+            b
+              | created_at:
+            br
+            = @plan.created_at
+            b
+              | updated_at:
+            br
+            = @plan.updated_at
+            b
+              | price:
+            br
+            = @plan.price
+            b
+              | crawls_per_day:
+            br
+            = @plan.crawls_per_day
+
+            .row
+              .col-lg-6
+                = link_to 'Unsubscribe', subscriptions_path, method: :delete, class:'btn btn-danger btn-block'
+              .col-lg-6
+                = link_to 'Upgrade Plan', dashboard_path, class:'btn btn-success btn-block'
 
 
