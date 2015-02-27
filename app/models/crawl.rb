@@ -36,10 +36,10 @@ class Crawl < ActiveRecord::Base
     
     if number_of_running_crawls < plan.crawls_at_the_same_time
       if number_of_pending_crawls > 0
-        number_of_apps_running = Heroku.app_list.count
+        number_of_apps_running = Heroku.new.app_list.count
         if number_of_apps_running < 99
           puts 'decision: starting new crawl'
-          ForkNewApp.start(user_id)
+          ForkNewApp.start(user_id, number_of_apps_running)
         end
       end
     else
