@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150225062243) do
+ActiveRecord::Schema.define(version: 20150227010456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -207,14 +207,14 @@ ActiveRecord::Schema.define(version: 20150225062243) do
 
   create_table "user_dashboards", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "domains_crawled"
-    t.integer  "domains_broken"
-    t.integer  "domains_expired"
-    t.integer  "pending_crawlers"
-    t.integer  "running_crawlers"
+    t.integer  "domains_crawled",  default: 0
+    t.integer  "domains_broken",   default: 0
+    t.integer  "domains_expired",  default: 0
+    t.integer  "pending_crawlers", default: 0
+    t.integer  "running_crawlers", default: 0
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
-    t.integer  "done_crawlers"
+    t.integer  "done_crawlers",    default: 0
     t.text     "top_domains",      default: [],              array: true
   end
 
