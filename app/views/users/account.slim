@@ -147,15 +147,17 @@
               | price:
             br
             = @plan.price
-            b
-              | crawls_per_day:
-            br
-            = @plan.crawls_per_day
+            .row
+              b crawls_per_day:
+              = @plan.crawls_per_day
 
             .row
               .col-lg-6
-                = link_to 'Unsubscribe', subscriptions_path, method: :delete, class:'btn btn-danger btn-block'
+                - if @current_user.subscription.active?
+                  = link_to 'Unsubscribe', subscriptions_path, method: :delete, class:'btn btn-danger btn-block', data:{disable_with:'Working Magic..' }
+                - else
+                  = link_to 'Subscribe', subscriptions_path, method: :put, class:'btn btn-success btn-block', data:{disable_with:'Working Magic..' }
               .col-lg-6
-                = link_to 'Upgrade Plan', dashboard_path, class:'btn btn-success btn-block'
+                = link_to 'Upgrade Plan', dashboard_path, class:'btn btn-default btn-block', disabled: true
 
 

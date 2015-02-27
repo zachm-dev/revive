@@ -34,6 +34,15 @@ class Subscription < ActiveRecord::Base
 
   end
 
+  def subscribe_with_stripe
+    customer = Stripe::Customer.retrieve(stripe_customer_token)
+    sub = customer.subscriptions.create(plan: stripe_plan_id)
+    if sub[:status] == 'active'
+      self.update(status: 'active', plan: Plan.find_by_name(stripe_plan_id))
+    end
+
+  end
+
   def unsubscribe_with_stripe
     customer = Stripe::Customer.retrieve(stripe_customer_token)
     sub_id = customer.subscriptions.data.find{|sub| sub[:plan][:id] == plan_id.to_s}[:id]
