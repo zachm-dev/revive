@@ -45,7 +45,7 @@ class DynoStats
       end
       unless dynos.empty?
         puts "checked app dyno stats and scaling dynos #{dynos}"
-        Heroku.scale_dynos(app_name: app_name, dynos: dynos)
+        Heroku.new.scale_dynos(app_name: app_name, dynos: dynos)
       end
       heroku_app.update(updated_at: Time.now)
     end

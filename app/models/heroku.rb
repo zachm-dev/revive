@@ -62,7 +62,6 @@ class Heroku
       puts "memory stats for #{dyno_type} are #{memory_stats}"
       return memory_stats
     end
-
   end
   
   def scale_dynos(options = {})
@@ -99,9 +98,19 @@ class Heroku
       heroku.enable_log_runtime_metrics(to)
       heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
       heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
+      librato_env_vars = heroku.get_librato_env_variables_for(to)
+      app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token])
       # restart_app(to)
       puts 'done creating new app'
     end
+  end
+  
+  def get_librato_env_variables_for(app_name)
+    puts "getting librato env variables for the app #{app_name}"
+    vars = config_vars(app_name)
+    librato_user = vars['LIBRATO_USER']
+    librato_token = vars['LIBRATO_TOKEN']
+    librato_hash = {librato_user: librato_user, librato_token: librato_token}
   end
   
   def release(app_name)
@@ -129,7 +138,7 @@ class Heroku
   
   def add_librato(to)
     puts 'adding librato'
-    @heroku.addon.create(to, plan: "librato:nickel")
+    @heroku.addon.create(to, plan: "librato:nickel")    
   end
   
   def enable_log_runtime_metrics(app_name)
@@ -162,14 +171,14 @@ class Heroku
 
   def copy_rack_and_rails_env_again(from, to)
     puts 'copying rack and rails env again'
-    env_to_update = get_original_env(from)
+    env_to_update = get_env_vars_for(from, ['RACK_ENV', 'RAILS_ENV'])
     @heroku.config_var.update(to, env_to_update) unless env_to_update.empty?
   end
   
-  def get_original_env(from)
+  def get_env_vars_for(app_name, options=[])
     environments = {}
-    %w(RACK_ENV RAILS_ENV).each do |var|
-      conf_var = @heroku.config_var.info(from)[var]
+    options.each do |var|
+      conf_var = @heroku.config_var.info(app_name)[var]
       if conf_var
         environments[var] = conf_var
       end
