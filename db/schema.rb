@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150227010456) do
+ActiveRecord::Schema.define(version: 20150227045555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,8 +74,8 @@ ActiveRecord::Schema.define(version: 20150227010456) do
     t.text     "url"
     t.integer  "crawl_id"
     t.string   "status"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.datetime "started_at"
     t.datetime "finished_at"
     t.string   "batch_id"
@@ -83,6 +83,8 @@ ActiveRecord::Schema.define(version: 20150227010456) do
     t.integer  "pos"
     t.integer  "position"
     t.boolean  "shutdown"
+    t.string   "librato_user"
+    t.string   "librato_token"
   end
 
   create_table "links", force: :cascade do |t|
