@@ -29,12 +29,14 @@ class Heroku
     puts "dyno stats method"
     dyno_type = options[:type].nil? ? "worker" : options[:type] 
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
-    formation = self.formation_info(type: dyno_type, app_name: options[:app_name])
-    puts "here is the dyno formation #{formation}"
-    quantity = formation["quantity"]
+    app = HerokuApp.find(options[:heroku_app_id])
+    # formation = self.formation_info(type: dyno_type, app_name: options[:app_name])
+    quantity = app.formation[dyno_type]
+    # puts "here is the dyno formation #{formation}"
+    # quantity = formation["quantity"]
     librato = DynoStats.new(heroku_app_id: options[:heroku_app_id])
     stats = {}
-    quantity.times do |index|
+    quantity.to_i.times do |index|
       puts "getting the dyno stats for #{dyno_type}.#{index+1}"
       memory_total = librato.metrics(metric: "memory_total", source: "#{dyno_type}.#{index+1}")
       resident_memory = librato.metrics(metric: "memory_rss", source: "#{dyno_type}.#{index+1}")
@@ -70,11 +72,21 @@ class Heroku
     app_name = options[:app_name].nil? ? APP_NAME : options[:app_name]
     increase_quantity = options[:quantity].nil? ? 1 : options[:quantity]
     size = options[:size].nil? ? '1X' : options[:size]
-    
+    app = options[:heroku_app_id].nil? ? nil : HerokuApp.find(options[:heroku_app_id])
     dynos.each do |type|
-      current_quantity = formation_info(app_name: app_name, type: type)["quantity"]
-      new_quantity = current_quantity + increase_quantity
-      @heroku.formation.update(app_name, type, {"quantity"=>new_quantity, 'size'=>size})
+      
+      if app
+        current_quantity = app.formation[type].to_i
+        new_quantity = current_quantity + increase_quantity
+        @heroku.formation.update(app_name, type, {"quantity"=>new_quantity, 'size'=>size})
+        app.formation[type] = new_quantity
+        app.save
+      else
+        current_quantity = formation_info(app_name: app_name, type: type)["quantity"]
+        new_quantity = current_quantity + increase_quantity
+        @heroku.formation.update(app_name, type, {"quantity"=>new_quantity, 'size'=>size})
+      end
+
     end
   end
   
@@ -99,7 +111,7 @@ class Heroku
       heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
       heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       librato_env_vars = heroku.get_librato_env_variables_for(to)
-      app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token])
+      app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
       # restart_app(to)
       puts 'done creating new app'
     end
