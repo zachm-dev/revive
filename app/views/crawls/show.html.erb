@@ -35,6 +35,14 @@
 									<% end %>
 								</li>
 								
+								<li>
+									<%= link_to bookmarked_sites_path(@project.id) do %>
+									    <i class="glyphicon glyphicon-bookmark">
+											<span class="glyph_text">Bookmarked</span>
+										</i>
+									<% end %>
+								</li>
+								
 								<% if @project.status != 'finished' %>
 									
 									<div class="pull-right">
