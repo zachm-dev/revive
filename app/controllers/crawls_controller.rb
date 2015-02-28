@@ -3,9 +3,7 @@ class CrawlsController < ApplicationController
   skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl]
   
   def index
-    #@sites = current_user.sites.all
     @crawls = current_user.crawls.order('created_at').page(params[:page]).per_page(4)
-    # Crawl.delay.update_all_crawl_stats(current_user.id)
   end
   
   def show
