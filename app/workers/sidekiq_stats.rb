@@ -28,8 +28,10 @@ class SidekiqStats
           end
         else
           puts 'app has stalled and shutting down'
+          crawl = app.crawl
+          crawl.update(status: 'finished')
           app.update(status: 'finished', finished_at: Time.now, shutdown: true)
-          user = app.crawl.user
+          user = crawl.user
           Api.fetch_new_crawl(user_id: user.id)
           UserDashboard.add_finished_crawl(user.user_dashboard.id)
           # Crawl.decision_maker(user.id)
