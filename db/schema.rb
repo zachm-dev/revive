@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150227234446) do
+ActiveRecord::Schema.define(version: 20150228002938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -198,6 +198,14 @@ ActiveRecord::Schema.define(version: 20150227234446) do
     t.float    "pa"
     t.float    "tf"
     t.float    "cf"
+    t.integer  "total_urls_found"
+    t.integer  "total_pages_crawled"
+    t.integer  "total_expired"
+    t.integer  "total_broken"
+    t.integer  "total_internal"
+    t.integer  "total_external"
+    t.string   "gather_status"
+    t.string   "processing_status"
   end
 
   create_table "subscriptions", force: :cascade do |t|

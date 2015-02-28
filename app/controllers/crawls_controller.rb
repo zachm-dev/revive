@@ -9,19 +9,14 @@ class CrawlsController < ApplicationController
   end
   
   def show
-    #@project = CobwebCrawlHelper.new(crawl_id: "8-8")
-    #@project = current_user.sites.find(params[:id])
     @project = current_user.crawls.find(params[:id])
+    @app = @project.heroku_app
     @stats_chart = Crawl.crawl_stats(params[:id])
     @sites = Site.find(@project.process_links_batches.map(&:site_id))
     @gather_links_batches = @project.gather_links_batches.where(status: ["pending", "running"]).count
     @process_links_batches = @project.process_links_batches.where(status: ["pending", "running"]).count
     @top_domains = @project.pages.where(available: 'true').limit(5)
     @total_running_jobs = @gather_links_batches + @process_links_batches
-
-    if @project.heroku_app.nil? || @project.heroku_app.verified == nil || @project.heroku_app.verified == 'pending'
-      Namecheap.delay.check(crawl_id: @project.id)
-    end
   end
 
   def new
