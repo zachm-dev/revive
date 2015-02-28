@@ -56,9 +56,19 @@ class SitesController < ApplicationController
     end
   end
   
-  def bookmarked
+  def save_bookmarked
     Page.where(id: params[:page_ids]).update_all(bookmarked: true)
-    redirect_to available_path(params[:id])
+    redirect_to bookmarked_sites_path(params[:id])
+  end
+  
+  def unbookmark
+    Page.where(id: params[:page_ids]).update_all(bookmarked: false)
+    redirect_to bookmarked_sites_path(params[:id])
+  end
+  
+  def bookmarked
+    @crawl = Crawl.find(params[:id])
+    @pages = @crawl.pages.where(bookmarked: true).page(params[:page]).per_page(25)
   end
   
 end

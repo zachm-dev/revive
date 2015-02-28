@@ -18,7 +18,7 @@
 									<% end %>
 								</li>
 			
-								<li class="active">
+								<li>
 									<%= link_to broken_path(@crawl.id) do %>
 									    <i class="glyphicon glyphicon-ban-circle">
 											<span class="glyph_text">Broken</span>
@@ -26,7 +26,7 @@
 									<% end %>
 								</li>
 								
-								<li >
+								<li>
 									<%= link_to available_path(@crawl.id) do %>
 									    <i class="glyphicon glyphicon-ok">
 											<span class="glyph_text">Available</span>
@@ -34,7 +34,7 @@
 									<% end %>
 								</li>
 								
-								<li>
+								<li class="active">
 									<%= link_to bookmarked_sites_path(@crawl.id) do %>
 									    <i class="glyphicon glyphicon-bookmark">
 											<span class="glyph_text">Bookmarked</span>
@@ -62,57 +62,66 @@
 					
 					<div class="panel panel-default">
 						<div class="panel-heading panel_pink_heading panel_glyph_container">
+							
 							<div class="header_glyph">
-								<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 							</div>
 							<div class="header_text">
-								<p>Found Broken Domains</p>
+								<p>Bookmarked Domains</p>
 							</div>
-						</div>
-						<div class="panel-body">
 							
+						</div>
+						<%= form_tag unbookmark_sites_path(params[:id]), id: 'bookmark-sites-form', method: :put do %>
+						<div class="panel-body">
 							<table class="table table-hover table-striped">
 								
 								<thead>
 									<tr>
-										<!-- <th></th> -->
+										<th></th>
 										<th>DOMAIN</th>
+										<th>DA</th>
+										<th>PA</th>
+										<th>TF</th>
+										<th>CF</th>
+										<th>TF/CF</th>
+										<th>RD</th>
+										<th>BL</th>
 										<th>FOUND ON</th>
-										<!-- <th>TF</th>
-										<th>D/A</th>
-										<th>L</th>
-										<th>D</th> -->
 									</tr>
 								</thead>
 								
 								<tbody>
-									
-									<% @broken.each do |i| %>
+									<% @pages.each do |i| %>
 										<tr>
-											<!-- <td>
-												<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
-												<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-											</td> -->
-											<td><%= i.url %></td>
+											<td><%= check_box_tag "page_ids[]", i.id %></td>
+											<td>www.<%= i.simple_url %></td>
+											<td><%= number_with_precision(i.da, precision: 0) %></td>
+											<td><%= number_with_precision(i.pa, precision: 0) %></td>
+											<td><%= i.trustflow %></td>
+											<td><%= i.citationflow %></td>
+											<td><%= number_with_precision(i.trustflow.to_f/i.citationflow.to_f) %></td>
+											<td><%= i.refdomains %></td>
+											<td><%= i.backlinks %></td>
 											<td><%= i.found_on %></td>
-											<!-- <td>-</td>
-											<td>-</td>
-											<td>-</td>
-											<td>-</td> -->
 										</tr>
 									<% end %>
-									
-									
 								</tbody>
 								
 							</table>
-							
+
 							<div class="will_paginate_container text-center">
-								<%= will_paginate @broken, renderer: BootstrapPagination::Rails %>
+								<%= will_paginate @pages, renderer: BootstrapPagination::Rails %>
 							</div>
 							
 						</div>
+						
 					</div>
+					
+					<div class="bookmark_sites_container pull-right">
+						<%= submit_tag 'Unbookmark Sites', id: 'bookmarked-submit-tag', class: 'btn btn-primary' %>
+					</div>
+					
+					<% end %>
 					
 				</div>
 			

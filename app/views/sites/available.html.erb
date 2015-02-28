@@ -33,6 +33,14 @@
 										</i>
 									<% end %>
 								</li>
+								
+								<li>
+									<%= link_to bookmarked_sites_path(@crawl.id) do %>
+									    <i class="glyphicon glyphicon-bookmark">
+											<span class="glyph_text">Bookmarked</span>
+										</i>
+									<% end %>
+								</li>
 			
 							</ul>
 						</div>
@@ -63,7 +71,7 @@
 							</div>
 							
 						</div>
-						<%= form_tag bookmarked_sites_path(params[:id]), method: :put do %>
+						<%= form_tag save_bookmarked_sites_path(params[:id]), id: 'available-sites-form', method: :put do %>
 						<div class="panel-body">
 							<table class="table table-hover table-striped">
 								
@@ -109,7 +117,7 @@
 						
 					</div>
 					<div class="bookmark_sites_container pull-right">
-						<%= submit_tag 'Bookmark Sites', class: 'btn btn-primary' %>
+						<%= submit_tag 'Bookmark Sites', id: 'available-submit-tag', class: 'btn btn-primary' %>
 					</div>
 					
 					<% end %>
