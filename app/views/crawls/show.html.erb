@@ -35,7 +35,7 @@
 									<% end %>
 								</li>
 								
-								<% if @total_running_jobs != 0 && @project.heroku_app.status != 'finished' %>
+								<% if @project.status != 'finished' %>
 									
 									<div class="pull-right">
 										<%= link_to 'Stop Crawl', stop_crawl_path(@project.id), class: 'btn btn-danger' %>
@@ -74,7 +74,7 @@
 					
 						<div class="row">
 							<div class="stat_circle_container glyph_pink">
-								<%= @project.links.map(&:links).flatten.count %>
+								<%= @project.total_urls_found.to_i %>
 							</div>
 						</div>
 					
@@ -90,7 +90,7 @@
 					
 						<div class="row">
 							<div class="stat_circle_container glyph_blue">
-								<%= @project.pages.uniq.count %>
+								<%= @project.total_pages_crawled.to_i %>
 							</div>
 						</div>
 					
@@ -106,7 +106,7 @@
 					
 						<div class="row">
 							<div class="stat_circle_container glyph_blue">
-								<%= @project.pages.where(internal: false, status_code: '0').uniq.count %>
+								<%= @project.total_expired.to_i %>
 							</div>
 						</div>
 					
@@ -122,7 +122,7 @@
 					
 						<div class="row">
 							<div class="stat_circle_container glyph_pink">
-								<%= @project.heroku_app.status %>
+								<%= @project.status.to_s %>
 							</div>
 						</div>
 					
@@ -154,23 +154,13 @@
 			<div class="col-xs-5">
 			
 				<div class="row">
-					<% if @total_running_jobs > 0 %>
-						<div class="row">
-							<div class="title_text">
-								<p>TOP PRIMED DOMAINS</p>
-							</div>
+					<!-- <div class="row">
+						<div class="title_text">
+							<p>TOP PRIMED DOMAINS</p>
 						</div>
-						<div class="text-center crawling_gif"><%= image_tag 'preloader.gif' %></div>
-					<% elsif @total_running_jobs == 0 && @top_domains.count == 0 %>
-						<div class="row">
-							<div class="title_text">
-								<p>TOP PRIMED DOMAINS</p>
-							</div>
-						</div>
-						<div class="zero_top_domains text-center">0</div>
-					<% else %>
-						<%= render 'top_domains' %>
-					<% end %>
+					</div> -->
+					<!-- <div class="zero_top_domains text-center">0</div> -->
+					<%= render 'top_domains' %>
 				</div>
 			
 			</div>
