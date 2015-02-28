@@ -43,11 +43,11 @@ production:
   database: crawler_production
   adapter: postgresql
   encoding: unicode
-  pool: 25
+  pool: 5
 
 development:
   adapter: postgresql
   database: crawler_development
-  pool: 100
+  pool: 5
   # username:
   # password:
