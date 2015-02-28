@@ -34,7 +34,7 @@ class DynoStats
       ["processlinks", "worker"].each do |dyno|
         memory_stats = Heroku.memory_stats(type: dyno, app_name: app_name, heroku_app_id: heroku_app.id)
         puts "the memory stats for the #{dyno} dyno on the app #{app_name} are #{memory_stats}"
-        if memory_stats.include?("red")
+        if memory_stats['green'].count < 2
           dynos << dyno
         end
       end

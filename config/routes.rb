@@ -21,7 +21,11 @@ Rails.application.routes.draw do
 
   # Sites
 
-  resources :sites
+  resources :sites do
+    collection do
+      put 'sites/:id/bookmarked' => "sites#bookmarked", as: :bookmarked
+    end
+  end
   get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
   get 'sites/:id/internal' => "sites#internal", as: :internal
   get 'sites/:id/external' => "sites#external", as: :external

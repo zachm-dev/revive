@@ -63,13 +63,13 @@
 							</div>
 							
 						</div>
+						<%= form_tag bookmarked_sites_path(params[:id]), method: :put do %>
 						<div class="panel-body">
-							
 							<table class="table table-hover table-striped">
 								
 								<thead>
 									<tr>
-										<!-- <th></th> -->
+										<th></th>
 										<th>DOMAIN</th>
 										<th>DA</th>
 										<th>PA</th>
@@ -83,60 +83,36 @@
 								</thead>
 								
 								<tbody>
-									
-									<% if @processing %>
-										
-										<% @pages.each do |i| %>
-											<tr>
-												<!-- <td>
-													<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
-													<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-												</td> -->
-												<td><%= i.url %></td>
-												<td>-</td>
-												<td>-</td>
-												<td>-</td>
-												<td>-</td>
-												<td>-</td>
-												<td>-</td>
-												<td>-</td>
-												<td><%= i.found_on %></td>
-											</tr>
-										<% end %>
-										
-									<% else %>
-									
-										<% @pages.each do |i| %>
-											<tr>
-												<!-- <td>
-													<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
-													<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-												</td> -->
-												<td>www.<%= i.simple_url %></td>
-												<td><%= number_with_precision(i.da, precision: 0) %></td>
-												<td><%= number_with_precision(i.pa, precision: 0) %></td>
-												<td><%= i.trustflow %></td>
-												<td><%= i.citationflow %></td>
-												<td><%= number_with_precision(i.trustflow.to_f/i.citationflow.to_f) %></td>
-												<td><%= i.refdomains %></td>
-												<td><%= i.backlinks %></td>
-												<td><%= i.found_on %></td>
-											</tr>
-										<% end %>
-									
+									<% @pages.each do |i| %>
+										<tr>
+											<td><%= check_box_tag "page_ids[]", i.id %></td>
+											<td>www.<%= i.simple_url %></td>
+											<td><%= number_with_precision(i.da, precision: 0) %></td>
+											<td><%= number_with_precision(i.pa, precision: 0) %></td>
+											<td><%= i.trustflow %></td>
+											<td><%= i.citationflow %></td>
+											<td><%= number_with_precision(i.trustflow.to_f/i.citationflow.to_f) %></td>
+											<td><%= i.refdomains %></td>
+											<td><%= i.backlinks %></td>
+											<td><%= i.found_on %></td>
+										</tr>
 									<% end %>
-									
-									
 								</tbody>
 								
 							</table>
-							
+
 							<div class="will_paginate_container text-center">
 								<%= will_paginate @pages, renderer: BootstrapPagination::Rails %>
 							</div>
 							
 						</div>
+						
 					</div>
+					<div class="bookmark_sites_container pull-right">
+						<%= submit_tag 'Bookmark Sites', class: 'btn btn-primary' %>
+					</div>
+					
+					<% end %>
 					
 				</div>
 			
