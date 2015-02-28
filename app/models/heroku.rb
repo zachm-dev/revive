@@ -117,6 +117,10 @@ class Heroku
     end
   end
   
+  def rate_limit
+    @heroku.rate_limit.info
+  end
+  
   def get_librato_env_variables_for(app_name)
     puts "getting librato env variables for the app #{app_name}"
     vars = config_vars(app_name)
