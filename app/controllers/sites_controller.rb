@@ -38,11 +38,11 @@ class SitesController < ApplicationController
     @available = @crawl.pages.where(available: 'true')
 
     unless @crawl.moz_da.nil? || @crawl.moz_da == 0
-      moz_da = @available.where('da >= ?', @crawl.moz_da)
+      moz_da = @available.where('da >= ?', @crawl.moz_da).order("#{sort}": :desc)
     end
     
     unless @crawl.majestic_tf.nil? || @crawl.majestic_tf == 0
-      majestic_tf = @available.where('trustflow >= ?', @crawl.majestic_tf)
+      majestic_tf = @available.where('trustflow >= ?', @crawl.majestic_tf).order("#{sort}": :desc)
     end
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
@@ -54,7 +54,7 @@ class SitesController < ApplicationController
         @pages = @available.page(params[:page]).per_page(25).order("#{sort}": :desc)
       end
     else
-      @pages = @available.page(params[:page]).per_page(25).order("#{sort}": :desc)
+      @pages = @available.order("#{sort}": :desc).page(params[:page]).per_page(25)
     end
   end
   
@@ -71,7 +71,7 @@ class SitesController < ApplicationController
   def bookmarked
     @crawl = Crawl.find(params[:id])
     sort = params[:sort].nil? ? 'id' : params[:sort]
-    @pages = @crawl.pages.where(bookmarked: true).page(params[:page]).per_page(25).order("#{sort}": :desc)
+    @pages = @crawl.pages.where(bookmarked: true).order("#{sort}": :desc).page(params[:page]).per_page(25)
   end
   
 end
