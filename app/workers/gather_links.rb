@@ -12,7 +12,8 @@ class GatherLinks
     }
     
     Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
-      Link.delay.create(site_id: site_id, links: page.links, found_on: "#{page.url}")
+      links = page.links
+      Link.delay.create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
     end
   end
   
