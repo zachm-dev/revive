@@ -45,16 +45,6 @@ class Crawl < ActiveRecord::Base
     else
       puts 'decision: exceeded crawls that can be performed at the same time'
     end
-
-    # number_of_pending_crawls = user.heroku_apps.where(status: "pending").count
-    # number_of_running_crawls = user.heroku_apps.where(status: "running").count
-    #
-    # if number_of_pending_crawls > 0 #&& number_of_running_crawls < 1
-    #   number_of_apps_running = Heroku.app_list.count
-    #   if number_of_apps_running < 95
-    #     ForkNewApp.start(user_id)
-    #   end
-    # end
     
   end
   
@@ -119,9 +109,8 @@ class Crawl < ActiveRecord::Base
     end
     
     urls_array.each do |u|
-      new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id)
+      new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
       new_site.create_gather_links_batch(status: "pending")
-      # Crawl.delay.decision_maker(new_site.crawl.user.id)
     end
     crawl.update(total_sites: crawl.sites.count)
   end
@@ -143,15 +132,13 @@ class Crawl < ActiveRecord::Base
   
   def self.crawl_stats(crawl_id)
     crawl = Crawl.find(crawl_id)
-    internal = crawl.pages.where(internal: true).uniq.count
-    external = crawl.pages.where(internal: false).uniq.count
-    broken = crawl.pages.where(status_code: '404').uniq.count
-    available = crawl.pages.where(status_code: '0', internal: false).uniq.count
+    broken = crawl.total_broken.to_i
+    available = crawl.total_expired.to_i
     
     LazyHighCharts::HighChart.new('graph') do |f|
       #f.title(:text => "Population vs GDP For 5 Big Countries [2009]")
-      f.xAxis(:categories => ["Internal", "External", "Broken", "Available"])
-      f.series(:showInLegend => false , :data => [internal, external, broken, available])
+      f.xAxis(:categories => ["Broken", "Available"])
+      f.series(:showInLegend => false , :data => [broken, available])
       #f.series(:name => "Population in Millions", :yAxis => 1, :data => [310, 127, 1340, 81, 65])
 
       f.yAxis [
