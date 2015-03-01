@@ -13,10 +13,10 @@ class MozStats
         puts "moz block perform regular"
         url = Domainatrix.parse("#{r[:uu]}")
         parsed_url = url.domain + "." + url.public_suffix
-        Page.update(page.id, da: r[:pda], pa: r[:upa])
+        Page.update(page.id, da: r[:pda].to_f, pa: r[:upa].to_f)
       rescue
         puts "moz block perform zero"
-        Page.update(page.id, da: '0', pa: '0')
+        Page.update(page.id, da: 0, pa: 0)
       end
     end
     
