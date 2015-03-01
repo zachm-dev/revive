@@ -16,6 +16,7 @@ class ForkNewApp
       batch.update(status: "running")
       UserDashboard.add_running_crawl(crawl.user.user_dashboard.id)
       Api.delay.start_crawl(crawl_id: batch.crawl_id)
+      # GatherLinks.delay.start('crawl_id' => crawl.id)
     end
   end
   

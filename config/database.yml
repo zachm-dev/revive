@@ -48,6 +48,6 @@ production:
 development:
   adapter: postgresql
   database: crawler_development
-  pool: 1
+  pool: 10
   # username:
   # password:
