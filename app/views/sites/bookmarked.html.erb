@@ -77,16 +77,27 @@
 								
 								<thead>
 									<tr>
-									<tr>
 										<th class="col-xs-1"></th>
 										<th>DOMAIN</th>
-										<th class="col-xs-1">DA</th>
-										<th class="col-xs-1">PA</th>
-										<th class="col-xs-1">TF</th>
-										<th class="col-xs-1">CF</th>
+										<th class="col-xs-1">
+											<%= link_to 'DA', bookmarked_sites_path(id: params[:id], sort: 'da') %>
+										</th>
+										<th class="col-xs-1">
+											<%= link_to 'PA', bookmarked_sites_path(id: params[:id], sort: 'pa') %>
+										</th>
+										<th class="col-xs-1">
+											<%= link_to 'TF', bookmarked_sites_path(id: params[:id], sort: 'trustflow') %>
+										</th>
+										<th class="col-xs-1">
+											<%= link_to 'CF', bookmarked_sites_path(id: params[:id], sort: 'citationflow') %>
+										</th>
 										<th class="col-xs-1">TF/CF</th>
-										<th class="col-xs-1">RD</th>
-										<th class="col-xs-1">BL</th>
+										<th class="col-xs-1">
+											<%= link_to 'RF', bookmarked_sites_path(id: params[:id], sort: 'refdomains') %>
+										</th>
+										<th class="col-xs-1">
+											<%= link_to 'BL', bookmarked_sites_path(id: params[:id], sort: 'backlinks') %>
+										</th>
 										<th>FOUND ON</th>
 									</tr>
 								</thead>

@@ -10,7 +10,7 @@ class MajesticStats
     
     res.items.each do |r|
       puts "majestic block perform #{r.response['CitationFlow']}"
-      Page.update(page.id, citationflow: r.response['CitationFlow'], trustflow: r.response['TrustFlow'], trustmetric: r.response['TrustMetric'], refdomains: r.response['RefDomains'], backlinks: r.response['ExtBackLinks'])
+      Page.update(page.id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
     end
     
   end
@@ -32,7 +32,7 @@ class MajesticStats
     
     res.items.each do |r|
       puts "majestic block start #{r.response['CitationFlow']}"
-      Page.update(page.id, citationflow: r.response['CitationFlow'], trustflow: r.response['TrustFlow'], trustmetric: r.response['TrustMetric'], refdomains: r.response['RefDomains'], backlinks: r.response['ExtBackLinks'])
+      Page.update(page.id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
     end
   end
 

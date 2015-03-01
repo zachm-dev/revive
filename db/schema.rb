@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150228131104) do
+ActiveRecord::Schema.define(version: 20150301062241) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,15 +115,15 @@ ActiveRecord::Schema.define(version: 20150228131104) do
     t.boolean  "verified"
     t.text     "simple_url"
     t.string   "available"
-    t.string   "citationflow"
-    t.string   "trustflow"
-    t.string   "trustmetric"
-    t.string   "refdomains"
-    t.string   "backlinks"
-    t.string   "pa"
-    t.string   "da"
     t.string   "status"
     t.boolean  "bookmarked"
+    t.float    "citationflow"
+    t.float    "trustflow"
+    t.float    "trustmetric"
+    t.float    "pa"
+    t.float    "da"
+    t.integer  "refdomains"
+    t.integer  "backlinks"
   end
 
   create_table "plans", force: :cascade do |t|
