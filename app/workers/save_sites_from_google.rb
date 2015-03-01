@@ -3,10 +3,10 @@ class SaveSitesFromGoogle
   include Sidekiq::Worker
   sidekiq_options retry: false
   
-  def perform(keyword, crawl_id, options = {})
+  def perform(crawl_id, options = {})
     crawl = Crawl.find(crawl_id)
     if !options['google_param'].nil?
-      uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
+      uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
     end
     page = Nokogiri::HTML(open(uri))
     urls_array = []
@@ -34,19 +34,21 @@ class SaveSitesFromGoogle
     ids = Site.in_the_top_x_percent(20, options['crawl_id'])
     sites = Site.find(ids)
     sites.each do |site|
+      site.update(processing_status: "pending")
       site.create_gather_links_batch(status: "pending")
     end
-    Crawl.delay.decision_maker(crawl.user.id)
+    GatherLinks.delay.start('crawl_id' => crawl.id)
+    # Crawl.delay.decision_maker(crawl.user.id)
   end
   
-  def self.start_batch(keyword, crawl_id)
+  def self.start_batch(crawl_id)
     google_links_batch = Sidekiq::Batch.new
     google_links_batch.on(:complete, self, 'bid' => google_links_batch.bid, 'crawl_id' => crawl_id)
     google_links_batch.jobs do
       
       Crawl::GOOGLE_PARAMS.each do |param|
         begin
-          SaveSitesFromGoogle.perform_async(keyword, crawl_id, 'google_param' => param)
+          SaveSitesFromGoogle.perform_async(crawl_id, 'google_param' => param)
         rescue
           puts 'failed to save'
         end

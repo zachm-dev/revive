@@ -25,14 +25,23 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def self.start_crawl(options = {})
+    crawl = Crawl.find(options["crawl_id"])
+    if crawl.crawl_type == 'url_crawl'
+      Crawl.save_new_sites(crawl.id)
+    elsif crawl.crawl_type == 'keyword_crawl'
+      SaveSitesFromGoogle.start_batch(crawl.id)
+    end
+  end
+  
   def self.decision_maker(user_id)
     puts 'making a decision'
     
     user = User.find(user_id)
     plan = user.subscription.plan
     
-    number_of_pending_crawls = user.heroku_apps.where(status: "pending").count
-    number_of_running_crawls = user.heroku_apps.where(status: "running").count
+    number_of_pending_crawls = user.crawls.where(status: "pending").count
+    number_of_running_crawls = user.crawls.where(status: "running").count
     
     if number_of_running_crawls < plan.crawls_at_the_same_time
       if number_of_pending_crawls > 0
@@ -45,7 +54,6 @@ class Crawl < ActiveRecord::Base
     else
       puts 'decision: exceeded crawls that can be performed at the same time'
     end
-    
   end
   
   def self.save_new_crawl(user_id, base_urls, options = {})
@@ -67,10 +75,16 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
+    if base_urls.include?("\r\n")
+      urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
+    else
+      urls_array = base_urls.split(",")
+    end
+    
+    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending')
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
-    save_new_sites = Crawl.save_new_sites(base_urls, new_crawl.id)
+    # save_new_sites = Crawl.save_new_sites(base_urls, new_crawl.id)
     Crawl.decision_maker(user_id)
   end
   
@@ -92,27 +106,29 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages)
+    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending')
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
-    SaveSitesFromGoogle.start_batch(keyword, new_crawl.id)
+    Crawl.decision_maker(user_id)
   end
   
-  def self.save_new_sites(base_urls, crawl_id)
+  def self.save_new_sites(crawl_id)
     
     crawl = Crawl.find(crawl_id)
 
-    if base_urls.include?("\r\n")
-      urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
-    else
-      urls_array = base_urls.split(",")
-    end
+    # if base_urls.include?("\r\n")
+    #   urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
+    # else
+    #   urls_array = base_urls.split(",")
+    # end
     
-    urls_array.each do |u|
+    crawl.base_urls.each do |u|
       new_site = Site.create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
       new_site.create_gather_links_batch(status: "pending")
     end
-    crawl.update(total_sites: crawl.sites.count)
+    
+    GatherLinks.delay.start('crawl_id' => crawl.id)
+    # crawl.update(total_sites: crawl.sites.count)
   end
   
   def self.update_all_crawl_stats(user_id)
