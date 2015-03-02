@@ -7,6 +7,14 @@ class ProcessLinks
   sidekiq_options :retry => false
   
   def perform(l, site_id, found_on, domain)
+    
+    crawl = Site.find(site_id).crawl
+    
+    if crawl.notify_me_after.is_a?(Integer) && crawl.notified == false
+      if crawl.links.where(started: true).sum(:links_count).to_i >= site.crawl.notify_me_after
+        NotifyMailer.notify(crawl.id).deliver
+      end
+    end
     request = Typhoeus::Request.new(l, method: :head, followlocation: true)
     request.on_complete do |response|
       internal = l.include?("#{domain}") ? true : false

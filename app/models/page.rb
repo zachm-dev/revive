@@ -9,11 +9,6 @@ class Page < ActiveRecord::Base
       crawl_total_expired = site.crawl.total_expired.to_i + 1
       site.crawl.update(total_expired: crawl_total_expired)
       site.update(total_expired: site_total_expired)
-      if site.crawl.notify_me_after.is_a?(Integer) && site.notified == false
-        if site.pages.count >= site.crawl.notify_me_after
-          NotifyMailer.notify(site.id).deliver
-        end
-      end
       
       if site.verify_namecheap_batch.nil?
         verify_namecheap_batch = Sidekiq::Batch.new
