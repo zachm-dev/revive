@@ -29,11 +29,12 @@ class VerifyNamecheap
             if json['available'].to_s == 'true'
               puts 'Majestic & Moz stats being saved'
               crawl = page.site.crawl
-              MozStats.start(page.id)
-              MajesticStats.start(page.id)
+              MozStats.perform_async(page.id)
+              MajesticStats.perform_async(page.id)
               crawl.update(total_expired: craw.total_expired.to_i+1)
             end
           # end
+          
         end
       end
     rescue
