@@ -43,7 +43,7 @@ production:
   database: crawler_production
   adapter: postgresql
   encoding: unicode
-  pool: 10
+  pool: 50
 
 development:
   adapter: postgresql
