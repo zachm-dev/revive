@@ -24,14 +24,14 @@ class MajesticStats
   end
   
   def self.start(page_id)
-    puts 'majestic perform on start'
+    puts 'majestic perform on perform'
     page = Page.find(page_id)
     
-    m = MajesticSeo::Api::Client.new
+    m = MajesticSeo::Api::Client.new(api_key: ENV['majestic_api_key'], environment: ENV['majestic_env'])
     res = m.get_index_item_info([page.simple_url])
     
     res.items.each do |r|
-      puts "majestic block start #{r.response['CitationFlow']}"
+      puts "majestic block perform #{r.response['CitationFlow']}"
       Page.update(page.id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
     end
   end
