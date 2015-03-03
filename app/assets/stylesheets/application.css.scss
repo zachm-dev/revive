@@ -42,7 +42,7 @@ html, body  {
 }
 
 .container-fluid {
-	padding: 0;
+//	padding: 0;
 }
 
 .row {
@@ -60,7 +60,6 @@ html, body  {
 }
 
 .main_container {
-	padding-top: 50px;
 	overflow-y: auto;
 }
 
@@ -102,6 +101,105 @@ html, body  {
 .white_text {
 	color: #fff !important;
 }
+
+// Nav
+
+.navbar-revive {
+  @extend .navbar-inverse;
+  color: #ffffff;
+  background-color: $pink;
+  border-radius: 0;
+  border-width: 0;
+  border-color: $pink;
+  margin-bottom: 0;
+
+  .navbar-brand{
+    color: #ffffff;
+    font-weight: 100;
+    letter-spacing: 1px;
+    font-size: 2rem;
+  }
+
+  .navbar-toggle, .navbar-collapse {
+    border-color: $pink;
+    box-shadow: none;
+  }
+
+  .navbar-nav {
+    li {
+      a {
+        background-color: transparent;
+        color: white;
+        &:hover, &:active, &:focus {
+          background-color: transparent;
+          color: white;
+          font-weight: bold;
+        }
+      }
+      &.active {
+        > a {
+          background-color: transparent;
+          color: white;
+          &:hover, &:active, &:focus {
+            background-color: transparent;
+            color: white;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $pink;
+        color: #ffffff;
+      }
+    }
+    .open .dropdown-menu {
+      background-color: $pink;
+      border: none;
+      .divider {
+        background-color: #ffffff;
+      }
+      li a{
+        color: white;
+      }
+      > .dropdown-header {
+        border-color: $pink
+      }
+      .divider {
+        background-color: $pink;
+      }
+      > li > a {
+        color: white;
+        &:hover,
+        &:focus {
+          color: white;
+          background-color: $pink;
+        }
+      }
+      > .active > a {
+        &,
+        &:hover,
+        &:focus {
+          color: white;
+          background-color: $pink;
+        }
+      }
+      > .disabled > a {
+        &,
+        &:hover,
+        &:focus {
+          color: #ffffff;
+          background-color: $pink;
+        }
+      }
+    }
+  }
+}
+
+
 
 // MAIN PAGE
 
