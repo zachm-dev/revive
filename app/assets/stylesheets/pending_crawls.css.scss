@@ -19,12 +19,12 @@
       margin-right: 20px;
       .handle {
         cursor: move;
-        color: #FF4F78;
+        color: $pink;
       }
     }
     &:hover {
       color: white;
-      background-color: #FF4F78;
+      background-color: $pink;
       .handle_div {
         .handle {
           @extend .handle;

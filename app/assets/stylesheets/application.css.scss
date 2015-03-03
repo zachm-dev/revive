@@ -1,3 +1,7 @@
+// Colors
+
+$pink: #ff4f78;
+
 // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
 
 @import "bootstrap-sprockets";
@@ -81,7 +85,7 @@ html, body  {
 .top_nav_container {
 	height: 50px;
 	border: none;
-	background-color: #ff4f78;
+	background-color: $pink;
 }
 
 .logo {
@@ -162,7 +166,7 @@ html, body  {
 }
 
 .pink_form_submit_btn {
-	background-color: #FF4F78;
+	background-color: $pink;
 	color: #fff;
 	width: 100%;
 	padding: 15px 0px;
@@ -328,7 +332,7 @@ Licensed under MIT
 
 .zero_top_domains {
 	font-family: helvetica;
-	color: #FF4F78;
+	color: $pink;
 	font-weight: bold;
 	font-size: 250px;
 }
@@ -353,9 +357,9 @@ Licensed under MIT
 	background-color: #F4F4F2 !important;
 	border-left: #F4F4F2 !important;
 	border-bottom: 1px solid #dddddd !important;
-	border-right: 5px solid #FF4F78 !important;
+	border-right: 5px solid $pink !important;
 //	border-right: 5px solid #2CCAD4 !important;
-	color: #FF4F78 !important;
+	color: $pink !important;
 //	color: #2CCAD4 !important;
 }
 
@@ -381,12 +385,12 @@ Licensed under MIT
 //}
 
 .pagination > .active > span {
-	background-color: #FF4F78 !important;
-	border-color: #FF4F78 !important;
+	background-color: $pink !important;
+	border-color: $pink !important;
 }
 
 .pagination > li > a {
-	color: #FF4F78 !important;
+	color: $pink !important;
 }
 
 // Alert

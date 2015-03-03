@@ -20,13 +20,13 @@ ul .left_nav_link_container {
   }
   &.active {
     a {
-      color: #ff4f78;
+      color: $pink;
     }
   }
 }
 
 .left_nav_container a:hover {
-  color: #ff4f78;
+  color: $pink;
 }
 
 .left_nav_container .glyph_text {
