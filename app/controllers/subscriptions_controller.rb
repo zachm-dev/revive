@@ -6,15 +6,18 @@ class SubscriptionsController < ApplicationController
   end
 
   def new
-    render layout: 'checkout'
+    @subscription = Subscription.new
     # For ~> checkout
     # If the user already has a plan just redirect to dash
     # in the future this will redirect to account and billing.
-    # if current_user.subscription.plan_id.present?
-    #   redirect_to dashboard_path
-    # end
+    if current_user.subscription.active?
+      redirect_to '/account#subscription'
+    else
+      render layout: 'checkout'
+    end
   end
 
+  # New Stripe Subscription
   def create
 
     @subscription = Subscription.new(user: current_user, stripe_card_token: params['stripeToken'])
@@ -40,17 +43,32 @@ class SubscriptionsController < ApplicationController
       elsif plan.present? == false
         format.html { redirect_to new_subscriptions_path, flash:{error: 'Invalid Plan ID' } }
       else
-        format.html { redirect_to new_subscriptions_path, flash:{error: 'Subscription Failed.'} }
+        format.html { render action: :new, layout: 'checkout' }
       end
 
     end
 
   end
 
+  # Re subscribe Stripe
+  def update
+    @subscription.stripe_plan_id = subscription_params[:plan_id] ||  @subscription.plan.name
+
+    respond_to do |format|
+      if @subscription.user == current_user && @subscription.subscribe_with_stripe
+        format.html { redirect_to '/dashboard', flash:{success: 'Subscription Successful. Welcome to Back Revive!' } }
+      else
+        format.html { redirect_to '/account#subscription'}
+      end
+    end
+  end
+
+  # Unsubscribe From Stripe
+
   def destroy
     respond_to do |format|
       if @subscription.unsubscribe_with_stripe
-        format.html { redirect_to dashboard_path, flash:{success: 'Successfully Canceled Subscription. We will miss you ' + "#{current_user.first_name}! :(" }}
+        format.html { redirect_to dashboard_path, flash:{success: 'Successfully Canceled Subscription. \n We will miss you ' + "#{current_user.first_name}! :(" }}
       else
         format.html { redirect_to dashboard_path,  flash:{success: 'Subscription Cancel Failed.'} }
       end

@@ -1,3 +1,7 @@
+// Colors
+
+$pink: #ff4f78;
+
 // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
 
 @import "bootstrap-sprockets";
@@ -32,22 +36,23 @@
 // MAIN LAYOUT
 
 html, body  {
-    height: 100%;
-	width: 100%;
-	overflow: hidden;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  font-size: 16px;
 }
 
 .container-fluid {
-	padding: 0;
+//	padding: 0;
 }
 
 .row {
-	margin: 0;
+  margin: 0;
 }
 
 .nopadding {
-   padding: 0 !important;
-   margin: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .fill { 
@@ -56,7 +61,6 @@ html, body  {
 }
 
 .main_container {
-	padding-top: 50px;
 	overflow-y: auto;
 }
 
@@ -81,7 +85,7 @@ html, body  {
 .top_nav_container {
 	height: 50px;
 	border: none;
-	background-color: #ff4f78;
+	background-color: $pink;
 }
 
 .logo {
@@ -98,6 +102,105 @@ html, body  {
 .white_text {
 	color: #fff !important;
 }
+
+// Nav
+
+.navbar-revive {
+  @extend .navbar-inverse;
+  color: #ffffff;
+  background-color: $pink;
+  border-radius: 0;
+  border-width: 0;
+  border-color: $pink;
+  margin-bottom: 0;
+
+  .navbar-brand{
+    color: #ffffff;
+    font-weight: 100;
+    letter-spacing: 1px;
+    font-size: 2rem;
+  }
+
+  .navbar-toggle, .navbar-collapse {
+    border-color: $pink;
+    box-shadow: none;
+  }
+
+  .navbar-nav {
+    li {
+      a {
+        background-color: transparent;
+        color: white;
+        &:hover, &:active, &:focus {
+          background-color: transparent;
+          color: white;
+          font-weight: bold;
+        }
+      }
+      &.active {
+        > a {
+          background-color: transparent;
+          color: white;
+          &:hover, &:active, &:focus {
+            background-color: transparent;
+            color: white;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $pink;
+        color: #ffffff;
+      }
+    }
+    .open .dropdown-menu {
+      background-color: $pink;
+      border: none;
+      .divider {
+        background-color: #ffffff;
+      }
+      li a{
+        color: white;
+      }
+      > .dropdown-header {
+        border-color: $pink
+      }
+      .divider {
+        background-color: $pink;
+      }
+      > li > a {
+        color: white;
+        &:hover,
+        &:focus {
+          color: white;
+          background-color: $pink;
+        }
+      }
+      > .active > a {
+        &,
+        &:hover,
+        &:focus {
+          color: white;
+          background-color: $pink;
+        }
+      }
+      > .disabled > a {
+        &,
+        &:hover,
+        &:focus {
+          color: #ffffff;
+          background-color: $pink;
+        }
+      }
+    }
+  }
+}
+
+
 
 // MAIN PAGE
 
@@ -162,7 +265,7 @@ html, body  {
 }
 
 .pink_form_submit_btn {
-	background-color: #FF4F78;
+	background-color: $pink;
 	color: #fff;
 	width: 100%;
 	padding: 15px 0px;
@@ -328,7 +431,7 @@ Licensed under MIT
 
 .zero_top_domains {
 	font-family: helvetica;
-	color: #FF4F78;
+	color: $pink;
 	font-weight: bold;
 	font-size: 250px;
 }
@@ -353,9 +456,9 @@ Licensed under MIT
 	background-color: #F4F4F2 !important;
 	border-left: #F4F4F2 !important;
 	border-bottom: 1px solid #dddddd !important;
-	border-right: 5px solid #FF4F78 !important;
+	border-right: 5px solid $pink !important;
 //	border-right: 5px solid #2CCAD4 !important;
-	color: #FF4F78 !important;
+	color: $pink !important;
 //	color: #2CCAD4 !important;
 }
 
@@ -381,12 +484,12 @@ Licensed under MIT
 //}
 
 .pagination > .active > span {
-	background-color: #FF4F78 !important;
-	border-color: #FF4F78 !important;
+	background-color: $pink !important;
+	border-color: $pink !important;
 }
 
 .pagination > li > a {
-	color: #FF4F78 !important;
+	color: $pink !important;
 }
 
 // Alert
@@ -407,8 +510,8 @@ Licensed under MIT
 }
 
 .project_stats_container {
-	padding-left: 0px;
-	margin-bottom: 0px;
+  padding-left: 0px;
+  margin-bottom: 0px;
 }
 
 

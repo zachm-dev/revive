@@ -7,6 +7,7 @@ class Subscription < ActiveRecord::Base
 
   validates_presence_of :stripe_customer_token, :message => 'Stripe Error'
   validates :plan, :presence => true
+  validates :user, :uniqueness => true
 
   def save_with_stripe!(stripe_plan = (stripe_plan_id.present? ? stripe_plan_id : false ) || plan_id )
     # It has dynamic stripe plan variable if it exists either set
@@ -20,17 +21,10 @@ class Subscription < ActiveRecord::Base
       # Create customer and Set Card
       customer = Stripe::Customer.create(email: user.email, plan: stripe_plan_id, card: stripe_card_token)
 
-      # Save Plan, Status and Customer Token
-      self.update({status: 'active', stripe_customer_token: customer.id})
-
-
-    elsif stripe_customer_token.present?
-
-      customer = Stripe::Customer.retrieve(stripe_customer_token)
-
       customer.subscriptions.create(plan: stripe_plan)
 
-      self.update(status:'active')
+      # Save Plan, Status and Customer Token
+      self.update({status: 'active', stripe_customer_token: customer.id})
 
     else
 
@@ -40,12 +34,21 @@ class Subscription < ActiveRecord::Base
 
   end
 
+  def subscribe_with_stripe
+    customer = Stripe::Customer.retrieve(stripe_customer_token)
+    sub = customer.subscriptions.create(plan: stripe_plan_id)
+    if sub[:status] == 'active'
+      self.update(status: 'active', plan: Plan.find_by_name(stripe_plan_id))
+    end
+
+  end
+
   def unsubscribe_with_stripe
     customer = Stripe::Customer.retrieve(stripe_customer_token)
     sub_id = customer.subscriptions.data.find{|sub| sub[:plan][:id] == plan_id.to_s}[:id]
     delete = customer.subscriptions.retrieve(sub_id).delete
-    if delete[:status] == 'cancelled'
-      self.update(status: 'cancelled')
+    if delete[:status] == 'canceled'
+      self.update(status: 'canceled')
     end
 
   end
