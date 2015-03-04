@@ -34,7 +34,6 @@ class VerifyNamecheap
               crawl.update(total_expired: craw.total_expired.to_i+1)
             end
           end
-          
         end
       end
     rescue
