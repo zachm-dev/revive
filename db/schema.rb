@@ -227,8 +227,6 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.string   "plan_name"
   end
 
-  add_index "subscriptions", ["user_id"], name: "index_subscriptions_on_user_id", unique: true, using: :btree
-
   create_table "user_dashboards", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "domains_crawled",  default: 0
@@ -258,13 +256,10 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.string   "zip"
     t.string   "state"
     t.string   "country"
-    t.integer  "subscription_id"
     t.datetime "last_crawl"
     t.integer  "crawls_this_hour"
     t.datetime "first_crawl"
   end
-
-  add_index "users", ["subscription_id"], name: "index_users_on_subscription_id", using: :btree
 
   create_table "verify_majestic_batches", force: :cascade do |t|
     t.integer  "site_id"
@@ -286,7 +281,5 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.integer  "site_id"
   end
 
-  add_foreign_key "subscriptions", "users"
   add_foreign_key "user_dashboards", "users"
-  add_foreign_key "users", "subscriptions"
 end
