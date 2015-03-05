@@ -74,6 +74,34 @@
 			
 		</div>
 		
+		<div class='col-xs-6' id="crawl_start_date_input">
+			<div class="field_container text-center">
+			
+				<div class="field_label">
+					<%= f.label :crawl_start_date, "Crawl Start Date" %>
+				</div>
+			
+				<div class="field">
+					<%= f.text_field :crawl_start_date, class: "form-control", placeholder: 'mm/dd/yy', data: {'provide'=>'datepicker'} %>
+				</div>
+			
+			</div>
+		</div>
+		
+		<div class='col-xs-6' id='crawl_end_date_input'>
+			<div class="field_container text-center">
+			
+				<div class="field_label">
+					<%= f.label :crawl_end_date, "Crawl End Date" %>
+				</div>
+			
+				<div class="field">
+					<%= f.text_field :crawl_end_date, class: "form-control", placeholder: 'mm/dd/yy', data: {'provide'=>'datepicker'} %>
+				</div>
+			
+			</div>
+		</div>
+		
 		<!-- <div class="field_container text-center">
 
 			<div class="field_label">

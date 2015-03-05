@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150302082501) do
+ActiveRecord::Schema.define(version: 20150305100827) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,8 @@ ActiveRecord::Schema.define(version: 20150302082501) do
     t.string   "crawl_type"
     t.string   "base_keyword"
     t.boolean  "notified"
+    t.string   "crawl_start_date"
+    t.string   "crawl_end_date"
   end
 
   create_table "expired_links", force: :cascade do |t|

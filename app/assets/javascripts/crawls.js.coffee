@@ -10,3 +10,4 @@ $(document).on 'ready page:load', ->
     $('#crawl_notify_me_after').ionRangeSlider(
       min: 0,
       max: 50000)
+		

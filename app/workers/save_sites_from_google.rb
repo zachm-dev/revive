@@ -6,7 +6,11 @@ class SaveSitesFromGoogle
   def perform(crawl_id, options = {})
     crawl = Crawl.find(crawl_id)
     if !options['google_param'].nil?
-      uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
+      if !crawl.crawl_start_date.nil? && !crawl.crawl_end_date.nil?
+        uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
+      else
+        uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701&source=lnt&tbs=cdr%3A1%2Ccd_min%3A#{crawl.crawl_start_date}%2Ccd_max%3A#{crawl.crawl_end_date}&tbm="))
+      end
     end
     page = Nokogiri::HTML(open(uri))
     urls_array = []
