@@ -27,32 +27,15 @@ class Link < ActiveRecord::Base
       ProcessLinksBatch.create(site_id: site.id, started_at: Time.now, status: "running", batch_id: process_links_batch.bid)
       process_links_batch.on(:complete, ProcessLinks, 'bid' => process_links_batch.bid)
       update(started: true)
-      process_links_batch.jobs do
-        links.each { |l| ProcessLinks.perform_async(l, site.id, found_on, domain) }
-      end
     else
-      
       process_links_batch = Sidekiq::Batch.new(site.process_links_batch.batch_id)
       update(started: true)
-      process_links_batch.jobs do
-        links.each { |l| ProcessLinks.perform_async(l, site.id, found_on, domain) }
-      end
-      
-      
-      # if crawl.links.where(started: true).sum(:links_count).to_i < crawl.user.subscription.plan.pages_per_crawl.to_i
-      #   process_links_batch = Sidekiq::Batch.new(site.process_links_batch.batch_id)
-      #   update(started: true)
-      #   process_links_batch.jobs do
-      #     links.each { |l| ProcessLinks.perform_async(l, site.id, found_on, domain) }
-      #   end
-      # else
-      #   puts "Stopping Crawl: page limit"
-      #   update(started: false)
-      #   crawl.sites.where(processing_status: ["pending", "running"]).update_all(processing_status: 'stopped')
-      #   crawl.update(status: 'stopped')
-      #   crawl.heroku_app.update(status: 'stopped', finished_at: Time.now)
-      # end
     end
+    
+    process_links_batch.jobs do
+      links.each { |l| ProcessLinks.perform_async(l, site.id, found_on, domain) }
+    end
+    
   end
   
 end
