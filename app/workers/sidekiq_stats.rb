@@ -54,10 +54,10 @@ class SidekiqStats
     else
       heroku_app_id = options[:heroku_app_id].to_i
     end
-    puts 'checking dyno stats'
-    DynoStats.delay.last_checked?(heroku_app_id: heroku_app_id)
-    puts 'scheduling sidekiq and dyno stats'
-    SidekiqStats.perform_in(1.minute, heroku_app_id)
+    # puts 'checking dyno stats'
+    # DynoStats.delay.last_checked?(heroku_app_id: heroku_app_id)
+    # puts 'scheduling sidekiq and dyno stats'
+    # SidekiqStats.perform_in(1.minute, heroku_app_id)
   end
   
 end
