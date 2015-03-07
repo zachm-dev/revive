@@ -3,7 +3,7 @@ require 'unirest'
 
 class VerifyNamecheap
   include Sidekiq::Worker
-  # sidekiq_options :queue => :process_links
+  sidekiq_options :queue => :verify_domains
   
   def perform(page_id)
     page = Page.where(id: page_id).first

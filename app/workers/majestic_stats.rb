@@ -1,5 +1,6 @@
 class MajesticStats
   include Sidekiq::Worker
+  sidekiq_options :queue => :verify_domains
   
   def perform(page_id)
     puts 'majestic perform on perform'
