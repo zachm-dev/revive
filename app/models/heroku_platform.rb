@@ -1,6 +1,6 @@
 require 'platform-api'
 
-class Heroku
+class HerokuPlatform
   attr_accessor :api_token, :app_name, :log_url
   
   APP_NAME = ENV['heroku_app_name']
@@ -99,7 +99,7 @@ class Heroku
   def self.fork(from, to, heroku_app_id)
     app = HerokuApp.where(id: heroku_app_id).first
     if app && app.status != 'running'
-      heroku = Heroku.new
+      heroku = HerokuPlatform.new
       # check if there are any pending crawls before forking a new app from the user
       heroku.create_app(to)
       heroku.copy_slug(from, to)
@@ -108,6 +108,9 @@ class Heroku
       heroku.add_librato(to)
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
+      heroku.add_pgbackups(to)
+      heroku.upgrade_postgres(to)
+      HerokuPlatform.migrate_db(to)
       heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
@@ -120,6 +123,13 @@ class Heroku
   
   def rate_limit
     @heroku.rate_limit.info
+  end
+  
+  def self.migrate_db(app_name)
+    puts 'migrating db'
+    heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
+    heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+    heroku.post_ps(app_name, 'rake db:migrate')
   end
   
   def get_librato_env_variables_for(app_name)
@@ -148,6 +158,17 @@ class Heroku
     @heroku.dyno.restart_all(app_name)
   end
   
+  def add_pgbackups(to)
+    puts 'adding pg backups'
+    @heroku.addon.create(to, plan: "pgbackups")
+  end
+  
+  def upgrade_postgres(to)
+    puts 'upgrading postgres db'
+    @heroku.addon.create(to, plan: "heroku-postgresql:standard-2")
+    puts 'making new db the primary'
+  end
+
   def add_redis(to)
     puts 'adding redis'
     @heroku.addon.create(to, plan: "redistogo:smedium")
@@ -155,7 +176,7 @@ class Heroku
   
   def add_librato(to)
     puts 'adding librato'
-    @heroku.addon.create(to, plan: "librato:nickel")    
+    @heroku.addon.create(to, plan: "librato:nickel") 
   end
   
   def enable_log_runtime_metrics(app_name)
@@ -176,7 +197,7 @@ class Heroku
   def copy_config(from, to)
     puts 'copying config'
     from_congig_vars = config_vars(from)
-    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_BRONZE_URL', 'PGBACKUPS_URL', 'HEROKU_POSTGRESQL_COPPER_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
+    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_TEAL_URL', 'PGBACKUPS_URL', 'DATABASE_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
     @heroku.config_var.update(to, from_congig_vars)
   end
   

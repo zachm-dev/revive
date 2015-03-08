@@ -38,6 +38,7 @@ gem 'unirest'
 gem 'premailer-rails'
 gem 'acts_as_list'
 gem 'bootstrap-datepicker-rails'
+gem 'ar-octopus'
 
 # Development Things
 group :development do
@@ -61,6 +62,7 @@ gem 'stripe'
 gem 'majestic_seo_api'
 gem 'linkscape'
 gem 'platform-api'
+gem 'heroku-api'
 gem 'librato-metrics'
 
 # Server Things
