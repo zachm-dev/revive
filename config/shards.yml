@@ -3,6 +3,14 @@ octopus:
     - development
     - production
   development:
+    master:
+      adapter: postgresql
+      database: daji1hvabgdc0c
+      username: ue9r4mdvjgsktq
+      password: p9rem1q40biu605siarnkvp2i83
+      host: ec2-184-73-202-38.compute-1.amazonaws.com
+      port: 5532
+      pool: 25
     development_shard:
       adapter: postgresql
       database: crawler_development
@@ -10,11 +18,11 @@ octopus:
   production:
     master:
       adapter: postgresql
-      <%= "database: #{ENV["MAIN_DB_NAME"]}" %>
-      <%= "username: #{ENV["MAIN_DB_USER"]}" %>
-      <%= "password: #{ENV["MAIN_DB_PASS"]}" %>
-      <%= "host: #{ENV["MAIN_DB_HOST"]}" %>
-      <%= "port: #{ENV["MAIN_DB_PORT"]}" %>
+      database: daji1hvabgdc0c
+      username: ue9r4mdvjgsktq
+      password: p9rem1q40biu605siarnkvp2i83
+      host: ec2-184-73-202-38.compute-1.amazonaws.com
+      port: 5532
       pool: 25
     production_shard:
       <%= "adapter: postgresql" %>
