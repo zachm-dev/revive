@@ -3,14 +3,6 @@ octopus:
     - development
     - production
   development:
-    master:
-      adapter: postgresql
-      database: daji1hvabgdc0c
-      username: ue9r4mdvjgsktq
-      password: p9rem1q40biu605siarnkvp2i83
-      host: ec2-184-73-202-38.compute-1.amazonaws.com
-      port: 5532
-      pool: 25
     development_shard:
       adapter: postgresql
       database: crawler_development
