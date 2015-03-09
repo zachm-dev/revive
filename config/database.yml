@@ -49,5 +49,4 @@ development:
   adapter: postgresql
   database: crawler_development
   pool: 100
-  # username:
-  # password:
+

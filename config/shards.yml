@@ -3,16 +3,16 @@ octopus:
     - development
     - production
   development:
-    shard_one:
+    development_shard:
       adapter: postgresql
       database: crawler_development
-      pool: 100
+      pool: 25
   production:
-    shard_one:
-      host: ec2-107-20-254-2.compute-1.amazonaws.com
-      adapter: postgresql
-      database: d1jtd30fmmju80
-      port: 5562
-      username: u78dtp9gsq4msu
-      password: per2pkece93kvd7ir8889t7p8gr
-      pool: 100
+    production_shard:
+      <%= "adapter: postgresql" %>
+      <%= "database: #{ENV["DB_NAME"]}" %>
+      <%= "username: #{ENV["DB_USER"]}" %>
+      <%= "password: #{ENV["DB_PASS"]}" %>
+      <%= "host: #{ENV["DB_HOST"]}" %>
+      <%= "port: #{ENV["DB_PORT"]}" %>
+      pool: 25

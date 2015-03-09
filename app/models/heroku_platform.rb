@@ -110,18 +110,13 @@ class HerokuPlatform
       heroku.enable_log_runtime_metrics(to)
       heroku.add_pgbackups(to)
       heroku.upgrade_postgres(to)
+      librato_env_vars = heroku.get_librato_env_variables_for(to)
+      db_url = librato_env_vars[:db_url]
+      heroku.set_db_config_vars(to, db_url)
       heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
-      librato_env_vars = heroku.get_librato_env_variables_for(to)
-      db_url = librato_env_vars[:db_url]
-      db_split = db_url.split(':')[1..3]
-      db_user = db_split[0].split('//')[1]
-      db_pass = db_split[1].split('@')[0]
-      db_host = db_split[1].split('@')[1]
-      db_port = db_split[2].split('/')[0].to_i
-      db_name = db_split[2].split('/')[1]
-      app.update(db_url: db_url, db_user: db_user, db_pass: db_pass, db_host: db_host, db_port: db_port, db_name: db_name, librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
+      app.update(db_url: db_url, librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
       # restart_app(to)
       puts 'done creating new app'
     end
@@ -136,6 +131,17 @@ class HerokuPlatform
     heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
     heroku.post_ps("#{app_name}", 'rake db:migrate')
+  end
+  
+  def set_db_config_vars(to, db_url)
+    db_split = db_url.split(':')[1..3]
+    db_user = db_split[0].split('//')[1]
+    db_pass = db_split[1].split('@')[0]
+    db_host = db_split[1].split('@')[1]
+    db_port = db_split[2].split('/')[0].to_i
+    db_name = db_split[2].split('/')[1]
+    db_hash = {'DB_USER' => db_user, 'DB_PASS' => db_pass, 'DB_HOST' => db_host, 'DB_PORT' => db_port, 'DB_NAME' => db_name}
+    @heroku.config_var.update(to, db_hash)
   end
   
   def get_librato_env_variables_for(app_name)

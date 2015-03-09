@@ -4,13 +4,14 @@ class ForkNewApp
   def perform(heroku_app_id, number_of_apps_running)
     heroku_app = HerokuApp.find(heroku_app_id)
     heroku_app.update(name: "revivecrawler#{number_of_apps_running+1}")
-    Heroku.fork(Heroku::APP_NAME, "revivecrawler#{number_of_apps_running+1}", heroku_app_id)
+    HerokuPlatform.fork(HerokuPlatform::APP_NAME, "revivecrawler#{number_of_apps_running+1}", heroku_app_id)
   end
   
   def on_complete(status, options)
     batch = HerokuApp.where(batch_id: "#{options['bid']}").first
     puts "heroku app is created with the following id #{options['bid']}"
     if !batch.nil?
+      HerokuPlatform.migrate_db(batch.name)
       crawl = batch.crawl
       crawl.update(status: 'running')
       batch.update(status: "running")
