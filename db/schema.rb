@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150305100827) do
+ActiveRecord::Schema.define(version: 20150309011200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,12 @@ ActiveRecord::Schema.define(version: 20150305100827) do
     t.string   "librato_user"
     t.string   "librato_token"
     t.hstore   "formation"
+    t.string   "db_url"
+    t.string   "db_user"
+    t.string   "db_pass"
+    t.string   "db_host"
+    t.integer  "db_port"
+    t.string   "db_name"
   end
 
   create_table "links", force: :cascade do |t|

@@ -4,23 +4,15 @@ octopus:
     - production
   development:
     shard_one:
-      host: ec2-50-16-237-108.compute-1.amazonaws.com
       adapter: postgresql
-      database: dr3g4lrg8li60
-      port: 5522
-      username: uf4jpe58t6hm04
-      password: p627u4h8p7ujrfcuhkb2co8ettc
-      pool: 100
-    shard_two:
-      host: ec2-50-16-237-108.compute-1.amazonaws.com
-      adapter: postgresql
-      database: d4dtplhdij45sp
-      port: 5532
-      username: u2ic8od4sg41e6
-      password: p4ugtblkacra6ua7upjcenlicor
+      database: crawler_development
       pool: 100
   production:
     shard_one:
-      host: localhost
-      adapter: mysql
-      database: app_production
+      host: ec2-107-20-254-2.compute-1.amazonaws.com
+      adapter: postgresql
+      database: d1jtd30fmmju80
+      port: 5562
+      username: u78dtp9gsq4msu
+      password: per2pkece93kvd7ir8889t7p8gr
+      pool: 100
