@@ -113,6 +113,7 @@ class HerokuPlatform
       librato_env_vars = heroku.get_librato_env_variables_for(to)
       db_url = librato_env_vars[:db_url]
       heroku.set_db_config_vars(to, db_url)
+      HerokuPlatform.migrate_db(to)
       heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
@@ -126,13 +127,12 @@ class HerokuPlatform
     @heroku.rate_limit.info
   end
   
-  def self.migrate_db(app_name, options={})
+  def self.migrate_db(app_name)
     puts 'migrating db'
     heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
     heroku.post_ps("#{app_name}", 'rake db:migrate')
     heroku.post_ps("#{app_name}", 'restart')
-    Crawl.delay.start_crawl(options)
   end
   
   def set_db_config_vars(to, db_url)
