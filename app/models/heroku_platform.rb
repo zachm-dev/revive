@@ -105,6 +105,7 @@ class HerokuPlatform
       heroku.copy_slug(from, to)
       heroku.copy_config(from, to)
       heroku.upgrade_postgres(to)
+      HerokuPlatform.migrate_db(to)
       heroku.add_redis(to)
       heroku.add_librato(to)
       heroku.copy_rack_and_rails_env_again(from, to)
