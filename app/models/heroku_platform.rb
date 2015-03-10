@@ -108,11 +108,15 @@ class HerokuPlatform
       heroku.add_librato(to)
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
+      heroku.add_pgbackups(to)
+      heroku.upgrade_postgres(to)
       librato_env_vars = heroku.get_librato_env_variables_for(to)
+      db_url = librato_env_vars[:db_url]
+      heroku.set_db_config_vars(to, db_url)
       heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
-      app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
+      app.update(db_url: db_url, librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
       # restart_app(to)
       puts 'done creating new app'
     end
