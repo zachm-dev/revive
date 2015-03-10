@@ -11,7 +11,6 @@ class ForkNewApp
     batch = HerokuApp.where(batch_id: "#{options['bid']}").first
     puts "heroku app is created with the following id #{options['bid']}"
     if !batch.nil?
-      HerokuPlatform.migrate_db(batch.name)
       crawl = batch.crawl
       crawl.update(status: 'running')
       batch.update(status: "running")
