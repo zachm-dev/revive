@@ -104,11 +104,11 @@ class HerokuPlatform
       heroku.create_app(to)
       heroku.copy_slug(from, to)
       heroku.copy_config(from, to)
+      heroku.upgrade_postgres(to)
       heroku.add_redis(to)
       heroku.add_librato(to)
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
-      heroku.upgrade_postgres(to)
       librato_env_vars = heroku.get_librato_env_variables_for(to)
       db_url = librato_env_vars[:db_url]
       heroku.set_db_config_vars(to, db_url)
@@ -129,8 +129,8 @@ class HerokuPlatform
     puts 'migrating db'
     heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
-    heroku.post_ps("#{app_name}", 'rake db:migrate')
-    heroku.post_ps("#{app_name}", 'restart')
+    heroku.post_ps("#{app_name}", "rake db:migrate --app #{app_name}")
+    heroku.post_ps("#{app_name}", "restart --app #{app_name}")
   end
   
   def set_db_config_vars(to, db_url)
@@ -210,7 +210,7 @@ class HerokuPlatform
   def copy_config(from, to)
     puts 'copying config'
     from_congig_vars = config_vars(from)
-    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_TEAL_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
+    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_TEAL_URL', 'DATABASE_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
     @heroku.config_var.update(to, from_congig_vars)
   end
   
