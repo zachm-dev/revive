@@ -16,6 +16,7 @@ octopus:
       host: ec2-184-73-202-38.compute-1.amazonaws.com
       port: 5532
       pool: 25
+	<% if ENV["DB_NAME"].present? %>
     production_shard:
       <%= "adapter: postgresql" %>
       <%= "database: #{ENV["DB_NAME"]}" %>
@@ -24,3 +25,4 @@ octopus:
       <%= "host: #{ENV["DB_HOST"]}" %>
       <%= "port: #{ENV["DB_PORT"]}" %>
       pool: 25
+    <% end %>
