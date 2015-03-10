@@ -27,21 +27,11 @@ class Crawl < ActiveRecord::Base
   
   def self.start_crawl(options = {})
     crawl = Crawl.find(options["crawl_id"])
-    
-    begin
-      if Page.last
-        puts 'db has been migrated'
-        if crawl.crawl_type == 'url_crawl'
-          Crawl.save_new_sites(crawl.id)
-        elsif crawl.crawl_type == 'keyword_crawl'
-          SaveSitesFromGoogle.start_batch(crawl.id)
-        end
-      end
-    rescue
-      puts 'rescue db migrate'
-      HerokuPlatform.migrate_db("#{crawl.heroku_app.name}", options)
+    if crawl.crawl_type == 'url_crawl'
+      Crawl.save_new_sites(crawl.id)
+    elsif crawl.crawl_type == 'keyword_crawl'
+      SaveSitesFromGoogle.start_batch(crawl.id)
     end
-
   end
   
   def self.decision_maker(user_id)
