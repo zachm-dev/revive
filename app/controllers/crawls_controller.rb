@@ -36,11 +36,15 @@ class CrawlsController < ApplicationController
   
   def api_create
     @json = JSON.parse(request.body.read)
-    puts "here is the json hash #{@json["options"]}"
-    # GatherLinks.delay.start(@json["options"])
-    Crawl.delay.start_crawl(@json["options"])
-    # SidekiqStats.delay.start(@json["options"])
-    render :layout => false
+    crawl = Crawl.find(@json["options"]["crawl_id"])
+    puts 'migrating database at the api'
+    HerokuPlatform.migrate_db(crawl.heroku_app.name)
+
+    # puts "here is the json hash #{@json["options"]}"
+    # # GatherLinks.delay.start(@json["options"])
+    # Crawl.delay.start_crawl(@json["options"])
+    # # SidekiqStats.delay.start(@json["options"])
+    # render :layout => false
   end
   
   def fetch_new_crawl
