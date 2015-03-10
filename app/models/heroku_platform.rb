@@ -108,7 +108,6 @@ class HerokuPlatform
       heroku.add_librato(to)
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
-      heroku.add_pgbackups(to)
       heroku.upgrade_postgres(to)
       librato_env_vars = heroku.get_librato_env_variables_for(to)
       db_url = librato_env_vars[:db_url]
@@ -211,7 +210,7 @@ class HerokuPlatform
   def copy_config(from, to)
     puts 'copying config'
     from_congig_vars = config_vars(from)
-    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_TEAL_URL', 'PGBACKUPS_URL', 'DATABASE_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
+    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_TEAL_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
     @heroku.config_var.update(to, from_congig_vars)
   end
   
