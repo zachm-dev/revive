@@ -17,14 +17,14 @@ class Link < ActiveRecord::Base
     #link = Link.find(link_id)
     #links = link.links
     
-    site = Site.find(site_id)
+    site = Site.using(:main_shard).find(site_id)
     crawl = site.crawl
     domain = Domainatrix.parse(site.base_url).domain
     
     if site.process_links_batch.nil?
       process_links_batch = Sidekiq::Batch.new
       site.update(processing_status: 'running')
-      ProcessLinksBatch.create(site_id: site.id, started_at: Time.now, status: "running", batch_id: process_links_batch.bid)
+      ProcessLinksBatch.using(:master).create(site_id: site.id, started_at: Time.now, status: "running", batch_id: process_links_batch.bid)
       process_links_batch.on(:complete, ProcessLinks, 'bid' => process_links_batch.bid)
       update(started: true)
     else
