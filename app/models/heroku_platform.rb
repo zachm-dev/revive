@@ -128,7 +128,7 @@ class HerokuPlatform
     heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
     heroku.post_ps("#{app_name}", "rake db:migrate")
-    heroku.post_ps("#{app_name}", "restart")
+    # heroku.post_ps("#{app_name}", "restart")
   end
   
   def set_db_config_vars(to, db_url)
