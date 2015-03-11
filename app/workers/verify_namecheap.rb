@@ -6,15 +6,17 @@ class VerifyNamecheap
   sidekiq_options :queue => :verify_domains
   
   def perform(page_id)
-    page = Page.where(id: page_id).first
+    puts 'performing verify namecheap'
+    page = Page.using(:master).where(id: page_id).first
     
     begin
       if page
+        puts 'found page to verify namecheap'
         url = Domainatrix.parse("#{page.url}")
         if !url.domain.empty? && !url.public_suffix.empty?
           puts "here is the parsed url #{page.url}"
           parsed_url = url.domain + "." + url.public_suffix
-          unless page.site.pages.where("simple_url IS NOT NULL").map(&:simple_url).include?(parsed_url)
+          unless Page.where("simple_url IS NOT NULL AND site_id = ?", page.site_id).map(&:simple_url).include?(parsed_url)
             puts "checking url #{parsed_url} on namecheap"
             uri = URI.parse("https://nametoolkit-name-toolkit.p.mashape.com/beta/whois/#{parsed_url}")
             http = Net::HTTP.new(uri.host, uri.port)
