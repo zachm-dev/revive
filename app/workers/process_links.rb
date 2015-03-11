@@ -63,7 +63,7 @@ class ProcessLinks
         Api.fetch_new_crawl(user_id: user_id)
         UserDashboard.add_finished_crawl(user.user_dashboard.id)
         if crawl.heroku_app.name.include?('revivecrawler')
-          heroku = Heroku.new
+          heroku = HerokuPlatform.new
           heroku.delete_app(crawl.heroku_app.name)
         end
       end
