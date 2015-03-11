@@ -54,7 +54,6 @@ class CrawlsController < ApplicationController
     heroku = HerokuPlatform.new
     puts "setting the database variables"
     heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
-    Api.call_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
     puts "migrating the database"
     HerokuPlatform.migrate_db(crawl.heroku_app.name)
     render :layout => false
