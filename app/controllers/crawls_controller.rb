@@ -36,12 +36,10 @@ class CrawlsController < ApplicationController
   
   def api_create
     @json = JSON.parse(request.body.read)
-
     puts "here is the json hash #{@json["options"]}"
     # GatherLinks.delay.start(@json["options"])
     Crawl.delay.start_crawl(@json["options"])
     # SidekiqStats.delay.start(@json["options"])
-
     render :layout => false
   end
   
@@ -59,6 +57,7 @@ class CrawlsController < ApplicationController
     Api.call_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
     puts "migrating the database"
     HerokuPlatform.migrate_db(crawl.heroku_app.name)
+    render :layout => false
   end
   
   def fetch_new_crawl
@@ -68,14 +67,16 @@ class CrawlsController < ApplicationController
   end
   
   def call_crawl
-    puts "calling crawl to start"
+    puts "calling crawl to start in one minute"
     @json = JSON.parse(request.body.read)
-    Api.delay.start_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
+    Api.delay_for(1.minute).start_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
+    render :layout => false
   end
   
   def stop_crawl
     Crawl.delay.stop_crawl(params[:id])
     redirect_to crawl_path_path(params[:id])
+    render :layout => false
   end
   
 end
