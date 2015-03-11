@@ -13,7 +13,7 @@ class GatherLinks
     
     Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
       links = page.links
-      Link.using(:main_shard).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
+      Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
     end
   end
   
@@ -51,8 +51,8 @@ class GatherLinks
     
     if site
       gather_links_batch = Sidekiq::Batch.new
-      site.using(:main_shard).update(gather_status: 'running')
-      site.using(:main_shard).gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
+      site.update(gather_status: 'running')
+      site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
       gather_links_batch.on(:complete, self, 'bid' => gather_links_batch.bid)
       gather_links_batch.jobs do
         GatherLinks.perform_async(site.id)
