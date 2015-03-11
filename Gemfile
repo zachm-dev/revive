@@ -38,6 +38,7 @@ gem 'unirest'
 gem 'premailer-rails'
 gem 'acts_as_list'
 gem 'bootstrap-datepicker-rails'
+gem 'ar-octopus'
 
 # Development Things
 group :development do

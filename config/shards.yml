@@ -1,0 +1,28 @@
+octopus:
+  environments:
+    - development
+    - production
+  development:
+    development_shard:
+      adapter: postgresql
+      database: crawler_development
+      pool: 25
+  production:
+    <% if ENV["DB_NAME"].present? %>
+    master:
+      <%= "adapter: postgresql" %>
+      <%= "database: #{ENV["DB_NAME"]}" %>
+      <%= "username: #{ENV["DB_USER"]}" %>
+      <%= "password: #{ENV["DB_PASS"]}" %>
+      <%= "host: #{ENV["DB_HOST"]}" %>
+      <%= "port: #{ENV["DB_PORT"]}" %>
+      pool: 25
+    <% end %>
+    main_shard:
+      adapter: postgresql
+      database: daji1hvabgdc0c
+      username: ue9r4mdvjgsktq
+      password: p9rem1q40biu605siarnkvp2i83
+      host: ec2-184-73-202-38.compute-1.amazonaws.com
+      port: 5532
+      pool: 25
