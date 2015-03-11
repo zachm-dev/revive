@@ -1,6 +1,6 @@
 class CrawlsController < ApplicationController
-  before_action :authorize, :except => [:api_create, :fetch_new_crawl, :migrate_db, :call_crawl]
-  skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl, :migrate_db, :call_crawl]
+  before_action :authorize, :except => [:api_create, :fetch_new_crawl]
+  skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl]
   
   def index
     @crawls = current_user.crawls.order('created_at').page(params[:page]).per_page(4)
@@ -56,7 +56,6 @@ class CrawlsController < ApplicationController
     heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
     puts "migrating the database"
     HerokuPlatform.migrate_db(crawl.heroku_app.name)
-    render :layout => false
   end
   
   def fetch_new_crawl
@@ -66,16 +65,13 @@ class CrawlsController < ApplicationController
   end
   
   def call_crawl
-    puts "calling crawl to start in one minute"
     @json = JSON.parse(request.body.read)
-    Api.delay_for(1.minute).start_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
-    render :layout => false
+    Api.delay.start_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
   end
   
   def stop_crawl
     Crawl.delay.stop_crawl(params[:id])
     redirect_to crawl_path_path(params[:id])
-    render :layout => false
   end
   
 end
