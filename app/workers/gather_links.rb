@@ -5,7 +5,7 @@ class GatherLinks
   #sidekiq_options :queue => :gather_links
   
   def perform(site_id)
-    site = Site.find(site_id)
+    site = Site.using(:main_shard).find(site_id)
     
     opts = {
       'maxpages' => site.maxpages
@@ -13,7 +13,7 @@ class GatherLinks
     
     Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
       links = page.links
-      Link.create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
+      Link.using(:main_shard).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
     end
   end
   
@@ -41,18 +41,18 @@ class GatherLinks
     
     if options["crawl_id"]
       running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
-      gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
+      gather_links_batch = running_crawl.using(:main_shard).gather_links_batches.where(status: 'pending').first
       if gather_links_batch
-        site = gather_links_batch.site
+        site = gather_links_batch.using(:main_shard).site
       end
     else
-      site = Site.where(id: options["site_id"]).first
+      site = Site.using(:main_shard).where(id: options["site_id"]).first
     end
     
     if site
       gather_links_batch = Sidekiq::Batch.new
-      site.update(gather_status: 'running')
-      site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
+      site.using(:main_shard).update(gather_status: 'running')
+      site.using(:main_shard).gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
       gather_links_batch.on(:complete, self, 'bid' => gather_links_batch.bid)
       gather_links_batch.jobs do
         GatherLinks.perform_async(site.id)
