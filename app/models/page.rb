@@ -4,7 +4,7 @@ class Page < ActiveRecord::Base
   
   def verify_namecheap
     if status_code == '0' && internal == false
-      site = Site.find(site_id)
+      site = Site.using(:main_shard).find(site_id)
       site_total_expired = site.total_expired.to_i + 1
       crawl_total_expired = site.crawl.total_expired.to_i + 1
       site.crawl.update(total_expired: crawl_total_expired)
@@ -23,7 +23,7 @@ class Page < ActiveRecord::Base
       end
       
     elsif status_code == '404'
-      site = Site.find(site_id)
+      site = Site.using(:main_shard).find(site_id)
       site_total_broken = site.total_broken.to_i + 1
       crawl_total_broken = site.crawl.total_broken.to_i + 1
       site.crawl.update(total_broken: crawl_total_broken)

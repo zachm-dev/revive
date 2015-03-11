@@ -34,17 +34,18 @@ class ProcessLinks
   end
   
   def on_complete(status, options)
-    batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
+    batch = ProcessLinksBatch.using(:master).where(batch_id: "#{options['bid']}").first
     if !batch.nil?
-      site = batch.site
+      site = Site.using(:main_shard).find(batch.site_id)
       crawl = site.crawl
       user = crawl.user
       user_id = user.id
       total_time = Time.now - batch.started_at
-      total_pages_crawled = site.pages.count
-      total_site_urls = site.links.map(&:links).flatten.count
-      total_expired = site.total_expired.to_i + site.pages.where(internal: false, status_code: '0').count
-      total_broken = site.total_broken.to_i + site.pages.where(status_code: '404').count
+      pages = Page.where(site_id: site.id).using(:master)
+      total_pages_crawled = pages.count
+      total_site_urls = Link.where(site_id: site.id).using(:master).all.map(&:links).flatten.count
+      total_expired = site.total_expired.to_i + pages.where(internal: false, status_code: '0').count
+      total_broken = site.total_broken.to_i + pages.where(status_code: '404').count
       crawl_total_pages_crawled = total_pages_crawled + crawl.total_pages_crawled.to_i
       crawl_total_urls_found = total_site_urls + crawl.total_urls_found.to_i
       site.update(total_pages_crawled: total_pages_crawled, processing_status: 'finished', total_urls_found: total_site_urls)
