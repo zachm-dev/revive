@@ -1,6 +1,6 @@
 class CrawlsController < ApplicationController
-  before_action :authorize, :except => [:api_create, :fetch_new_crawl]
-  skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl]
+  before_action :authorize, :except => [:api_create, :fetch_new_crawl, :migrate_db]
+  skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl, :migrate_db]
   
   def index
     @crawls = current_user.crawls.order('created_at').page(params[:page]).per_page(4)
