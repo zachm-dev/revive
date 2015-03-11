@@ -35,28 +35,12 @@ class CrawlsController < ApplicationController
   end
   
   def api_create
-    # @json = JSON.parse(request.body.read)
-    # puts "here is the json hash #{@json["options"]}"
-    # # GatherLinks.delay.start(@json["options"])
-    # Crawl.delay.start_crawl(@json["options"])
-    # # SidekiqStats.delay.start(@json["options"])
-    # render :layout => false
-    
-    
-    
     @json = JSON.parse(request.body.read)
-    crawl = Crawl.find(@json["options"]["crawl_id"].to_i)
-
-    master_url = ENV['DATABASE_URL']
-    slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
-    slave_keys.delete_if{ |k| ENV[k] == master_url }
-    db_url = ENV[slave_keys.first]
-    heroku = HerokuPlatform.new
-    heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
-    HerokuPlatform.migrate_db(crawl.heroku_app.name)
+    puts "here is the json hash #{@json["options"]}"
+    # GatherLinks.delay.start(@json["options"])
+    Crawl.delay.start_crawl(@json["options"])
+    # SidekiqStats.delay.start(@json["options"])
     render :layout => false
-    
-    
   end
   
   def migrate_db
