@@ -16,7 +16,7 @@ octopus:
       <%= "password: #{ENV["DB_PASS"]}" %>
       <%= "host: #{ENV["DB_HOST"]}" %>
       <%= "port: #{ENV["DB_PORT"]}" %>
-      pool: 25
+      pool: 50
     <% end %>
     main_shard:
       adapter: postgresql
