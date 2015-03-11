@@ -45,6 +45,7 @@ class VerifyNamecheap
     batch = VerifyNamecheapBatch.where(batch_id: "#{options['bid']}").first
     if !batch.nil?
       app = batch.site.crawl.heroku_app
+      app = Site.using(:main_shard).find(batch.site_id).crawl.heroku_app
       app.update(verified: 'finished') if app
       puts 'finished verifying all namecheap domains'
     end
