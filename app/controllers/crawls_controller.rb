@@ -56,7 +56,7 @@ class CrawlsController < ApplicationController
     heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
     puts "migrating the database"
     HerokuPlatform.migrate_db(crawl.heroku_app.name)
-    ender :layout => false
+    render :layout => false
   end
   
   def fetch_new_crawl
@@ -68,7 +68,7 @@ class CrawlsController < ApplicationController
   def call_crawl
     @json = JSON.parse(request.body.read)
     Api.delay.start_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
-    ender :layout => false
+    render :layout => false
   end
   
   def stop_crawl
