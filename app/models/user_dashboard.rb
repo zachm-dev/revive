@@ -6,7 +6,7 @@ class UserDashboard < ActiveRecord::Base
     puts "updating user dashboard with metrics #{options}"
     user = User.using(:main_shard).find(user_id)
     dash = user.user_dashboard
-    top_domains = user.pages.where('internal = ? AND pages.pa IS NOT NULL', false).order(da: :desc).limit(10).map(&:id)
+    # top_domains = user.pages.where('internal = ? AND pages.pa IS NOT NULL', false).order(da: :desc).limit(10).map(&:id)
     top_domains = Page.where('internal = ? AND pa IS NOT NULL', false).using(:main_shard).order(da: :desc).limit(10).map(&:id)
     dash.update(domains_crawled: dash.domains_crawled.to_i + options[:domains_crawled].to_i, 
                 domains_broken: dash.domains_broken.to_i + options[:domains_broken].to_i, 
@@ -16,19 +16,19 @@ class UserDashboard < ActiveRecord::Base
   
   def self.add_pending_crawl(dashboard_id, options={})
     puts "adding a new pending crawl"
-    dash = UserDashboard.find(dashboard_id)
+    dash = UserDashboard.using(:main_shard).find(dashboard_id)
     dash.update(pending_crawlers: dash.pending_crawlers.to_i + 1)
   end
   
   def self.add_running_crawl(dashboard_id, options={})
     puts "adding a new running crawl and removing 1 pending crawl"
-    dash = UserDashboard.find(dashboard_id)
+    dash = UserDashboard.using(:main_shard).find(dashboard_id)
     dash.update(pending_crawlers: (dash.pending_crawlers.to_i - 1), running_crawlers: (dash.running_crawlers.to_i + 1))
   end
   
   def self.add_finished_crawl(dashboard_id, options={})
     puts "adding a new done crawl and removing 1 running crawl"
-    dash = UserDashboard.find(dashboard_id)
+    dash = UserDashboard.using(:main_shard).find(dashboard_id)
     dash.update(running_crawlers: (dash.running_crawlers.to_i - 1), done_crawlers: (dash.done_crawlers.to_i + 1))
   end
 
