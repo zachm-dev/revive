@@ -28,9 +28,9 @@ class Crawl < ActiveRecord::Base
   def self.start_crawl(options = {})
     crawl = Crawl.using(:main_shard).find(options["crawl_id"])
     if crawl.crawl_type == 'url_crawl'
-      Crawl.using(:main_shard).save_new_sites(crawl.id)
+      Crawl.save_new_sites(crawl.id)
     elsif crawl.crawl_type == 'keyword_crawl'
-      SaveSitesFromGoogle.using(:main_shard).start_batch(crawl.id)
+      SaveSitesFromGoogle.start_batch(crawl.id)
     end
   end
   
