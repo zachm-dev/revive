@@ -16,7 +16,7 @@ class ForkNewApp
       batch.update(status: "running")
       UserDashboard.add_running_crawl(crawl.user.user_dashboard.id)
       HerokuPlatform.migrate_db(batch.name)
-      Api.delay.start_crawl(crawl_id: batch.crawl_id, migrate_db: true)
+      Api.delay.migrate_db(crawl_id: batch.crawl_id)
       # GatherLinks.delay.start('crawl_id' => crawl.id)
     end
   end

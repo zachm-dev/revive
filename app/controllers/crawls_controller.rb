@@ -37,30 +37,28 @@ class CrawlsController < ApplicationController
   def api_create
     @json = JSON.parse(request.body.read)
 
-    if @json["options"]["migrate_db"].present?
-    
-      crawl = Crawl.find(@json["options"]["crawl_id"].to_i)
-      puts "the crawl id is #{crawl.id}"
-      master_url = ENV['DATABASE_URL']
-      slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
-      slave_keys.delete_if{ |k| ENV[k] == master_url }
-      db_url = ENV[slave_keys.first]
-      heroku = HerokuPlatform.new
-      puts "setting the database variables"
-      heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
-      puts "migrating the database"
-      Api.call_crawl(crawl_id: batch.crawl_id)
-      HerokuPlatform.migrate_db(crawl.heroku_app.name)
-    else
-      
-      puts "here is the json hash #{@json["options"]}"
-      # GatherLinks.delay.start(@json["options"])
-      Crawl.delay.start_crawl(@json["options"])
-      # SidekiqStats.delay.start(@json["options"])
-      
-    end
+    puts "here is the json hash #{@json["options"]}"
+    # GatherLinks.delay.start(@json["options"])
+    Crawl.delay.start_crawl(@json["options"])
+    # SidekiqStats.delay.start(@json["options"])
 
     render :layout => false
+  end
+  
+  def migrate_db
+    @json = JSON.parse(request.body.read)
+    crawl = Crawl.find(@json["options"]["crawl_id"].to_i)
+    puts "the crawl id is #{crawl.id}"
+    master_url = ENV['DATABASE_URL']
+    slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
+    slave_keys.delete_if{ |k| ENV[k] == master_url }
+    db_url = ENV[slave_keys.first]
+    heroku = HerokuPlatform.new
+    puts "setting the database variables"
+    heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
+    puts "migrating the database"
+    Api.call_crawl(crawl_id: batch.crawl_id)
+    HerokuPlatform.migrate_db(crawl.heroku_app.name)
   end
   
   def fetch_new_crawl
@@ -70,6 +68,7 @@ class CrawlsController < ApplicationController
   end
   
   def call_crawl
+    puts "calling crawl to start"
     @json = JSON.parse(request.body.read)
     Api.delay.start_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
   end
