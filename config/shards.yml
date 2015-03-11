@@ -3,7 +3,7 @@ octopus:
     - development
     - production
   development:
-    development_shard:
+    main_shard:
       adapter: postgresql
       database: crawler_development
       pool: 25

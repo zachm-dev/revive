@@ -48,5 +48,5 @@ production:
 development:
   adapter: postgresql
   database: crawler_development
-  pool: 100
+  pool: 25
 

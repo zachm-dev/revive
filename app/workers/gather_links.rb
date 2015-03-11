@@ -41,9 +41,9 @@ class GatherLinks
     
     if options["crawl_id"]
       running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
-      gather_links_batch = running_crawl.using(:main_shard).gather_links_batches.where(status: 'pending').first
+      gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
       if gather_links_batch
-        site = gather_links_batch.using(:main_shard).site
+        site = gather_links_batch.site
       end
     else
       site = Site.using(:main_shard).where(id: options["site_id"]).first

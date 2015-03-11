@@ -124,7 +124,8 @@ class Crawl < ActiveRecord::Base
     
     crawl.base_urls.each do |u|
       new_site = Site.using(:main_shard).create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
-      new_site.using(:main_shard).create_gather_links_batch(status: "pending")
+      new_site.create_gather_links_batch(status: "pending")
+      # GatherLinksBatch.using(:main_shard).create(status: "pending", site_id: new_site.id)
     end
     
     GatherLinks.delay.start('crawl_id' => crawl.id)
