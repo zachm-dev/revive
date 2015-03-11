@@ -25,4 +25,4 @@ octopus:
       password: p9rem1q40biu605siarnkvp2i83
       host: ec2-184-73-202-38.compute-1.amazonaws.com
       port: 5532
-      pool: 3
+      pool: 1
