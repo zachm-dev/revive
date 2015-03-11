@@ -4,7 +4,7 @@ class ProcessLinks
   
   include Sidekiq::Worker
   sidekiq_options :queue => :process_links
-  sidekiq_options :retry => false
+  # sidekiq_options :retry => false
   
   def perform(l, site_id, found_on, domain)
     
@@ -21,12 +21,12 @@ class ProcessLinks
       if internal == true
         if "#{response.code}" == '404'
 
-          Page.using(:main_shard).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+          Page.using(:main_shard).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
 
         end
       elsif internal == false
 
-        Page.using(:master).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+        Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
 
       end
     end
