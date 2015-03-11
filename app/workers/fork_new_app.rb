@@ -11,12 +11,14 @@ class ForkNewApp
     batch = HerokuApp.where(batch_id: "#{options['bid']}").first
     puts "heroku app is created with the following id #{options['bid']}"
     if !batch.nil?
+      HerokuPlatform.migrate_db(batch.name)
+      
       crawl = batch.crawl
       crawl.update(status: 'running')
       batch.update(status: "running")
       UserDashboard.add_running_crawl(crawl.user.user_dashboard.id)
-
-      Api.delay.migrate_db(crawl_id: batch.crawl_id)
+      HerokuPlatform.migrate_db(batch.name)
+      Api.delay.start_crawl(crawl_id: batch.crawl_id)
       # GatherLinks.delay.start('crawl_id' => crawl.id)
     end
   end
