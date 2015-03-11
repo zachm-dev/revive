@@ -26,7 +26,7 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.start_crawl(options = {})
-    crawl = Crawl.find(options["crawl_id"])
+    crawl = Crawl.using(:main_shard).find(options["crawl_id"])
     if crawl.crawl_type == 'url_crawl'
       Crawl.save_new_sites(crawl.id)
     elsif crawl.crawl_type == 'keyword_crawl'
@@ -114,7 +114,7 @@ class Crawl < ActiveRecord::Base
   
   def self.save_new_sites(crawl_id)
     
-    crawl = Crawl.find(crawl_id)
+    crawl = Crawl.using(:main_shard).find(crawl_id)
 
     # if base_urls.include?("\r\n")
     #   urls_array = base_urls.split(/[\r\n]+/).map(&:strip)

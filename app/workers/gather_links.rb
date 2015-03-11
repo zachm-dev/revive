@@ -40,7 +40,7 @@ class GatherLinks
   def self.start(options = {})
     
     if options["crawl_id"]
-      running_crawl = Crawl.find(options["crawl_id"])
+      running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
       gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
       if gather_links_batch
         site = gather_links_batch.site
