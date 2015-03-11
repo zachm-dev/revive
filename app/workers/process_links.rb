@@ -20,10 +20,14 @@ class ProcessLinks
       internal = l.include?("#{domain}") ? true : false
       if internal == true
         if "#{response.code}" == '404'
-          Page.using(:main_shard).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+          Octopus.using(:slave_two) do
+            Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+          end
         end
       elsif internal == false
-        Page.using(:main_shard).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+        Octopus.using(:main_shard) do
+          Page.delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+        end
       end
     end
     begin
