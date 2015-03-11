@@ -36,10 +36,24 @@ class CrawlsController < ApplicationController
   
   def api_create
     @json = JSON.parse(request.body.read)
-    puts "here is the json hash #{@json["options"]}"
-    # GatherLinks.delay.start(@json["options"])
-    Crawl.delay.start_crawl(@json["options"])
-    # SidekiqStats.delay.start(@json["options"])
+    # puts "here is the json hash #{@json["options"]}"
+    # # GatherLinks.delay.start(@json["options"])
+    # Crawl.delay.start_crawl(@json["options"])
+    # # SidekiqStats.delay.start(@json["options"])
+    crawl = Crawl.find(@json["options"]["crawl_id"].to_i)
+    puts "the crawl id is #{crawl.id}"
+    master_url = ENV['DATABASE_URL']
+    slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
+    slave_keys.delete_if{ |k| ENV[k] == master_url }
+    db_url = ENV[slave_keys.first]
+    heroku = HerokuPlatform.new
+    puts "setting the database variables"
+    heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
+    puts "migrating the database"
+    HerokuPlatform.migrate_db(crawl.heroku_app.name)
+    puts "sleeping for 1 minute waiting for the database to migrate"
+    sleep 60
+    puts 'crawl should start now the database has been migrated'
     render :layout => false
   end
   

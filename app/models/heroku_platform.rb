@@ -110,12 +110,10 @@ class HerokuPlatform
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
       librato_env_vars = heroku.get_librato_env_variables_for(to)
-      db_url = librato_env_vars[:db_url]
-      heroku.set_db_config_vars(to, db_url)
       heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "processlinks"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
-      app.update(db_url: db_url, librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
+      app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
       # restart_app(to)
       puts 'done creating new app'
     end
@@ -140,7 +138,7 @@ class HerokuPlatform
     db_host = db_split[1].split('@')[1]
     db_port = db_split[2].split('/')[0].to_i
     db_name = db_split[2].split('/')[1]
-    db_hash = {'DB_USER' => db_user, 'DB_PASS' => db_pass, 'DB_HOST' => db_host, 'DB_PORT' => db_port, 'DB_NAME' => db_name}
+    db_hash = {'DATABASE_URL' => db_url, 'DB_USER' => db_user, 'DB_PASS' => db_pass, 'DB_HOST' => db_host, 'DB_PORT' => db_port, 'DB_NAME' => db_name}
     @heroku.config_var.update(to, db_hash)
   end
   
@@ -149,8 +147,7 @@ class HerokuPlatform
     vars = config_vars(app_name)
     librato_user = vars['LIBRATO_USER']
     librato_token = vars['LIBRATO_TOKEN']
-    db_url = vars['DATABASE_URL']
-    librato_hash = {librato_user: librato_user, librato_token: librato_token, db_url: db_url}
+    librato_hash = {librato_user: librato_user, librato_token: librato_token}
   end
   
   def release(app_name)
