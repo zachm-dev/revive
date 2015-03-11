@@ -3,6 +3,7 @@ class Page < ActiveRecord::Base
   after_create :verify_namecheap
   
   def verify_namecheap
+    puts 'verifying namecheap'
     if status_code == '0' && internal == false
       site = Site.using(:main_shard).find(site_id)
       site_total_expired = site.total_expired.to_i + 1
