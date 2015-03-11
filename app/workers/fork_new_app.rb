@@ -17,9 +17,9 @@ class ForkNewApp
       crawl.update(status: 'running')
       batch.update(status: "running")
       UserDashboard.add_running_crawl(crawl.user.user_dashboard.id)
-      # Api.delay_for(1.minute).migrate_db(crawl_id: batch.crawl_id)
-      # Api.delay_for(2.minute).start_crawl(crawl_id: batch.crawl_id)
-      Api.delay.start_crawl(crawl_id: batch.crawl_id)
+      Api.delay_for(1.minute).migrate_db(crawl_id: batch.crawl_id)
+      Api.delay_for(2.minute).start_crawl(crawl_id: batch.crawl_id)
+      # Api.delay.start_crawl(crawl_id: batch.crawl_id)
     end
   end
   

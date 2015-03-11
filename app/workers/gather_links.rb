@@ -13,7 +13,7 @@ class GatherLinks
     
     Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
       links = page.links
-      Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
+      Link.using(:main_shard).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
     end
   end
   
