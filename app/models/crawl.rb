@@ -37,7 +37,7 @@ class Crawl < ActiveRecord::Base
   def self.decision_maker(user_id)
     puts 'making a decision'
     
-    user = User.find(user_id)
+    user = User.using(:main_shard).find(user_id)
     plan = user.subscription.plan
     
     number_of_pending_crawls = user.crawls.where(status: "pending").count
@@ -58,7 +58,7 @@ class Crawl < ActiveRecord::Base
   
   def self.save_new_crawl(user_id, base_urls, options = {})
     
-    user = User.find(user_id)
+    user = User.using(:main_shard).find(user_id)
     beta = true
     name = options[:name]
     moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
@@ -81,7 +81,7 @@ class Crawl < ActiveRecord::Base
       urls_array = base_urls.split(",")
     end
     
-    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending')
+    new_crawl = Crawl.using(:main_shard).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending')
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     # save_new_sites = Crawl.save_new_sites(base_urls, new_crawl.id)
@@ -89,7 +89,7 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.save_new_keyword_crawl(user_id, keyword, options = {})
-    user = User.find(user_id)
+    user = User.using(:main_shard).find(user_id)
     beta = true
     name = options[:name]
     moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
