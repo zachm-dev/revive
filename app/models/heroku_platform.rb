@@ -110,9 +110,9 @@ class HerokuPlatform
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
       librato_env_vars = heroku.get_librato_env_variables_for(to)
-      heroku.scale_dynos(app_name: to, quantity: 2, size: '2X', dynos: ["worker", "processlinks"])
+      heroku.scale_dynos(app_name: to, quantity: 3, size: '2X', dynos: ["worker", "processlinks"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
-      heroku.scale_dynos(app_name: to, quantity: 1, size: '2X', dynos: ["verifydomains"])
+      heroku.scale_dynos(app_name: to, quantity: 2, size: '2X', dynos: ["verifydomains"])
       app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
       # restart_app(to)
       puts 'done creating new app'
