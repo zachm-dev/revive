@@ -33,7 +33,11 @@ class Link < ActiveRecord::Base
     end
     
     process_links_batch.jobs do
-      links.each { |l| ProcessLinks.perform_async(l, site.id, found_on, domain) }
+      links.each do |l|
+        ActiveRecord::Base.connection_pool.with_connection do
+          ProcessLinks.perform_async(l, site.id, found_on, domain)
+        end
+      end
     end
     
   end
