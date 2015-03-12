@@ -7,6 +7,7 @@ octopus:
       adapter: postgresql
       database: crawler_development
       pool: 25
+      checkout_timeout: 10
       reaping_frequency: 3
   production:
     <% if ENV["DB_NAME"].present? %>
@@ -18,6 +19,7 @@ octopus:
       <%= "host: #{ENV["DB_HOST"]}" %>
       <%= "port: #{ENV["DB_PORT"]}" %>
       pool: 100
+      checkout_timeout: 10
       reaping_frequency: 3
     <% end %>
     main_shard:
@@ -27,5 +29,6 @@ octopus:
       password: p9rem1q40biu605siarnkvp2i83
       host: ec2-184-73-202-38.compute-1.amazonaws.com
       port: 5532
-      pool: 3
+      pool: 1
+      checkout_timeout: 10
       reaping_frequency: 3
