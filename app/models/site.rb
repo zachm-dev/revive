@@ -10,17 +10,17 @@ class Site < ActiveRecord::Base
   has_one :verify_majestic_batch
   
   def self.save_url_domains(options = {})
-    crawl = Crawl.find(options[:crawl_id].to_i)
+    crawl = Crawl.using(:main_shard).find(options[:crawl_id].to_i)
     sites = crawl.sites
     sites.each do |s|
       url = Domainatrix.parse(s.base_url)
       parsed_url = 'www.' + url.domain + "." + url.public_suffix
-      Site.update(s.id, domain: parsed_url)
+      Site.using(:main_shard).update(s.id, domain: parsed_url)
     end
   end
   
   def self.save_moz_data(options = {})
-    crawl = Crawl.find(options[:crawl_id].to_i)
+    crawl = Crawl.using(:main_shard).find(options[:crawl_id].to_i)
     sites = crawl.sites.select('id, domain').each_slice(90)
 
     sites.each do |site_array|
@@ -32,9 +32,9 @@ class Site < ActiveRecord::Base
       response.data.each do |r|
         url = Domainatrix.parse("#{r[:uu]}")
         parsed_url = 'www.' + url.domain + "." + url.public_suffix
-        site = crawl.sites.where(domain: parsed_url).first
+        site = crawl.sites.where(domain: parsed_url).using(:main_shard).first
         if !site.nil?
-          Site.update(site.id, da: r[:pda].to_f, pa: r[:upa].to_f)
+          Site.using(:main_shard).update(site.id, da: r[:pda].to_f, pa: r[:upa].to_f)
         end
       end
           
@@ -42,22 +42,22 @@ class Site < ActiveRecord::Base
   end
   
   def self.save_majestic_data(options = {})
-    crawl = Crawl.find(options[:crawl_id].to_i)
+    crawl = Crawl.using(:main_shard).find(options[:crawl_id].to_i)
     sites = crawl.sites.map(&:domain).each_slice(90).to_a
     sites.map do |s|
       m = MajesticSeo::Api::Client.new
       res = m.get_index_item_info(s)
       res.items.map do |r|
-        site = Site.where("domain = ?", r.response['Item']).first
+        site = Site.where("domain = ?", r.response['Item']).using(:main_shard).first
         if !site.nil?
-          Site.update(site.id, cf: r.response['CitationFlow'].to_f, tf: r.response['TrustFlow'].to_f)
+          Site.using(:main_shard).update(site.id, cf: r.response['CitationFlow'].to_f, tf: r.response['TrustFlow'].to_f)
         end
       end
     end
   end
   
   def self.in_the_top_x_percent(percent, crawl_id)
-    crawl = Crawl.find(crawl_id)
+    crawl = Crawl.using(:main_shard).find(crawl_id)
     sites = crawl.sites.where('da IS NOT NULL')
     total_sites_count = sites.count
     
