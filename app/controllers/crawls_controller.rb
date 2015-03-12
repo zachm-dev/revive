@@ -9,7 +9,8 @@ class CrawlsController < ApplicationController
   def show
     @project = current_user.crawls.find(params[:id])
     @stats_chart = Crawl.crawl_stats(params[:id])
-    @sites = Site.find(@project.process_links_batches.map(&:site_id))
+    # @sites = Site.find(@project.process_links_batches.map(&:site_id))
+    @sites = @project.sites
     @top_domains = @project.pages.where(available: 'true').limit(5)
   end
 
