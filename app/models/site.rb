@@ -32,9 +32,9 @@ class Site < ActiveRecord::Base
       response.data.each do |r|
         url = Domainatrix.parse("#{r[:uu]}")
         parsed_url = 'www.' + url.domain + "." + url.public_suffix
-        site = crawl.sites.where(domain: parsed_url).using(:main_shard).first
+        site = crawl.sites.where(domain: parsed_url).first
         if !site.nil?
-          Site.using(:main_shard).update(site.id, da: r[:pda].to_f, pa: r[:upa].to_f)
+          site.update(da: r[:pda].to_f, pa: r[:upa].to_f)
         end
       end
           
