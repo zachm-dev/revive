@@ -17,7 +17,7 @@ octopus:
       <%= "password: #{ENV["DB_PASS"]}" %>
       <%= "host: #{ENV["DB_HOST"]}" %>
       <%= "port: #{ENV["DB_PORT"]}" %>
-      pool: 10
+      pool: 100
 	  reaping_frequency: 3
     <% end %>
     main_shard:
