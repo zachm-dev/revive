@@ -26,7 +26,7 @@ class Site < ActiveRecord::Base
     sites.each do |site_array|
       ids = site_array.map(&:id)
       domains = site_array.map(&:domain)
-      client = Linkscape::Client.new(:accessID => ENV['linkscape_accessid'], :secret => ENV['linkscape_secret'])
+      client = Linkscape::Client.new(:accessID => "member-8967f7dff3", :secret => "8b98d4acd435d50482ebeded953e2331")
       response = client.urlMetrics(domains, :cols => :all)
       
       response.data.each do |r|
