@@ -32,8 +32,6 @@ Rails.application.configure do
   # Generate digests for assets URLs.
   config.assets.digest = true
   
-  
-  config.threadsafe!
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Specifies the header that your server uses for sending files.
