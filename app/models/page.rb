@@ -1,6 +1,6 @@
 class Page < ActiveRecord::Base
   belongs_to :site
-  # after_create :verify_namecheap
+  after_create :verify_namecheap
   
   def verify_namecheap
     puts 'verifying namecheap'
