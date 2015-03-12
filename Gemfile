@@ -69,9 +69,9 @@ gem 'librato-metrics'
 ##############
 
 gem 'figaro' # Manage Secrets
-# gem 'passenger', '4.0.57'
 gem 'foreman'
-gem 'puma'
+gem 'passenger'
+# gem 'passenger', '4.0.57'
 # gem 'thin' # Use Thin Server
 gem 'rails_12factor', group: :production
 
