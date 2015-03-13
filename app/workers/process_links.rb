@@ -38,7 +38,7 @@ class ProcessLinks
   end
   
   def on_complete(status, options)
-    batch = ProcessLinksBatch.using(:master).where(batch_id: "#{options['bid']}").first
+    batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
     if !batch.nil?
       site = Site.using(:main_shard).find(batch.site_id)
       crawl = site.crawl
@@ -60,7 +60,7 @@ class ProcessLinks
       crawl.update(total_urls_found: crawl_total_urls_found, total_pages_crawled: crawl_total_pages_crawled)
       batch.update(finished_at: Time.now, status: "finished")
       
-      if crawl.process_links_batches.where(status: 'running').count == 0
+      if ProcessLinksBatch.where(status: 'running', crawl_id: crawl.id).count == 0
         puts "Finished ProcessLinks for crawl #{crawl.id} and shutting down server"
         crawl.update(status: 'finished')
         crawl.heroku_app.update(status: 'finished', finished_at: Time.now)

@@ -24,7 +24,7 @@ class Link < ActiveRecord::Base
     if site.process_links_batch.nil?
       process_links_batch = Sidekiq::Batch.new
       site.update(processing_status: 'running')
-      ProcessLinksBatch.using(:master).create(site_id: site.id, started_at: Time.now, status: "running", batch_id: process_links_batch.bid)
+      ProcessLinksBatch.using(:master).create(site_id: site.id, started_at: Time.now, status: "running", batch_id: process_links_batch.bid, crawl_id: crawl.id)
       process_links_batch.on(:complete, ProcessLinks, 'bid' => process_links_batch.bid)
       update(started: true)
     else

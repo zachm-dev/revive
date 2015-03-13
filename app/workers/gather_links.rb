@@ -39,10 +39,9 @@ class GatherLinks
   end
   
   def self.start(options = {})
-    
+    puts 'gather links start method'
     if options["crawl_id"]
       running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
-      gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
       gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
       if gather_links_batch
         site = gather_links_batch.site
@@ -57,6 +56,7 @@ class GatherLinks
       site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
       gather_links_batch.on(:complete, self, 'bid' => gather_links_batch.bid)
       gather_links_batch.jobs do
+        puts 'starting to gather links'
         GatherLinks.perform_async(site.id)
       end
     end
