@@ -42,15 +42,16 @@ class GatherLinks
     if options["crawl_id"]
       puts 'gather links start method'
       running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
-      gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
-      if gather_links_batch
-        site = gather_links_batch.site
+      pending = running_crawl.gather_links_batches.where(status: 'pending').first
+      if pending
+        site = pending.site
       end
     else
       site = Site.using(:main_shard).where(id: options["site_id"]).first
     end
     
     if site
+      puts 'there is a site and gathering the links'
       gather_links_batch = Sidekiq::Batch.new
       site.update(gather_status: 'running')
       site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
