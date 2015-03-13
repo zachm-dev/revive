@@ -38,7 +38,7 @@ class SaveSitesFromGoogle
     ids = Site.in_the_top_x_percent(20, options['crawl_id'])
     sites = Site.using(:main_shard).find(ids)
     sites.each do |site|
-      puts "here is the site id for the gather links batch of keyword crawl #{site.id}"
+      puts "the gather links batch of keyword crawl #{site.id}"
       site.update(processing_status: "pending")
       GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
     end
@@ -48,6 +48,7 @@ class SaveSitesFromGoogle
   
   def self.start_batch(crawl_id)
     google_links_batch = Sidekiq::Batch.new
+    puts "the crawl id for this google batch is #{crawl_id}"
     google_links_batch.on(:complete, self, 'bid' => google_links_batch.bid, 'crawl_id' => crawl_id)
     google_links_batch.jobs do
       
