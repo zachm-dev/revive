@@ -21,9 +21,9 @@ class GatherLinks
     puts "GatherLinks Just finished Batch #{options['bid']}"
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:main_shard).first
     if !batch.nil?
-      puts "found gather links batch after complete"
-      site = Site.using(:main_shard).find(batch.site_id)
-      puts "here is the site id #{site.id} and object #{site}"
+      puts "found gather links batch after complete for the site #{options['site_id']}"
+      site = Site.using(:main_shard).find(options['site_id'])
+      puts "here is the site id #{site.id}"
       crawl = site.crawl
       user_id = crawl.user.id
       total_urls_found = Link.where(site_id: site.id).map(&:links).flatten.count
@@ -45,7 +45,7 @@ class GatherLinks
       running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
       pending = running_crawl.gather_links_batches.where(status: 'pending').first
       if pending
-        puts "the pending crawl is #{pending} on the site #{pending.site}"
+        puts "the pending crawl is #{pending.id} on the site #{pending.site.id}"
         site = pending.site
       end
     else
@@ -57,7 +57,7 @@ class GatherLinks
       gather_links_batch = Sidekiq::Batch.new
       site.update(gather_status: 'running')
       site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
-      gather_links_batch.on(:complete, GatherLinks, 'bid' => gather_links_batch.bid)
+      gather_links_batch.on(:complete, GatherLinks, 'bid' => gather_links_batch.bid, 'crawl_id' => options["crawl_id"], 'site_id' => site.id)
       gather_links_batch.jobs do
         puts 'starting to gather links'
         GatherLinks.perform_async(site.id)
