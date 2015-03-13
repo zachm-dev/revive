@@ -41,6 +41,10 @@
 										</i>
 									<% end %>
 								</li>
+								
+								<div class="download_csv_btn pull-right">
+									<%= link_to 'Download', broken_path(@crawl.id, format: 'csv'), class: 'btn btn-success' %>
+								</div>
 			
 							</ul>
 						</div>

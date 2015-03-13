@@ -31,6 +31,12 @@ class SitesController < ApplicationController
     @crawl = Crawl.find(params[:id])
     # @broken = @crawl.pages.where(status_code: '404').limit(50).uniq
     @broken = @crawl.pages.where(status_code: '404').page(params[:page]).per_page(25)
+    
+    respond_to do |format|
+      format.html
+      format.csv { send_data @broken.to_csv }
+    end
+    
   end
 
   def available
@@ -56,6 +62,12 @@ class SitesController < ApplicationController
     else
       @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
     end
+    
+    respond_to do |format|
+      format.html
+      format.csv { send_data @pages.to_csv }
+    end
+    
   end
   
   def save_bookmarked
@@ -72,6 +84,12 @@ class SitesController < ApplicationController
     @crawl = Crawl.find(params[:id])
     sort = params[:sort].nil? ? 'id' : params[:sort]
     @pages = @crawl.pages.where(bookmarked: true).order("#{sort} DESC").page(params[:page]).per_page(25)
+    
+    respond_to do |format|
+      format.html
+      format.csv { send_data @pages.to_csv }
+    end
+    
   end
   
 end
