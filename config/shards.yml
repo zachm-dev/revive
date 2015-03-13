@@ -8,6 +8,11 @@ octopus:
       database: crawler_development
       pool: 25
       reaping_frequency: 3
+    master:
+      adapter: postgresql
+      database: crawler_development
+      pool: 25
+      reaping_frequency: 3
   production:
     <% if ENV["DB_NAME"].present? %>
     master:
