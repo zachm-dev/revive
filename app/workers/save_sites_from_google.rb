@@ -38,8 +38,9 @@ class SaveSitesFromGoogle
     ids = Site.in_the_top_x_percent(20, options['crawl_id'])
     sites = Site.using(:main_shard).find(ids)
     sites.each do |site|
+      puts "here is the site id for the gather links batch of keyword crawl #{site.id}"
       site.update(processing_status: "pending")
-      site.create_gather_links_batch(status: "pending")
+      GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
     end
     GatherLinks.delay.start('crawl_id' => crawl.id)
     # Crawl.delay.decision_maker(crawl.user.id)
