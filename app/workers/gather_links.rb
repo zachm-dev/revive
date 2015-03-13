@@ -23,6 +23,7 @@ class GatherLinks
     if !batch.nil?
       puts "found gather links batch after complete"
       site = Site.using(:main_shard).find(batch.site_id)
+      puts "here is the site id #{site.id} and object #{site}"
       crawl = site.crawl
       user_id = crawl.user.id
       total_urls_found = Link.where(site_id: site.id).map(&:links).flatten.count
