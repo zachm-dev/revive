@@ -30,7 +30,7 @@ class SaveSitesFromGoogle
   end
   
   def on_complete(status, options)
-    puts 'finished saving sites from google'
+    puts "finished saving sites from google for the crawl #{options['crawl_id']}"
     crawl = Crawl.using(:main_shard).find(options['crawl_id'])
     Site.save_url_domains(crawl_id: options['crawl_id'])
     Site.save_moz_data(crawl_id: options['crawl_id'])
@@ -42,7 +42,7 @@ class SaveSitesFromGoogle
       site.update(processing_status: "pending")
       GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
     end
-    GatherLinks.delay.start('crawl_id' => crawl.id)
+    GatherLinks.delay.start('crawl_id' => options['crawl_id'])
     # Crawl.delay.decision_maker(crawl.user.id)
   end
   
