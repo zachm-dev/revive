@@ -8,7 +8,7 @@ class ProcessLinks
   
   def perform(l, site_id, found_on, domain)
     
-    crawl = Site.using(:main_shard).find(site_id).crawl
+    # crawl = Site.using(:main_shard).find(site_id).crawl
     
     # if crawl.notify_me_after.is_a?(Integer) && crawl.notified == false
     #   if crawl.links.where(started: true).sum(:links_count).to_i >= site.crawl.notify_me_after
@@ -20,14 +20,10 @@ class ProcessLinks
       internal = l.include?("#{domain}") ? true : false
       if internal == true
         if "#{response.code}" == '404'
-          ActiveRecord::Base.connection_pool.with_connection do
-            Page.using(:main_shard).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
-          end
+          Page.using(:master).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
         end
       elsif internal == false
-        ActiveRecord::Base.connection_pool.with_connection do
-          Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
-        end
+        Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
       end
     end
     begin
