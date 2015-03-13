@@ -19,14 +19,15 @@ class GatherLinks
   
   def on_complete(status, options)
     puts "GatherLinks Just finished Batch #{options['bid']}"
-    batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").first
+    batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:main_shard).first
     if !batch.nil?
-      site = batch.site
+      puts "found gather links batch after complete"
+      site = Site.using(:main_shard).find(batch.site_id)
       crawl = site.crawl
       user_id = crawl.user.id
-      total_urls_found = site.links.map(&:links).flatten.count
+      total_urls_found = Link.where(site_id: site.id).map(&:links).flatten.count
       total_time = Time.now - batch.started_at
-      pages_per_second = site.links.count / total_time
+      pages_per_second = Link.where(site_id: site.id).count / total_time
       est_crawl_time = total_urls_found / pages_per_second
       crawl_total_urls = crawl.total_urls_found.to_i + total_urls_found
       crawl.update(total_urls_found: crawl_total_urls)
@@ -41,6 +42,7 @@ class GatherLinks
     
     if options["crawl_id"]
       running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
+      gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
       gather_links_batch = running_crawl.gather_links_batches.where(status: 'pending').first
       if gather_links_batch
         site = gather_links_batch.site
