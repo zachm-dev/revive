@@ -30,7 +30,8 @@ class SitesController < ApplicationController
     #@site = Site.find(params[:id])
     @crawl = Crawl.find(params[:id])
     # @broken = @crawl.pages.where(status_code: '404').limit(50).uniq
-    @broken = @crawl.pages.where(status_code: '404').page(params[:page]).per_page(25)
+    @broken = @crawl.pages.where(status_code: '404')
+    @pages = @broken.page(params[:page]).per_page(25)
     
     respond_to do |format|
       format.html
@@ -65,7 +66,7 @@ class SitesController < ApplicationController
     
     respond_to do |format|
       format.html
-      format.csv { send_data @pages.to_csv }
+      format.csv { send_data @available.to_csv }
     end
     
   end
@@ -83,11 +84,12 @@ class SitesController < ApplicationController
   def bookmarked
     @crawl = Crawl.find(params[:id])
     sort = params[:sort].nil? ? 'id' : params[:sort]
-    @pages = @crawl.pages.where(bookmarked: true).order("#{sort} DESC").page(params[:page]).per_page(25)
+    @bookmarked = @crawl.pages.where(bookmarked: true)
+    @pages = @bookmarked.order("#{sort} DESC").page(params[:page]).per_page(25)
     
     respond_to do |format|
       format.html
-      format.csv { send_data @pages.to_csv }
+      format.csv { send_data @bookmarked.to_csv }
     end
     
   end
