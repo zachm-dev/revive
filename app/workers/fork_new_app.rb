@@ -3,8 +3,8 @@ class ForkNewApp
   
   def perform(heroku_app_id, number_of_apps_running)
     heroku_app = HerokuApp.find(heroku_app_id)
-    heroku_app.update(name: "revivecrawler#{number_of_apps_running+1}")
-    HerokuPlatform.fork(HerokuPlatform::APP_NAME, "revivecrawler#{number_of_apps_running+1}", heroku_app_id)
+    heroku_app.update(name: "revivecrawler#{heroku_app.crawl.id}")
+    HerokuPlatform.fork(HerokuPlatform::APP_NAME, "revivecrawler#{heroku_app.crawl.id}", heroku_app_id)
   end
   
   def on_complete(status, options)
