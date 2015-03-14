@@ -59,6 +59,7 @@ class Crawl < ActiveRecord::Base
   def self.save_new_crawl(user_id, base_urls, options = {})
     
     user = User.using(:main_shard).find(user_id)
+    plan = user.subscription.plan
     beta = true
     name = options[:name]
     moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
@@ -81,7 +82,7 @@ class Crawl < ActiveRecord::Base
       urls_array = base_urls.split(",")
     end
     
-    new_crawl = Crawl.using(:main_shard).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending')
+    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending', max_pages_allowed: plan.pages_per_crawl.to_i)
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     # save_new_sites = Crawl.save_new_sites(base_urls, new_crawl.id)
@@ -90,6 +91,7 @@ class Crawl < ActiveRecord::Base
   
   def self.save_new_keyword_crawl(user_id, keyword, options = {})
     user = User.using(:main_shard).find(user_id)
+    plan = user.subscription.plan
     beta = true
     name = options[:name]
     moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
@@ -108,7 +110,7 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date)
+    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i)
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     Crawl.decision_maker(user_id)
@@ -117,12 +119,6 @@ class Crawl < ActiveRecord::Base
   def self.save_new_sites(crawl_id)
     
     crawl = Crawl.using(:main_shard).find(crawl_id)
-
-    # if base_urls.include?("\r\n")
-    #   urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
-    # else
-    #   urls_array = base_urls.split(",")
-    # end
     
     crawl.base_urls.each do |u|
       new_site = Site.using(:main_shard).create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
@@ -131,7 +127,6 @@ class Crawl < ActiveRecord::Base
     end
     
     GatherLinks.delay.start('crawl_id' => crawl.id)
-    # crawl.update(total_sites: crawl.sites.count)
   end
   
   def self.update_all_crawl_stats(user_id)

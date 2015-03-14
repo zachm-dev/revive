@@ -4,16 +4,24 @@ class GatherLinks
   sidekiq_options retry: false
   #sidekiq_options :queue => :gather_links
   
-  def perform(site_id)
-    site = Site.using(:main_shard).find(site_id)
-    
+  def perform(site_id, maxpages, base_url, max_pages_allowed)
     opts = {
-      'maxpages' => site.maxpages
+      'maxpages' => maxpages
     }
     
-    Retriever::PageIterator.new("#{site.base_url}", opts) do |page|
+    Retriever::PageIterator.new("#{base_url}", opts) do |page|
+      total_pages = Rails.cache.read(:total_pages).to_i
       links = page.links
-      Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links.count.to_i)
+      links_count = links.count.to_i
+      
+      if total_pages < max_pages_allowed
+        process = true
+      else
+        process = false
+      end
+      
+      Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process)
+      Rails.cache.write(:total_pages, total_pages+links_count)
     end
   end
   
@@ -60,7 +68,7 @@ class GatherLinks
       gather_links_batch.on(:complete, GatherLinks, 'bid' => gather_links_batch.bid, 'crawl_id' => options["crawl_id"], 'site_id' => site.id)
       gather_links_batch.jobs do
         puts 'starting to gather links'
-        GatherLinks.perform_async(site.id)
+        GatherLinks.perform_async(site.id, site.maxpages, site.base_url, running_crawl.max_pages_allowed)
       end
     end
   end
