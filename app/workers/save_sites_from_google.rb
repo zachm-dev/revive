@@ -27,20 +27,11 @@ class SaveSitesFromGoogle
       end
     end
     
-    urls_hash_array = []
-    
     urls_array.each do |u|
-      urls_hash_array << {base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending"}
+      puts "the gather links batch of keyword crawl #{u}"
+      site = Site.using(:main_shard).create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
+      GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
     end
-    
-    Site.using(:main_shard).create(urls_hash_array)
-    
-    
-    # urls_array.each do |u|
-    #   puts "the gather links batch of keyword crawl #{u}"
-    #   site = Site.using(:main_shard).create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
-    #   GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
-    # end
   end
   
   def on_complete(status, options)
