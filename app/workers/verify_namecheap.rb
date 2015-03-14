@@ -34,7 +34,7 @@ class VerifyNamecheap
               crawl = Site.using(:main_shard).find(page.site_id).crawl
               MozStats.perform_async(new_page.id)
               MajesticStats.perform_async(new_page.id)
-              crawl.update(total_expired: craw.total_expired.to_i+1)
+              crawl.update(total_expired: crawl.total_expired.to_i+1)
             end
           end
         end

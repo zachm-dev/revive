@@ -7,8 +7,6 @@ class Page < ActiveRecord::Base
     if status_code == '0' && internal == false
       site = Site.using(:main_shard).find(site_id)
       site_total_expired = site.total_expired.to_i + 1
-      # crawl_total_expired = site.crawl.total_expired.to_i + 1
-      site.crawl.update(total_expired: crawl_total_expired)
       site.update(total_expired: site_total_expired)
       
       if site.verify_namecheap_batch.nil?
