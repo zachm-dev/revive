@@ -37,21 +37,8 @@ class MajesticStats
     end
   end
 
-  # def self.start(page_id)
-  #   puts 'majestic start'
-  #   page = Page.find(page_id)
-  #   if page.site.verify_majestic_batch.nil?
-  #     verify_majestic_batch = Sidekiq::Batch.new
-  #     VerifyMajesticBatch.create(site_id: page.site.id, started_at: Time.now, status: "running", batch_id: verify_majestic_batch.bid)
-  #     verify_majestic_batch.on(:complete, MajesticStats, 'bid' => verify_majestic_batch.bid)
-  #   else
-  #     verify_majestic_batch = Sidekiq::Batch.new(page.site.verify_majestic_batch.batch_id)
-  #   end
-  #
-  #   verify_majestic_batch.jobs do
-  #     puts 'majestic job batch'
-  #     MajesticStats.perform_async(page.id)
-  #   end
-  # end
+  def self.start(page_id)
+    MajesticStats.perform_async(page_id)
+  end
   
 end

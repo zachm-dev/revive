@@ -35,8 +35,8 @@ class VerifyNamecheap
               crawl = site.crawl
               site.update(total_expired: site.total_expired.to_i+1)
               crawl.update(total_expired: crawl.total_expired.to_i+1)
-              MozStats.perform_async(new_page.id)
-              MajesticStats.perform_async(new_page.id)
+              MozStats.delay.start(new_page.id)
+              MajesticStats.delay.start(new_page.id)
             end
           end
         end

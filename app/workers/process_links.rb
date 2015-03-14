@@ -71,7 +71,6 @@ class ProcessLinks
     link = Link.find(link_id)
     links = link.links
     site = Site.find(link.site_id)
-    #hydra = Typhoeus::Hydra.new
     domain = Domainatrix.parse(site.base_url).domain
     batch = Sidekiq::Batch.new
     site.update(processing_status: 'running')
@@ -82,24 +81,6 @@ class ProcessLinks
       links.each { |l| ProcessLinks.perform_async(l, site.id, link.found_on, domain) }
     end
   end
-  
-  # def self.decision_maker(site_id)
-  #   site = Site.find(site_id)
-  #   user = site.crawl.user
-  #   pending_count = user.process_links_batches.where(status: "pending").count
-  #   running_count = user.process_links_batches.where(status: "running").count
-  #   if pending_count > 0 #&& running_count < 1
-  #     memory_stats = Heroku.memory_stats(type: 'processlinks')
-  #     if memory_stats.include?("red")
-  #       Heroku.scale_dyno(user_id: user.id, type: 'processlinks')
-  #       puts "Scale dyno formation"
-  #     else
-  #       link_to_crawl_id = user.process_links_batches.where(status: "pending").first
-  #       if !link_to_crawl_id.nil?
-  #         ProcessLinks.start(link_to_crawl_id.link_id)
-  #       end
-  #     end
-  #   end
-  # end
+
   
 end
