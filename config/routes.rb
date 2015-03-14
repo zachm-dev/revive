@@ -37,6 +37,8 @@ Rails.application.routes.draw do
   # Crawls
   resources :crawls
   get 'projects/' => "crawls#index", as: :projects
+  get 'running_crawls' => "crawls#running", as: :running_crawls
+  get 'finished_crawls' => "crawls#finished", as: :finished_crawls
   get 'projects/new' => "crawls#new", as: :new_project
   get 'projects/:id' => "crawls#show", as: :crawl_path
   get 'stop_crawl/:id' => 'crawls#stop_crawl', as: :stop_crawl

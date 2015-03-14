@@ -1,5 +1,9 @@
 <div class="main_page_container">
 	
+
+	
+	
+	
 	<div class="container-fluid header_title_container">
 		<div class="row">
 			<div class="col-xs-12">
@@ -17,9 +21,9 @@
 									<% end %>
 								</li>
 		
-								<li class="active">
+								<li>
 									<%= link_to pending_crawls_path do %>
-									    <i class="glyphicon glyphicon-exclamation-sign">
+									    <i class="glyphicon glyphicon-time">
 											<span class="glyph_text">Pending</span>
 										</i>
 									<% end %>
@@ -41,7 +45,7 @@
 									<% end %>
 								</li>
 
-								<li >
+								<li class="active">
 									<%= link_to finished_crawls_path do %>
 									    <i class="glyphicon glyphicon-flag">
 											<span class="glyph_text">Finished</span>
@@ -50,45 +54,31 @@
 								</li>
 								
 								<div class="header_button pull-right">
-									<p><%= link_to "CREATE NEW", new_project_path, class: 'btn btn-success btn-sm' %></p>
+									<p><%= link_to "CREATE NEW", new_project_path, class: 'btn btn-success btn-sm', 'data-no-turbolink': true %></p>
 								</div>
 							</ul>
 						</div>
 					</div>
 				
 					<!-- TABS -->
+
 				</div>
 			</div>
 		</div>
 	</div>
 	
-	<div class="container-fluid container_section pending-crawls-list-container">
-		<div class="row">
-			<div class='col-xs-12'>
+	
 
-        <div class="page-header">
-          <h3>Click and drag to sort the order</h3>
-        </div>
-        <ul class="pending-crawls-container" data-update-url="<%= sort_pending_crawls_url %>">
+	<div class="container-fluid container_section">
+	
+		<%= render 'project_row' %>
+	
 
-					<% @crawls.each do |c| %>
-						
-						<%= content_tag_for :li, c do %>
-							<div class='row'>
-								<div class='handle_div'>
-									<span class="handle glyphicon glyphicon-align-justify" aria-hidden="true"></span>
-								</div>
-								<div class='name'>
-									<%= c.crawl.name %>
-								</div>
-							</div>
-						<% end %>
-						
-					<% end %>
-				</ul>
-				
-			</div>
+		
+		<div class="will_paginate_container text-center">
+			<%= will_paginate @crawls, renderer: BootstrapPagination::Rails %>
 		</div>
+	
 	</div>
 
 </div>

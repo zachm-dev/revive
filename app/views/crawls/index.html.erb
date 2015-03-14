@@ -23,19 +23,36 @@
 		
 								<li>
 									<%= link_to pending_crawls_path do %>
-									    <i class="glyphicon glyphicon-exclamation-sign">
+									    <i class="glyphicon glyphicon-time">
 											<span class="glyph_text">Pending</span>
 										</i>
 									<% end %>
 								</li>
 							
-								<!-- <li >
-									<%= link_to '#' do %>
-									    <i class="glyphicon glyphicon-ok">
-											<span class="glyph_text">Available</span>
+								<li >
+									<%= link_to running_crawls_path do %>
+									    <i class="glyphicon glyphicon-refresh">
+											<span class="glyph_text">Running</span>
 										</i>
 									<% end %>
-								</li> -->
+								</li>
+								
+								<li >
+									<%= link_to '#' do %>
+									    <i class="glyphicon glyphicon-ban-circle">
+											<span class="glyph_text">Stopped</span>
+										</i>
+									<% end %>
+								</li>
+
+								<li >
+									<%= link_to finished_crawls_path do %>
+									    <i class="glyphicon glyphicon-flag">
+											<span class="glyph_text">Finished</span>
+										</i>
+									<% end %>
+								</li>
+								
 								<div class="header_button pull-right">
 									<p><%= link_to "CREATE NEW", new_project_path, class: 'btn btn-success btn-sm', 'data-no-turbolink': true %></p>
 								</div>

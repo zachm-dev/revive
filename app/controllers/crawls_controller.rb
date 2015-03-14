@@ -6,6 +6,14 @@ class CrawlsController < ApplicationController
     @crawls = current_user.crawls.order('created_at').page(params[:page]).per_page(4)
   end
   
+  def running
+    @crawls = current_user.crawls.where(status: 'running').order('created_at').page(params[:page]).per_page(4)
+  end
+  
+  def finished
+    @crawls = current_user.crawls.where(status: 'finished').order('created_at').page(params[:page]).per_page(4)
+  end
+  
   def show
     @project = current_user.crawls.find(params[:id])
     @stats_chart = Crawl.crawl_stats(params[:id])
