@@ -30,6 +30,7 @@ class SaveSitesFromGoogle
       puts "the gather links batch of keyword crawl #{u}"
       site = Site.using(:main_shard).create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
       GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
+      sleep 3
     end
   end
   
