@@ -31,10 +31,12 @@ class VerifyNamecheap
             if json['available'].to_s == 'true'
               new_page = Page.using(:main_shard).create(status_code: page.status_code, url: page.url, internal: page.internal, site_id: page.site_id, found_on: "#{page.found_on}", simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}")
               puts 'Majestic & Moz stats being saved'
-              crawl = Site.using(:main_shard).find(page.site_id).crawl
+              site = Site.using(:main_shard).find(page.site_id)
+              crawl = site.crawl
+              site.update(total_expired: site.total_expired.to_i+1)
+              crawl.update(total_expired: crawl.total_expired.to_i+1)
               MozStats.perform_async(new_page.id)
               MajesticStats.perform_async(new_page.id)
-              crawl.update(total_expired: crawl.total_expired.to_i+1)
             end
           end
         end

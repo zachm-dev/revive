@@ -6,9 +6,6 @@ class Page < ActiveRecord::Base
     puts 'verifying namecheap'
     if status_code == '0' && internal == false
       site = Site.using(:main_shard).find(site_id)
-      site_total_expired = site.total_expired.to_i + 1
-      site.update(total_expired: site_total_expired)
-      
       if site.verify_namecheap_batch.nil?
         verify_namecheap_batch = Sidekiq::Batch.new
         VerifyNamecheapBatch.create(site_id: site.id, started_at: Time.now, status: "running", batch_id: verify_namecheap_batch.bid)
