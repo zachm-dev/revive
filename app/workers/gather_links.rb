@@ -2,7 +2,7 @@ class GatherLinks
   
   include Sidekiq::Worker
   sidekiq_options retry: false
-  #sidekiq_options :queue => :gather_links
+  # sidekiq_options :queue => :gather_links
   
   def perform(site_id, maxpages, base_url, max_pages_allowed)
     opts = {
@@ -29,19 +29,24 @@ class GatherLinks
     puts "GatherLinks Just finished Batch #{options['bid']}"
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:main_shard).first
     if !batch.nil?
+      
+      total_pages = Rails.cache.read(:total_pages).to_i
       puts "found gather links batch after complete for the site #{options['site_id']}"
       site = Site.using(:main_shard).find(options['site_id'])
       puts "here is the site id #{site.id}"
       crawl = site.crawl
-      user_id = crawl.user.id
-      total_urls_found = Link.where(site_id: site.id).map(&:links).flatten.count
-      total_time = Time.now - batch.started_at
-      pages_per_second = Link.where(site_id: site.id).count / total_time
-      est_crawl_time = total_urls_found / pages_per_second
-      crawl_total_urls = crawl.total_urls_found.to_i + total_urls_found
-      crawl.update(total_urls_found: crawl_total_urls)
+      # user_id = crawl.user.id
+      
+      total_urls_found = Link.where(site_id: site.id).sum(:links_count)
+      # total_time = Time.now - batch.started_at
+      # pages_per_second = Link.where(site_id: site.id).count / total_time
+      # est_crawl_time = total_urls_found / pages_per_second
+      # crawl_total_urls = crawl.total_urls_found.to_i + total_urls_found
+      
+      crawl.update(total_urls_found: total_pages)
       site.update(total_urls_found: total_urls_found, gather_status: 'finished')
-      batch.update(finished_at: Time.now, status: "finished", pages_per_second: "#{pages_per_second}", est_crawl_time: "#{est_crawl_time}")
+      batch.update(finished_at: Time.now, status: "finished")
+      
       puts "checking if there are more sites to crawl #{crawl.id}"
       GatherLinks.delay.start('crawl_id' => crawl.id)
     end
