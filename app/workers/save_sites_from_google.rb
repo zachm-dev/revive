@@ -6,7 +6,7 @@ class SaveSitesFromGoogle
   def perform(crawl_id, options = {})
     crawl = Crawl.using(:main_shard).find(crawl_id)
     if !options['google_param'].nil?
-      if !crawl.crawl_start_date.nil? && !crawl.crawl_end_date.nil?
+      if crawl.crawl_start_date.nil? && crawl.crawl_end_date.nil?
         puts "the google query is https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"
         uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
       else
