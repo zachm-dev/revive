@@ -95,6 +95,8 @@ class Crawl < ActiveRecord::Base
     moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
     majestic_tf = options[:majestic_tf].nil? ? 501 : options[:majestic_tf].to_i
     notify_me_after = options[:notify_me_after].nil? ? 0 : options[:notify_me_after].to_i
+    crawl_start_date = options[:crawl_start_date].nil? ? '' : options[:crawl_start_date]
+    crawl_end_date = options[:crawl_end_date].nil? ? '' : options[:crawl_end_date]
     
     if beta == true
       if options[:maxpages].nil?
@@ -106,7 +108,7 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending')
+    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date)
     new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     Crawl.decision_maker(user_id)
