@@ -10,18 +10,18 @@ class GatherLinks
     }
     
     Retriever::PageIterator.new("#{base_url}", opts) do |page|
-      total_pages = Rails.cache.read(:total_pages).to_i
+      total_crawl_urls = Rails.cache.read(:total_crawl_urls).to_i
       links = page.links
       links_count = links.count.to_i
       
-      if total_pages < max_pages_allowed
+      if total_crawl_urls < max_pages_allowed
         process = true
       else
         process = false
       end
       
       Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process)
-      Rails.cache.write(:total_pages, total_pages+links_count)
+      Rails.cache.write(:total_crawl_urls, total_crawl_urls+links_count)
     end
   end
   
@@ -30,21 +30,21 @@ class GatherLinks
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:main_shard).first
     if !batch.nil?
       
-      total_pages = Rails.cache.read(:total_pages).to_i
+      total_crawl_urls = Rails.cache.read(:total_crawl_urls).to_i
       puts "found gather links batch after complete for the site #{options['site_id']}"
       site = Site.using(:main_shard).find(options['site_id'])
       puts "here is the site id #{site.id}"
       crawl = site.crawl
       # user_id = crawl.user.id
       
-      total_urls_found = Link.where(site_id: site.id).sum(:links_count)
+      total_site_urls = Link.where(site_id: site.id).sum(:links_count)
       # total_time = Time.now - batch.started_at
       # pages_per_second = Link.where(site_id: site.id).count / total_time
       # est_crawl_time = total_urls_found / pages_per_second
       # crawl_total_urls = crawl.total_urls_found.to_i + total_urls_found
       
-      crawl.update(total_urls_found: total_pages)
-      site.update(total_urls_found: total_urls_found, gather_status: 'finished')
+      crawl.update(total_urls_found: total_crawl_urls)
+      site.update(total_urls_found: total_site_urls, gather_status: 'finished')
       batch.update(finished_at: Time.now, status: "finished")
       
       puts "checking if there are more sites to crawl #{crawl.id}"

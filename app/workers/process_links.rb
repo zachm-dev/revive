@@ -28,25 +28,29 @@ class ProcessLinks
   def on_complete(status, options)
     batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
     if !batch.nil?
+      
       site = Site.using(:main_shard).find(batch.site_id)
       crawl = site.crawl
       user = crawl.user
       user_id = user.id
-      total_time = Time.now - batch.started_at
-      pages = Page.where(site_id: site.id).using(:master)
-      total_pages_crawled = pages.count
-      total_site_urls = Link.where(site_id: site.id).using(:master).all.map(&:links).flatten.count
-      total_expired = site.total_expired.to_i + pages.where(internal: false, status_code: '0').count
-      total_broken = site.total_broken.to_i + pages.where(status_code: '404').count
-      crawl_total_pages_crawled = total_pages_crawled + crawl.total_pages_crawled.to_i
-      crawl_total_urls_found = total_site_urls + crawl.total_urls_found.to_i
-      site.update(total_pages_crawled: total_pages_crawled, processing_status: 'finished', total_urls_found: total_site_urls)
-      UserDashboard.update_crawl_stats(user.id, domains_crawled: total_pages_crawled, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)
-      #pages_per_second = batch.link.site.pages.count / total_time
-      #total_pages_processed = batch.link.site.pages.count
-      #est_crawl_time = total_pages_processed / pages_per_second
-      crawl.update(total_urls_found: crawl_total_urls_found, total_pages_crawled: crawl_total_pages_crawled)
+      
+      total_crawl_urls = Rails.cache.read(:total_crawl_urls).to_i
+      total_site_urls = Link.where(site_id: site.id).sum(:links_count)
+      # total_time = Time.now - batch.started_at
+      # pages = Page.where(site_id: site.id).using(:master)
+      # total_pages_crawled = pages.count
+      # total_expired = site.total_expired.to_i + pages.where(internal: false, status_code: '0').count
+      # total_broken = site.total_broken.to_i + pages.where(status_code: '404').count
+      # crawl_total_pages_crawled = total_pages_crawled + crawl.total_pages_crawled.to_i
+      # crawl_total_urls_found = total_site_urls + crawl.total_urls_found.to_i
+      # pages_per_second = batch.link.site.pages.count / total_time
+      # total_pages_processed = batch.link.site.pages.count
+      # est_crawl_time = total_pages_processed / pages_per_second
+      
+      site.update(processing_status: 'finished', total_urls_found: total_site_urls)
+      crawl.update(total_urls_found: total_crawl_urls)
       batch.update(finished_at: Time.now, status: "finished")
+      # UserDashboard.update_crawl_stats(user.id, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)
       
       # if ProcessLinksBatch.where(status: 'running', crawl_id: crawl.id).count == 0
       #   puts "Finished ProcessLinks for crawl #{crawl.id} and shutting down server"
