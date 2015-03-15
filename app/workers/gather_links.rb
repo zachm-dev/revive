@@ -22,7 +22,7 @@ class GatherLinks
       end
       
       Link.create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id)
-      Rails.cache.increment("total_crawl_urls", links_count)
+      Rails.cache.increment(["total_crawl_urls"], links_count)
       Rails.cache.increment(["site/#{site_id}/total_site_urls"], links_count)
     end
   end
