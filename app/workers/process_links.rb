@@ -28,6 +28,9 @@ class ProcessLinks
   def on_complete(status, options={})
     puts "finished processing batch #{options}"
     
+    site_id = options['site_id'].to_i
+    crawl_id = options['crawl_id'].to_i
+    
     total_site_count = Rails.cache.read(["site/#{options['site_id']}/processing_batches/total"], raw: true).to_i
     total_site_running = Rails.cache.decrement(["site/#{options['site_id']}/processing_batches/running"])
     total_site_finished = Rails.cache.increment(["site/#{options['site_id']}/processing_batches/finished"])
@@ -36,17 +39,17 @@ class ProcessLinks
     total_crawl_running = Rails.cache.decrement(["crawl/#{options['crawl_id']}/processing_batches/running"])
     total_crawl_finished = Rails.cache.increment(["crawl/#{options['crawl_id']}/processing_batches/finished"])
     
-    # total_crawl_urls = Rails.cache.read(["total_crawl_urls"], raw: true).to_i
-    # total_site_urls = Rails.cache.read(["site/#{options['site_id']}/total_site_urls"], raw: true).to_i
+    total_crawl_urls = Rails.cache.read(["total_crawl_urls"], raw: true).to_i
+    total_site_urls = Rails.cache.read(["site/#{options['site_id']}/total_site_urls"], raw: true).to_i
     
     ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
     Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
     
     if total_crawl_count == total_crawl_finished
       puts 'shut down app and update crawl stats and user stats'
-    # elsif total_site_count == total_site_finished
-    #   Site.using(:main_shard).update(options['site_id'], processing_status: 'finished', total_urls_found: total_site_urls)
-    #   Crawl.using(:main_shard).update(options['crawl_id'], total_urls_found: total_crawl_urls)
+    elsif total_site_count == total_site_finished
+      Site.using(:main_shard).update(site_id, processing_status: 'finished', total_urls_found: total_site_urls)
+      Crawl.using(:main_shard).update(crawl_id, total_urls_found: total_crawl_urls)
     else
       puts 'do something else'
     end
