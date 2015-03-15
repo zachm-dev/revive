@@ -25,9 +25,9 @@ class ProcessLinks
     end
   end
   
-  def on_complete(status, options={})
+  def on_complete(status, options)
     puts "finished processing batch #{options}"
-    
+
     # total_site_count = Rails.cache.read(["site/#{options['site_id']}/processing_batches/total"], raw: true).to_i
     # total_site_running = Rails.cache.decrement(["site/#{options['site_id']}/processing_batches/running"])
     # total_site_finished = Rails.cache.increment(["site/#{options['site_id']}/processing_batches/finished"])
@@ -41,7 +41,7 @@ class ProcessLinks
     #
     # ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
     # Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
-    
+    #
     # if total_crawl_count == total_crawl_finished
     #   puts 'shut down app and update crawl stats and user stats'
     # elsif total_site_count == total_site_finished
