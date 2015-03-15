@@ -10,7 +10,7 @@ class GatherLinks
     }
     
     Retriever::PageIterator.new("#{base_url}", opts) do |page|
-      total_crawl_urls = Rails.cache.read(:total_crawl_urls).to_i
+      total_crawl_urls = Rails.cache.read("total_crawl_urls", raw: true).to_i
       
       links = page.links
       links_count = links.count.to_i
