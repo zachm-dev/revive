@@ -33,7 +33,7 @@ class Link < ActiveRecord::Base
       puts "process links on complete variables link id #{link_id} site id #{site.id} crawl id #{site.crawl_id}"
       
       batch = Sidekiq::Batch.new
-      batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'link_id' => id, 'site_id' => site.id, 'crawl_id' => site.crawl_id)
+      batch.on(:complete, ProcessLinks, options: {'bid' => batch.bid, 'link_id' => id, 'site_id' => site_id, 'crawl_id' => site.crawl_id})
       
       batch.jobs do
         links.each{|l| ProcessLinks.perform_async(l, site.id, found_on, domain)}

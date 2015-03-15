@@ -48,6 +48,8 @@ class ProcessLinks
       site = Site.using(:main_shard).find("#{options['site_id']}")
       site.update(processing_status: 'finished', total_urls_found: total_site_urls)
       crawl.update(total_urls_found: total_crawl_urls)
+    else
+      puts 'do something else'
     end
       
 
