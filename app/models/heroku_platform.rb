@@ -152,7 +152,7 @@ class HerokuPlatform
   end
   
   def release(app_name)
-    @heroku.release.list(app_name).last['slug']['id']
+    @heroku.release.list(app_name).to_a.last['slug']['id']
   end
   
   def delete_app(app_name)
