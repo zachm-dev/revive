@@ -18,7 +18,7 @@ class Link < ActiveRecord::Base
       Rails.cache.increment(["crawl/#{site.crawl_id}/processing_batches/running"])
       Rails.cache.write(["crawl/#{site.crawl_id}/processing_batches/ids"], ids<<id)
       
-      if Rails.cache.read(["site/#{site.id}/processing_batches/total"], raw: true).nil?
+      if Rails.cache.read(["site/#{site.id}/processing_batches/total"], raw: true).to_i == 0
         site.update(processing_status: 'running')
         Rails.cache.write(["site/#{site.id}/processing_batches/total"], 1, raw: true)
         Rails.cache.write(["site/#{site.id}/processing_batches/running"], 1, raw: true)

@@ -10,7 +10,7 @@ class GatherLinks
     }
     
     Retriever::PageIterator.new("#{base_url}", opts) do |page|
-      total_crawl_urls = Rails.cache.read("total_crawl_urls", raw: true).to_i
+      total_crawl_urls = Rails.cache.read(["total_crawl_urls"], raw: true).to_i
       
       links = page.links
       links_count = links.count.to_i
@@ -63,7 +63,7 @@ class GatherLinks
         site = pending.site
       end
     else
-      site = Site.using(:main_shard).where(id: options["site_id"]).first
+      site = Site.using(:main_shard).where(id: options["site_id"].to_i).first
     end
     
     if site

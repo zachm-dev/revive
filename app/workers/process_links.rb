@@ -26,6 +26,7 @@ class ProcessLinks
   end
   
   def on_complete(status, options)
+    puts "finished processing batch"
     
     total_site_count = Rails.cache.read(["site/#{options['site_id']}/processing_batches/total"], raw: true).to_i
     total_site_running = Rails.cache.decrement(["site/#{options['site_id']}/processing_batches/running"])
