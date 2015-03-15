@@ -12,20 +12,20 @@ class Link < ActiveRecord::Base
       
       site = Site.using(:main_shard).find(site_id)
       domain = Domainatrix.parse(site.base_url).domain
-      ids = Rails.cache.read([:crawl, site.crawl_id, :processing_batches, :ids])
+      ids = Rails.cache.read(["crawl/#{site.crawl_id}/processing_batches/ids"])
       
-      Rails.cache.increment([:crawl, site.crawl_id, :processing_batches, :total])
-      Rails.cache.increment([:crawl, site.crawl_id, :processing_batches, :running])
-      Rails.cache.write([:crawl, site.crawl_id, :processing_batches, :ids], ids<<id)
+      Rails.cache.increment(["crawl/#{site.crawl_id}/processing_batches/total"])
+      Rails.cache.increment(["crawl/#{site.crawl_id}/processing_batches/running"])
+      Rails.cache.write(["crawl/#{site.crawl_id}/processing_batches/ids"], ids<<id)
       
-      if Rails.cache.read([:site, site_id, :processing_batches, :total]).nil?
+      if Rails.cache.read(["site/#{site_id}/processing_batches/total"]).nil?
         site.update(processing_status: 'running')
-        Rails.cache.write([:site, site_id, :processing_batches, :total], 1, raw: true)
-        Rails.cache.write([:site, site_id, :processing_batches, :running], 1, raw: true)
-        Rails.cache.write([:site, site_id, :processing_batches, :finished], 0, raw: true)
+        Rails.cache.write(["site/#{site_id}/processing_batches/total"], 1, raw: true)
+        Rails.cache.write(["site/#{site_id}/processing_batches/running"], 1, raw: true)
+        Rails.cache.write(["site/#{site_id}/processing_batches/finished"], 0, raw: true)
       else
-        Rails.cache.increment([:site, site_id, :processing_batches, :total])
-        Rails.cache.increment([:site, site_id, :processing_batches, :running])
+        Rails.cache.increment(["site/#{site_id}/processing_batches/total"])
+        Rails.cache.increment(["site/#{site_id}/processing_batches/running"])
       end
       
       batch = Sidekiq::Batch.new

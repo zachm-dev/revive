@@ -27,19 +27,19 @@ class ProcessLinks
   
   def on_complete(status, options)
     
-    total_site_finished = Rails.cache.increment([:site, options['site_id'], :processing_batches, :finished])
-    total_site_running = Rails.cache.decrement([:site, options['site_id'], :processing_batches, :running])
-    total_site_count = Rails.cache.read([:site, options['site_id'], :processing_batches, :total])
-    
-    total_crawl_finished = Rails.cache.increment([:crawl, options['crawl_id'], :processing_batches, :finished])
-    total_crawl_running = Rails.cache.decrement([:crawl, options['crawl_id'], :processing_batches, :running])
-    total_crawl_count = Rails.cache.read([:crawl, options['crawl_id'], :processing_batches, :total])
+    total_site_count = Rails.cache.read(["site/#{options['site_id']}/processing_batches/total"], raw: true).to_i
+    total_site_running = Rails.cache.decrement(["site/#{options['site_id']}/processing_batches/running"])
+    total_site_finished = Rails.cache.increment(["site/#{options['site_id']}/processing_batches/finished"])
+
+    total_crawl_count = Rails.cache.read(["crawl/#{crawl.id}/processing_batches/total"], raw: true).to_i
+    total_crawl_running = Rails.cache.decrement(["crawl/#{crawl.id}/processing_batches/running"])
+    total_crawl_finished = Rails.cache.increment(["crawl/#{crawl.id}/processing_batches/finished"])
     
     total_crawl_urls = Rails.cache.read(:total_crawl_urls)
     total_site_urls = Rails.cache.read([:site, site_id, :total_site_urls])
     
-    ids = Rails.cache.read([:crawl, site.crawl_id, :processing_batches, :ids])
-    Rails.cache.write([:crawl, site.crawl_id, :processing_batches, :ids], ids-[options['link_id']])
+    ids = Rails.cache.read(["crawl/#{crawl.id}/processing_batches/ids"])
+    Rails.cache.write(["crawl/#{crawl.id}/processing_batches/ids"], ids-[options['link_id']])
     
     if total_crawl_count == total_crawl_finished
       puts 'shut down app and update crawl stats and user stats'
