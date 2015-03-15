@@ -30,7 +30,7 @@ class Link < ActiveRecord::Base
         Rails.cache.increment(["site/#{site.id}/processing_batches/running"])
       end
       
-      puts "process links on complete variables link id #{link_id} site id #{site.id} and crawl id #{site.crawl_id}"
+      puts "process links on complete variables link id #{id} site id #{site.id} and crawl id #{site.crawl_id}"
       
       batch = Sidekiq::Batch.new
       batch.on(:complete, ProcessLinks, 'bid' => batch.bid)
