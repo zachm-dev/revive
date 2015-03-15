@@ -6,12 +6,12 @@ octopus:
     main_shard:
       adapter: postgresql
       database: crawler_development
-      pool: 25
+      pool: 3
       reaping_frequency: 3
     master:
       adapter: postgresql
       database: crawler_development
-      pool: 25
+      pool: 80
       reaping_frequency: 3
   production:
     <% if ENV["DB_NAME"].present? %>
