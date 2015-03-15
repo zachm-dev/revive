@@ -9,7 +9,7 @@ class Link < ActiveRecord::Base
     
   def start_processing
     if process == true
-      puts 'start processing method'
+      puts 'starting processing method'
       site = Site.using(:main_shard).find(site_id)
       domain = Domainatrix.parse(site.base_url).domain
       ids = Rails.cache.read(["crawl/#{site.crawl_id}/processing_batches/ids"])
