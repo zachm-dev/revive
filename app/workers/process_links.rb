@@ -44,7 +44,7 @@ class ProcessLinks
     if total_crawl_count == total_crawl_finished
       puts 'shut down app and update crawl stats and user stats'
     elsif total_site_count == total_site_finished
-      site = Site.using(:main_shard).find(options['site_id'])
+      site = Site.using(:main_shard).find(options['site_id'].to_i)
       site.update(processing_status: 'finished', total_urls_found: total_site_urls)
       crawl.update(total_urls_found: total_crawl_urls)
     end

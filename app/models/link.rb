@@ -18,21 +18,23 @@ class Link < ActiveRecord::Base
       Rails.cache.increment(["crawl/#{site.crawl_id}/processing_batches/running"])
       Rails.cache.write(["crawl/#{site.crawl_id}/processing_batches/ids"], ids<<id)
       
-      if Rails.cache.read(["site/#{site_id}/processing_batches/total"], raw: true).nil?
+      if Rails.cache.read(["site/#{site.id}/processing_batches/total"], raw: true).nil?
         site.update(processing_status: 'running')
-        Rails.cache.write(["site/#{site_id}/processing_batches/total"], 1, raw: true)
-        Rails.cache.write(["site/#{site_id}/processing_batches/running"], 1, raw: true)
-        Rails.cache.write(["site/#{site_id}/processing_batches/finished"], 0, raw: true)
+        Rails.cache.write(["site/#{site.id}/processing_batches/total"], 1, raw: true)
+        Rails.cache.write(["site/#{site.id}/processing_batches/running"], 1, raw: true)
+        Rails.cache.write(["site/#{site.id}/processing_batches/finished"], 0, raw: true)
       else
-        Rails.cache.increment(["site/#{site_id}/processing_batches/total"])
-        Rails.cache.increment(["site/#{site_id}/processing_batches/running"])
+        Rails.cache.increment(["site/#{site.id}/processing_batches/total"])
+        Rails.cache.increment(["site/#{site.id}/processing_batches/running"])
       end
       
+      puts "process links on complete variables link_id: #{link_id} site_id: #{site.id} crawl_id: #{site.crawl_id}"
+      
       batch = Sidekiq::Batch.new
-      batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'link_id' => 'id', 'site_id' => site.id, 'crawl_id' => site.crawl_id)
+      batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'link_id' => id, 'site_id' => site.id, 'crawl_id' => site.crawl_id)
       
       batch.jobs do
-        links.each{|l| ProcessLinks.perform_async(l, site_id, found_on, domain)}
+        links.each{|l| ProcessLinks.perform_async(l, site.id, found_on, domain)}
       end
       
     end
