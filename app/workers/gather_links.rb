@@ -4,13 +4,14 @@ class GatherLinks
   sidekiq_options retry: false
   # sidekiq_options :queue => :gather_links
   
-  def perform(site_id, maxpages, base_url, max_pages_allowed)
+  def perform(site_id, maxpages, base_url, max_pages_allowed, crawl_id)
     opts = {
       'maxpages' => maxpages
     }
     
     Retriever::PageIterator.new("#{base_url}", opts) do |page|
       total_crawl_urls = Rails.cache.read(:total_crawl_urls).to_i
+      
       links = page.links
       links_count = links.count.to_i
       
@@ -20,8 +21,9 @@ class GatherLinks
         process = false
       end
       
-      Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process)
-      Rails.cache.write(:total_crawl_urls, total_crawl_urls+links_count)
+      Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id)
+      Rails.cache.increment(:total_crawl_urls, links_count)
+      Rails.cache.increment([:site, site_id, :total_site_urls], links_count)
     end
   end
   
@@ -35,7 +37,6 @@ class GatherLinks
       site = Site.using(:main_shard).find(options['site_id'])
       puts "here is the site id #{site.id}"
       crawl = site.crawl
-      # user_id = crawl.user.id
       
       total_site_urls = Link.where(site_id: site.id).sum(:links_count)
       # total_time = Time.now - batch.started_at
@@ -73,7 +74,7 @@ class GatherLinks
       gather_links_batch.on(:complete, GatherLinks, 'bid' => gather_links_batch.bid, 'crawl_id' => options["crawl_id"], 'site_id' => site.id)
       gather_links_batch.jobs do
         puts 'starting to gather links'
-        GatherLinks.perform_async(site.id, site.maxpages, site.base_url, running_crawl.max_pages_allowed)
+        GatherLinks.perform_async(site.id, site.maxpages, site.base_url, running_crawl.max_pages_allowed, options["crawl_id"])
       end
     end
   end

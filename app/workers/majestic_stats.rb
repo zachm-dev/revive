@@ -2,6 +2,19 @@ class MajesticStats
   include Sidekiq::Worker
   sidekiq_options :queue => :verify_domains
   
+  def self.perform(page_id)
+    puts 'majestic perform on perform'
+    page = Page.using(:main_shard).find(page_id)
+    
+    m = MajesticSeo::Api::Client.new(api_key: ENV['majestic_api_key'], environment: ENV['majestic_env'])
+    res = m.get_index_item_info([page.simple_url])
+    
+    res.items.each do |r|
+      puts "majestic block perform #{r.response['CitationFlow']}"
+      Page.using(:main_shard).update(page.id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
+    end
+  end
+
   def perform(page_id)
     puts 'majestic perform on perform'
     page = Page.using(:main_shard).find(page_id)
@@ -13,7 +26,6 @@ class MajesticStats
       puts "majestic block perform #{r.response['CitationFlow']}"
       Page.using(:main_shard).update(page.id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
     end
-    
   end
   
   def on_complete(status, options)
@@ -38,7 +50,8 @@ class MajesticStats
   end
 
   def self.start(page_id)
-    MajesticStats.perform_async(page_id)
+    # MajesticStats.perform_async(page_id)
+    MajesticStats.perform(page_id)
   end
   
 end

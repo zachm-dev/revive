@@ -26,16 +26,31 @@ class ProcessLinks
   end
   
   def on_complete(status, options)
-    batch = ProcessLinksBatch.where(batch_id: "#{options['bid']}").first
-    if !batch.nil?
+    
+    total_site_finished = Rails.cache.increment([:site, options['site_id'], :processing_batches, :finished])
+    total_site_running = Rails.cache.decrement([:site, options['site_id'], :processing_batches, :running])
+    total_site_count = Rails.cache.read([:site, options['site_id'], :processing_batches, :total])
+    
+    total_crawl_finished = Rails.cache.increment([:crawl, options['crawl_id'], :processing_batches, :finished])
+    total_crawl_running = Rails.cache.decrement([:crawl, options['crawl_id'], :processing_batches, :running])
+    total_crawl_count = Rails.cache.read([:crawl, options['crawl_id'], :processing_batches, :total])
+    
+    total_crawl_urls = Rails.cache.read(:total_crawl_urls)
+    total_site_urls = Rails.cache.read([:site, site_id, :total_site_urls])
+    
+    ids = Rails.cache.read([:crawl, site.crawl_id, :processing_batches, :ids])
+    Rails.cache.write([:crawl, site.crawl_id, :processing_batches, :ids], ids-[options['link_id']])
+    
+    if total_crawl_count == total_crawl_finished
+      puts 'shut down app and update crawl stats and user stats'
+    elsif total_site_count == total_site_finished
+      site = Site.using(:main_shard).find(site_id)
+      site.update(processing_status: 'finished', total_urls_found: total_site_urls)
+      crawl.update(total_urls_found: total_crawl_urls)
+    end
       
-      site = Site.using(:main_shard).find(batch.site_id)
-      crawl = site.crawl
-      user = crawl.user
-      user_id = user.id
+
       
-      total_crawl_urls = Rails.cache.read(:total_crawl_urls).to_i
-      total_site_urls = Link.where(site_id: site.id).sum(:links_count)
       # total_time = Time.now - batch.started_at
       # pages = Page.where(site_id: site.id).using(:master)
       # total_pages_crawled = pages.count
@@ -47,9 +62,8 @@ class ProcessLinks
       # total_pages_processed = batch.link.site.pages.count
       # est_crawl_time = total_pages_processed / pages_per_second
       
-      site.update(processing_status: 'finished', total_urls_found: total_site_urls)
-      crawl.update(total_urls_found: total_crawl_urls)
-      batch.update(finished_at: Time.now, status: "finished")
+
+      # batch.update(finished_at: Time.now, status: "finished")
       # UserDashboard.update_crawl_stats(user.id, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)
       
       # if ProcessLinksBatch.where(status: 'running', crawl_id: crawl.id).count == 0
@@ -63,7 +77,7 @@ class ProcessLinks
       #     # heroku.delete_app(crawl.heroku_app.name)
       #   end
       # end
-    end
+
   end
 
 

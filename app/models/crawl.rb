@@ -27,6 +27,16 @@ class Crawl < ActiveRecord::Base
   
   def self.start_crawl(options = {})
     crawl = Crawl.using(:main_shard).find(options["crawl_id"])
+    
+    Rails.cache.write([:crawl, crawl.id, :gathering_batches, :finished], 0, raw: true)
+    Rails.cache.write([:crawl, crawl.id, :gathering_batches, :running], 0, raw: true)
+    Rails.cache.write([:crawl, crawl.id, :gathering_batches, :total], 0, raw: true)
+    
+    Rails.cache.write([:crawl, crawl.id, :processing_batches, :finished], 0, raw: true)
+    Rails.cache.write([:crawl, crawl.id, :processing_batches, :running], 0, raw: true)
+    Rails.cache.write([:crawl, crawl.id, :processing_batches, :total], 0, raw: true)
+    Rails.cache.write([:crawl, crawl.id, :processing_batches, :ids], [])
+    
     if crawl.crawl_type == 'url_crawl'
       Crawl.save_new_sites(crawl.id)
     elsif crawl.crawl_type == 'keyword_crawl'
