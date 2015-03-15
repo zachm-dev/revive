@@ -1,9 +1,5 @@
 <div class="main_page_container">
-	
 
-	
-	
-	
 	<div class="container-fluid header_title_container">
 		<div class="row">
 			<div class="col-xs-12">
@@ -16,7 +12,7 @@
 								<li class="active">
 									<%= link_to crawls_path do %>
 									    <i class="glyphicon glyphicon-folder-open">
-											<span class="glyph_text">Projects</span>
+											<span class="glyph_text">Projectz</span>
 										</i>
 									<% end %>
 								</li>
@@ -73,8 +69,6 @@
 	
 		<%= render 'project_row' %>
 	
-
-		
 		<div class="will_paginate_container text-center">
 			<%= will_paginate @crawls, renderer: BootstrapPagination::Rails %>
 		</div>
