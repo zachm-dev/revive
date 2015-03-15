@@ -25,8 +25,8 @@ class ProcessLinks
     end
   end
   
-  def on_complete(status, options)
-    puts "finished processing batch"
+  def on_complete(status, options={})
+    puts "finished processing batch #{options}"
     
     total_site_count = Rails.cache.read(["site/#{options['site_id']}/processing_batches/total"], raw: true).to_i
     total_site_running = Rails.cache.decrement(["site/#{options['site_id']}/processing_batches/running"])
@@ -42,44 +42,42 @@ class ProcessLinks
     ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
     Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
     
-    if total_crawl_count == total_crawl_finished
-      puts 'shut down app and update crawl stats and user stats'
-    elsif total_site_count == total_site_finished
-      Site.using(:main_shard).update(options['site_id'], processing_status: 'finished', total_urls_found: total_site_urls)
-      Crawl.using(:main_shard).update(options['crawl_id'], total_urls_found: total_crawl_urls)
-    else
-      puts 'do something else'
-    end
-      
+    # if total_crawl_count == total_crawl_finished
+    #   puts 'shut down app and update crawl stats and user stats'
+    # elsif total_site_count == total_site_finished
+    #   Site.using(:main_shard).update(options['site_id'], processing_status: 'finished', total_urls_found: total_site_urls)
+    #   Crawl.using(:main_shard).update(options['crawl_id'], total_urls_found: total_crawl_urls)
+    # else
+    #   puts 'do something else'
+    # end
 
-      
-      # total_time = Time.now - batch.started_at
-      # pages = Page.where(site_id: site.id).using(:master)
-      # total_pages_crawled = pages.count
-      # total_expired = site.total_expired.to_i + pages.where(internal: false, status_code: '0').count
-      # total_broken = site.total_broken.to_i + pages.where(status_code: '404').count
-      # crawl_total_pages_crawled = total_pages_crawled + crawl.total_pages_crawled.to_i
-      # crawl_total_urls_found = total_site_urls + crawl.total_urls_found.to_i
-      # pages_per_second = batch.link.site.pages.count / total_time
-      # total_pages_processed = batch.link.site.pages.count
-      # est_crawl_time = total_pages_processed / pages_per_second
-      
+    # total_time = Time.now - batch.started_at
+    # pages = Page.where(site_id: site.id).using(:master)
+    # total_pages_crawled = pages.count
+    # total_expired = site.total_expired.to_i + pages.where(internal: false, status_code: '0').count
+    # total_broken = site.total_broken.to_i + pages.where(status_code: '404').count
+    # crawl_total_pages_crawled = total_pages_crawled + crawl.total_pages_crawled.to_i
+    # crawl_total_urls_found = total_site_urls + crawl.total_urls_found.to_i
+    # pages_per_second = batch.link.site.pages.count / total_time
+    # total_pages_processed = batch.link.site.pages.count
+    # est_crawl_time = total_pages_processed / pages_per_second
+    
 
-      # batch.update(finished_at: Time.now, status: "finished")
-      # UserDashboard.update_crawl_stats(user.id, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)
-      
-      # if ProcessLinksBatch.where(status: 'running', crawl_id: crawl.id).count == 0
-      #   puts "Finished ProcessLinks for crawl #{crawl.id} and shutting down server"
-      #   crawl.update(status: 'finished')
-      #   crawl.heroku_app.update(status: 'finished', finished_at: Time.now)
-      #   Api.fetch_new_crawl(user_id: user_id)
-      #   UserDashboard.add_finished_crawl(user.user_dashboard.id)
-      #   if crawl.heroku_app.name.include?('revivecrawler')
-      #     # heroku = HerokuPlatform.new
-      #     # heroku.delete_app(crawl.heroku_app.name)
-      #   end
-      # end
-
+    # batch.update(finished_at: Time.now, status: "finished")
+    # UserDashboard.update_crawl_stats(user.id, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)
+    
+    # if ProcessLinksBatch.where(status: 'running', crawl_id: crawl.id).count == 0
+    #   puts "Finished ProcessLinks for crawl #{crawl.id} and shutting down server"
+    #   crawl.update(status: 'finished')
+    #   crawl.heroku_app.update(status: 'finished', finished_at: Time.now)
+    #   Api.fetch_new_crawl(user_id: user_id)
+    #   UserDashboard.add_finished_crawl(user.user_dashboard.id)
+    #   if crawl.heroku_app.name.include?('revivecrawler')
+    #     # heroku = HerokuPlatform.new
+    #     # heroku.delete_app(crawl.heroku_app.name)
+    #   end
+    # end
+    
   end
 
 
