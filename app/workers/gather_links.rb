@@ -22,8 +22,8 @@ class GatherLinks
       end
       
       Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id)
-      Rails.cache.increment(:total_crawl_urls, links_count)
-      Rails.cache.increment([:site, site_id, :total_site_urls], links_count)
+      Rails.cache.increment("total_crawl_urls", links_count)
+      Rails.cache.increment(["site/#{site_id}/total_site_urls"], links_count)
     end
   end
   
@@ -32,7 +32,7 @@ class GatherLinks
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:main_shard).first
     if !batch.nil?
       
-      total_crawl_urls = Rails.cache.read(:total_crawl_urls).to_i
+      total_crawl_urls = Rails.cache.read(:total_crawl_urls, raw: true).to_i
       puts "found gather links batch after complete for the site #{options['site_id']}"
       site = Site.using(:main_shard).find(options['site_id'])
       puts "here is the site id #{site.id}"
