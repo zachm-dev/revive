@@ -36,7 +36,6 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/running"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/finished"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/ids"], [])
-    
     Rails.cache.write(["total_crawl_urls"], 0, raw: true)
     
     if crawl.crawl_type == 'url_crawl'
