@@ -236,7 +236,7 @@ class HerokuPlatform
       local_release_env_version = get_local_release_env_version
       puts "local release exists and the version is #{local_release_env_version}"
       
-      if local_release_env_version == latest_api_release['version'] || local_release_env_version > latest_api_release['version']
+      if local_release_env_version.to_i == latest_api_release['version'].to_i || local_release_env_version.to_i > latest_api_release['version'].to_i
         puts 'release exists and OK to copy slug from local env'
         @heroku.release.create(to, slug: ENV['SLUG_ID'])
       else
@@ -245,7 +245,7 @@ class HerokuPlatform
         @heroku.release.create(to, slug: latest_api_release['slug']['id'])
       end
     else
-      puts 'local release does not exists: setting new local env release version and slug id'
+      puts "local release does not exists: setting new local env release version and slug id: new version number is #{latest_api_release['version']}"
       set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
       @heroku.release.create(to, slug: latest_api_release['slug']['id'])
     end
