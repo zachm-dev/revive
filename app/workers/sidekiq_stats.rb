@@ -8,13 +8,13 @@ class SidekiqStats
     SidekiqStats.delay.start(heroku_app_id: heroku_app_id)
     stats = Sidekiq::Stats.new
     if stats.enqueued < 100
-      app = HerokuApp.find(heroku_app_id)
+      sidekiq_stats = SidekiqStat.where(heroku_app_id: heroku_app_id)
  
-      if app.sidekiq_stats.count == 0
+      if sidekiq_stats.count == 0
         puts 'sidekiq stats did not exist creating it now'
         SidekiqStat.create(workers_size: stats.workers_size, enqueued: stats.enqueued, processed: stats.processed, heroku_app_id: heroku_app_id)
       else
-        last_stats = app.sidekiq_stats.last
+        last_stats = sidekiq_stats.last
         if last_stats.try_count.nil?
           puts 'app has less than 100 in the queue'
           SidekiqStat.create(workers_size: stats.workers_size, enqueued: stats.enqueued, processed: stats.processed, try_count: 1, heroku_app_id: heroku_app_id)
@@ -28,17 +28,17 @@ class SidekiqStats
           end
         else
           puts 'app has stalled and shutting down'
-          crawl = app.crawl
-          crawl.update(status: 'finished')
-          app.update(status: 'finished', finished_at: Time.now, shutdown: true)
-          user = crawl.user
-          Api.fetch_new_crawl(user_id: user.id)
-          UserDashboard.add_finished_crawl(user.user_dashboard.id)
-          # Crawl.decision_maker(user.id)
-          if app.name.include?('revivecrawler')
-            heroku = Heroku.new
-            heroku.delete_app(app.name)
-          end
+          # crawl = app.crawl
+          # crawl.update(status: 'finished')
+          # app.update(status: 'finished', finished_at: Time.now, shutdown: true)
+          # user = crawl.user
+          # Api.fetch_new_crawl(user_id: user.id)
+          # UserDashboard.add_finished_crawl(user.user_dashboard.id)
+          # # Crawl.decision_maker(user.id)
+          # if app.name.include?('revivecrawler')
+          #   heroku = Heroku.new
+          #   heroku.delete_app(app.name)
+          # end
         end
       end
       
@@ -49,7 +49,7 @@ class SidekiqStats
     puts 'start sidekiq and dyno stats'
     
     if options["crawl_id"]
-      crawl = Crawl.find(options["crawl_id"])
+      crawl = Crawl.using(:main_shard).find(options["crawl_id"])
       heroku_app_id = crawl.heroku_app.id
     else
       heroku_app_id = options[:heroku_app_id].to_i
