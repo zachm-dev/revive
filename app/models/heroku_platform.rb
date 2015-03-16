@@ -102,7 +102,7 @@ class HerokuPlatform
       heroku = HerokuPlatform.new
       # check if there are any pending crawls before forking a new app from the user
       heroku.create_app(to)
-      heroku.copy_slug(from, to)
+      heroku.check_and_copy_slug(from, to)
       heroku.copy_config(from, to)
       heroku.upgrade_postgres(to)
       heroku.add_redis(to)
@@ -151,13 +151,29 @@ class HerokuPlatform
     librato_hash = {librato_user: librato_user, librato_token: librato_token}
   end
   
-  def release(app_name)
-    @heroku.release.list(app_name).to_a.last['slug']['id']
+  def get_latest_api_release(app_name)
+    puts "getting latest api release object"
+    @heroku.release.list(app_name).to_a.last
+  end
+  
+  def get_local_release_env_version
+    puts "getting local release version from env var"
+    ENV['RELEASE_VERSION']
+  end
+  
+  def local_release_exists?
+    puts "checking if local release version env var exists"
+    ENV['RELEASE_VERSION'].nil? ? false : true
+  end
+  
+  def set_release_env_and_slug_id(release_version, slug_id)
+    puts "setting or updating new release version and slug id as env var"
+    release_and_slug_hash = {'RELEASE_VERSION' => release_version, 'SLUG_ID' => slug_id}
+    @heroku.config_var.update('sourcerevive', release_and_slug_hash)
   end
   
   def delete_app(app_name)
     puts "delete app method for the app #{app_name}"
-    #logger.info "Deleting #{app_name}"
     if "#{app_name}".include?('revivecrawler')
       puts "DANGER THE APP #{app_name} IS BEING DELETED"
       @heroku.app.delete(app_name)
@@ -212,10 +228,27 @@ class HerokuPlatform
     @heroku.config_var.update(to, from_congig_vars)
   end
   
-  def copy_slug(from, to)
-    puts 'copying slug'
-    from_release_slug_id = release(from)
-    @heroku.release.create(to, slug: from_release_slug_id)
+  def check_and_copy_slug(from, to)
+    puts 'checking and copying slug'
+    latest_api_release = get_latest_api_release(from)
+    
+    if local_release_exists? == true
+      local_release_env_version = get_local_release_env_version
+      puts "local release exists and the version is #{local_release_env_version}"
+      
+      if local_release_env_version == latest_api_release['version'] || local_release_env_version > latest_api_version['version']
+        puts 'release exists and OK to copy slug from local env'
+        @heroku.release.create(to, slug: ENV['SLUG_ID'])
+      else
+        puts 'updating local env release version and slug id and copying slug'
+        set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
+        @heroku.release.create(to, slug: latest_api_release['slug']['id'])
+      end
+    else
+      puts 'local release does not exists: setting new local env release version and slug id'
+      set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
+      @heroku.release.create(to, slug: latest_api_release['slug']['id'])
+    end
   end
 
   def copy_rack_and_rails_env_again(from, to)
