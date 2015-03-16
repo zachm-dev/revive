@@ -17,7 +17,7 @@ class CrawlsController < ApplicationController
   def show
     @project = current_user.crawls.find(params[:id])
     
-    if @project.status == 'running'
+    if @project.status == 'running' && !@project.redis_url.nil?
       redis = ActiveSupport::Cache.lookup_store(:redis_store, @project.redis_url)
       urls_found = "crawl/#{@project.id}/urls_found"
       expired_domains = "crawl/#{@project.id}/expired_domains"

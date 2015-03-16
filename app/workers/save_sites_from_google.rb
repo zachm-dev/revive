@@ -1,7 +1,7 @@
 class SaveSitesFromGoogle
   
   include Sidekiq::Worker
-  sidekiq_options retry: false
+  # sidekiq_options retry: false
   
   def perform(crawl_id, options = {})
     crawl = Crawl.using(:main_shard).find(crawl_id)
