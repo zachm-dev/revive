@@ -29,8 +29,12 @@ class SidekiqStats
             elsif stats_verify_count == 2
               puts 'stats have been the same for the past three minutes: increasing verify count'
               Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
-            elsif stats_verify_count == 3
+            elsif stats_verify_count >= 3
               puts 'app has stalled shutting it down'
+              app = HerokuApp.using(:main_shard).where(crawl_id: crawl_id).first
+              app_name = app.name
+              heroku = HerokuPlatform.new
+              heroku.delete_app(app_name)
             end
           else
             puts 'resetting verify count back to 0'
