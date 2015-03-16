@@ -36,7 +36,11 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/running"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/finished"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/ids"], [])
-    Rails.cache.write(["total_crawl_urls"], 0, raw: true)
+    
+    Rails.cache.write(["crawl/#{crawl.id}/urls_found"], 0, raw: true)
+    Rails.cache.write(["crawl/#{crawl.id}/urls_crawled"], 0, raw: true)
+    Rails.cache.write(["crawl/#{crawl.id}/expired_domains"], 0, raw: true)
+    Rails.cache.write(["crawl/#{crawl.id}/broken_domains"], 0, raw: true)
     
     if crawl.crawl_type == 'url_crawl'
       Crawl.save_new_sites(crawl.id)

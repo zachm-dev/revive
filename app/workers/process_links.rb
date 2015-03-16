@@ -36,7 +36,7 @@ class ProcessLinks
     total_crawl_running = Rails.cache.decrement(["crawl/#{options['crawl_id']}/processing_batches/running"])
     total_crawl_finished = Rails.cache.increment(["crawl/#{options['crawl_id']}/processing_batches/finished"])
 
-    total_crawl_urls = Rails.cache.read(["total_crawl_urls"], raw: true).to_i
+    total_crawl_urls = Rails.cache.read(["crawl/#{crawl_id}/urls_found"], raw: true).to_i
     total_site_urls = Rails.cache.read(["site/#{options['site_id']}/total_site_urls"], raw: true).to_i
 
     ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])

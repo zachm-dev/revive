@@ -10,7 +10,7 @@ class GatherLinks
     }
     
     Retriever::PageIterator.new("#{base_url}", opts) do |page|
-      total_crawl_urls = Rails.cache.read(["total_crawl_urls"], raw: true).to_i
+      total_crawl_urls = Rails.cache.read(["crawl/#{crawl_id}/urls_found"], raw: true).to_i
       
       links = page.links
       links_count = links.count.to_i
@@ -22,7 +22,7 @@ class GatherLinks
       end
       
       Link.create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id)
-      Rails.cache.increment(["total_crawl_urls"], links_count)
+      Rails.cache.increment(["crawl/#{crawl_id}/urls_found"], links_count)
       Rails.cache.increment(["site/#{site_id}/total_site_urls"], links_count)
     end
   end
@@ -32,12 +32,10 @@ class GatherLinks
     batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:main_shard).first
     if !batch.nil?
       
-      total_crawl_urls = Rails.cache.read(["total_crawl_urls"], raw: true).to_i
-      puts "found gather links batch after complete for the site #{options['site_id']}"
       site = Site.using(:main_shard).find(options['site_id'])
-      puts "here is the site id #{site.id}"
       crawl = site.crawl
       
+      total_crawl_urls = Rails.cache.read(["crawl/#{crawl.id}/urls_found"], raw: true).to_i
       total_site_urls = Link.where(site_id: site.id).sum(:links_count)
       # total_time = Time.now - batch.started_at
       # pages_per_second = Link.where(site_id: site.id).count / total_time

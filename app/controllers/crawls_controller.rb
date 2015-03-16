@@ -16,6 +16,22 @@ class CrawlsController < ApplicationController
   
   def show
     @project = current_user.crawls.find(params[:id])
+    
+    if @project.status == 'running'
+      redis = ActiveSupport::Cache.lookup_store(:redis_store, @project.redis_url)
+      urls_found = "crawl/#{@project.id}/urls_found"
+      expired_domains = "crawl/#{@project.id}/expired_domains"
+      broken_domains = "crawl/#{@project.id}/broken_domains"
+      stats = redis.read_multi(urls_found, expired_domains, broken_domains, raw: true)
+      @urls_found = stats[urls_found].to_i
+      @broken_domains = stats[broken_domains].to_i
+      @expired_domains = stats[expired_domains].to_i
+    else
+      @urls_found = @project.total_urls_found.to_i
+      @broken_domains = @project.total_broken.to_i
+      @expired_domains = @project.total_expired.to_i
+    end
+    
     @stats_chart = Crawl.crawl_stats(params[:id])
     # @sites = Site.find(@project.process_links_batches.map(&:site_id))
     @sites = @project.sites

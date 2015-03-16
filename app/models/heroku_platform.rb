@@ -115,6 +115,7 @@ class HerokuPlatform
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
+      app.crawl.update(redis_url: librato_env_vars[:redis_url)
       # restart_app(to)
       puts 'done creating new app'
     end
@@ -148,7 +149,8 @@ class HerokuPlatform
     vars = config_vars(app_name)
     librato_user = vars['LIBRATO_USER']
     librato_token = vars['LIBRATO_TOKEN']
-    librato_hash = {librato_user: librato_user, librato_token: librato_token}
+    redis_url = vars['REDISTOGO_URL']
+    librato_hash = {librato_user: librato_user, librato_token: librato_token, redis_url: redis_url}
   end
   
   def get_latest_api_release(app_name)
