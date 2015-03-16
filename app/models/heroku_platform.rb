@@ -115,7 +115,7 @@ class HerokuPlatform
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
-      app.crawl.update(redis_url: librato_env_vars[:redis_url])
+      Crawl.using(:main_shard).update(app.crawl.id, redis_url: librato_env_vars[:redis_url])
       # restart_app(to)
       puts 'done creating new app'
     end
