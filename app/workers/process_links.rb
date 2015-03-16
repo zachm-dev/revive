@@ -42,8 +42,13 @@ class ProcessLinks
     ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
     Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
     
-    if total_crawl_count == total_crawl_finished
+    if total_crawl_urls > 20
       puts 'shut down app and update crawl stats and user stats'
+      app = HerokuApp.where(crawl_id: options['crawl_id']).using(:main_shard).first
+      if app.name.include?('revivecrawler')
+        heroku = HerokuPlatform.new
+        heroku.delete_app(app.name)
+      end
     elsif total_site_count == total_site_finished
       Site.using(:main_shard).update(options['site_id'], processing_status: 'finished', total_urls_found: total_site_urls)
       Crawl.using(:main_shard).update(options['crawl_id'], total_urls_found: total_crawl_urls)
