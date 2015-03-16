@@ -18,10 +18,9 @@ class Crawl < ActiveRecord::Base
     heroku_app = crawl.heroku_app
     if heroku_app
       heroku_app.update(status: 'finished')
-      heroku = Heroku.new
-      if heroku.app_exists?(heroku_app.name)
-        heroku.delete_app(heroku_app.name)
-      end
+      crawl.update(status: 'finished')
+      heroku = HerokuPlatform.new
+      heroku.delete_app(heroku_app.name)
     end
   end
   

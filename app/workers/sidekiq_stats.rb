@@ -1,7 +1,7 @@
 class SidekiqStats
   
   include Sidekiq::Worker
-  sidekiq_options :queue => :sidekiq_stats
+  # sidekiq_options :queue => :sidekiq_stats
   
   def perform(heroku_app_id)
     puts 'getting sidekiq stats'

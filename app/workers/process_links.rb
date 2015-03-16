@@ -68,7 +68,6 @@ class ProcessLinks
     # pages_per_second = batch.link.site.pages.count / total_time
     # total_pages_processed = batch.link.site.pages.count
     # est_crawl_time = total_pages_processed / pages_per_second
-    
 
     # batch.update(finished_at: Time.now, status: "finished")
     # UserDashboard.update_crawl_stats(user.id, domains_broken: total_broken, domains_expired: total_expired, crawl_id: crawl.id)

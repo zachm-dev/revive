@@ -25,7 +25,6 @@ class Page < ActiveRecord::Base
       site.crawl.update(total_broken: crawl_total_broken)
       site.update(total_broken: site_total_broken)
       
-
       Rails.cache.increment(["crawl/#{site.crawl.id}/broken_domains"])
       
     end
