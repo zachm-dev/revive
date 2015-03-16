@@ -41,6 +41,7 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{crawl.id}/urls_crawled"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/expired_domains"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/broken_domains"], 0, raw: true)
+    Rails.cache.write(["crawl/#{crawl.id}/progress"], 0.00, raw: true)
     
     if crawl.crawl_type == 'url_crawl'
       Crawl.save_new_sites(crawl.id)

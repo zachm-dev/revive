@@ -38,11 +38,13 @@ class ProcessLinks
 
     total_crawl_urls = Rails.cache.read(["crawl/#{options['crawl_id']}/urls_found"], raw: true).to_i
     total_site_urls = Rails.cache.read(["site/#{options['site_id']}/total_site_urls"], raw: true).to_i
-
+    progress = (total_crawl_finished.to_f/total_crawl_count.to_f)*100.to_f
+    Rails.cache.write(["crawl/#{options['crawl_id']}/progress"], progress, raw: true)
+    
     ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
     Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
     
-    if total_crawl_urls > 20
+    if total_crawl_count == total_crawl_finished
       puts 'shut down app and update crawl stats and user stats'
       app = HerokuApp.where(crawl_id: options['crawl_id']).using(:main_shard).first
       if app.name.include?('revivecrawler')
