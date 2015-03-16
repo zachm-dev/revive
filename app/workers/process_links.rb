@@ -48,6 +48,14 @@ class ProcessLinks
       puts 'shut down app and update crawl stats and user stats'
       app = HerokuApp.using(:main_shard).where(crawl_id: options['crawl_id']).first
       if app.name.include?('revivecrawler')
+        
+        puts 'updating crawl stats before shutting down'
+        urls_found = "crawl/#{options['crawl_id']}/urls_found"
+        expired_domains = "crawl/#{options['crawl_id']}/expired_domains"
+        broken_domains = "crawl/#{options['crawl_id']}/broken_domains"
+        stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
+        Crawl.using(:main_shard).update(options['crawl_id'], status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
+        
         puts 'shtting it down: the crawl is finished'
         heroku = HerokuPlatform.new
         heroku.delete_app(app.name)

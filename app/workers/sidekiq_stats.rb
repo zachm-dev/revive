@@ -33,6 +33,15 @@ class SidekiqStats
               puts 'app has stalled shutting it down'
               app = HerokuApp.using(:main_shard).where(crawl_id: crawl_id).first
               app_name = app.name
+              crawl = app.crawl
+              
+              puts 'updating crawl stats before shutting down'
+              urls_found = "crawl/#{crawl.id}/urls_found"
+              expired_domains = "crawl/#{crawl.id}/expired_domains"
+              broken_domains = "crawl/#{crawl.id}/broken_domains"
+              stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
+              Crawl.using(:main_shard).update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
+              
               heroku = HerokuPlatform.new
               heroku.delete_app(app_name)
             end
