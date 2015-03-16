@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150316131823) do
+ActiveRecord::Schema.define(version: 20150316155915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 20150316131823) do
     t.string   "crawl_end_date"
     t.integer  "max_pages_allowed"
     t.string   "redis_url"
+    t.float    "progress"
   end
 
   create_table "expired_links", force: :cascade do |t|
