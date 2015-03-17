@@ -53,8 +53,12 @@
 									<% end %>
 									
 								</tbody>
-								
+
 							</table>
+							
+							<div class="will_paginate_container text-center">
+								<%= will_paginate @sites, renderer: BootstrapPagination::Rails %>
+							</div>
 							
 						</div>
 					</div>
