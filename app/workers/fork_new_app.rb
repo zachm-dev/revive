@@ -2,13 +2,13 @@ class ForkNewApp
   include Sidekiq::Worker
   
   def perform(heroku_app_id, number_of_apps_running)
-    heroku_app = HerokuApp.find(heroku_app_id)
+    heroku_app = HerokuApp.using(:processor).find(heroku_app_id)
     heroku_app.update(name: "revivecrawler#{heroku_app.crawl.id}")
     HerokuPlatform.fork(HerokuPlatform::APP_NAME, "revivecrawler#{heroku_app.crawl.id}", heroku_app_id)
   end
   
   def on_complete(status, options)
-    batch = HerokuApp.where(batch_id: "#{options['bid']}").first
+    batch = HerokuApp.using(:processor).where(batch_id: "#{options['bid']}").first
     puts "heroku app is created with the following id #{options['bid']}"
     if !batch.nil?
       HerokuPlatform.migrate_db(batch.name)
@@ -24,7 +24,7 @@ class ForkNewApp
   end
   
   def self.start(user_id, number_of_apps_running)
-    crawl_to_start = HerokuApp.where(status: 'pending', user_id: user_id).order(:position).first
+    crawl_to_start = HerokuApp.where(status: 'pending', user_id: user_id).using(:processor).order(:position).first
     
     batch = Sidekiq::Batch.new
     puts "heroku app bacth id is #{batch.bid}"

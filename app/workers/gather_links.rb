@@ -29,7 +29,7 @@ class GatherLinks
   
   def on_complete(status, options)
     puts "GatherLinks Just finished Batch #{options['bid']}"
-    batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:processor).first
+    batch = GatherLinksBatch.using(:processor).where(batch_id: "#{options['bid']}").first
     if !batch.nil?
       
       site = Site.using(:processor).find(options['site_id'])

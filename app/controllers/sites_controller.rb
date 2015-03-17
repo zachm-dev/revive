@@ -16,16 +16,6 @@ class SitesController < ApplicationController
     @urls = @site.pages.limit(50).uniq
   end
   
-  def internal
-    @site = Site.find(params[:id])
-    @internal = @site.pages.where(internal: true).uniq.limit(50)
-  end
-  
-  def external
-    @site = Site.find(params[:id])
-    @internal = @site.pages.where(internal: false).limit(50).uniq
-  end
-  
   def broken
     @crawl = Crawl.using(:processor).find(params[:id])
     # @broken = @crawl.pages.where(status_code: '404').limit(50).uniq

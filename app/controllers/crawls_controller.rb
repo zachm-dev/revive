@@ -3,19 +3,19 @@ class CrawlsController < ApplicationController
   skip_before_action :verify_authenticity_token, :only => [:api_create, :migrate_db, :process_new_crawl]
   
   def index
-    @crawls = Crawl.where(user_id: current_user.id).using(:processor).order('created_at').page(params[:page]).per_page(4)
+    @crawls = Crawl.using(:processor).where(user_id: current_user.id).order('created_at').page(params[:page]).per_page(4)
   end
   
   def running
-    @crawls = Crawl.where(status: 'running', user_id: current_user.id).using(:processor).order('created_at').page(params[:page]).per_page(4)
+    @crawls = Crawl.using(:processor).where(status: 'running', user_id: current_user.id).order('created_at').page(params[:page]).per_page(4)
   end
   
   def finished
-    @crawls = Crawl.where(status: 'finished', user_id: current_user.id).using(:processor).order('created_at').page(params[:page]).per_page(4)
+    @crawls = Crawl.using(:processor).where(status: 'finished', user_id: current_user.id).order('created_at').page(params[:page]).per_page(4)
   end
   
   def show
-    @project = Crawl.where(user_id: current_user.id, id: params[:id]).using(:processor).first
+    @project = Crawl.using(:processor).where(user_id: current_user.id, id: params[:id]).first
     
     
     if @project.status == 'running' && !@project.redis_url.nil?

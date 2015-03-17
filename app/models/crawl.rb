@@ -124,8 +124,8 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i)
-    new_heroku_app_object = HerokuApp.create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
+    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i)
+    new_heroku_app_object = HerokuApp.using(:processor).create(status: "pending", crawl_id: new_crawl.id, verified: 'pending')
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     Crawl.decision_maker(user_id)
   end
