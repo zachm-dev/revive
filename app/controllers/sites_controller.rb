@@ -27,6 +27,7 @@ class SitesController < ApplicationController
   end
   
   def broken
+    #@site = Site.find(params[:id])
     @crawl = Crawl.find(params[:id])
     # @broken = @crawl.pages.where(status_code: '404').limit(50).uniq
     @broken = @crawl.pages.where(status_code: '404')
