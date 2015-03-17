@@ -70,7 +70,7 @@ class CrawlsController < ApplicationController
     @json = JSON.parse(request.body.read)
     puts "here is the json hash #{@json["options"]}"
     Crawl.delay.start_crawl(@json["options"])
-    SidekiqStats.delay.start(@json["options"])
+    # SidekiqStats.delay.start(@json["options"])
     render :layout => false
   end
   

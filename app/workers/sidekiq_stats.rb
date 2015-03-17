@@ -27,7 +27,7 @@ class SidekiqStats
               puts 'stats have been the same for the past two minutes: restarting app: increasing verify count'
               Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
               
-              app = HerokuApp.using(:main_shard).where(crawl_id: crawl_id).first
+              app = HerokuApp.using(:processor).where(crawl_id: crawl_id).first
               app_name = app.name
               
               heroku = HerokuPlatform.new
@@ -37,7 +37,7 @@ class SidekiqStats
               Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
             elsif stats_verify_count >= 3
               puts 'app has stalled shutting it down'
-              app = HerokuApp.using(:main_shard).where(crawl_id: crawl_id).first
+              app = HerokuApp.using(:processor).where(crawl_id: crawl_id).first
               app_name = app.name
               crawl = app.crawl
               
@@ -46,7 +46,7 @@ class SidekiqStats
               expired_domains = "crawl/#{crawl.id}/expired_domains"
               broken_domains = "crawl/#{crawl.id}/broken_domains"
               stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
-              Crawl.using(:main_shard).update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
+              Crawl.using(:processor).update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
               
               heroku = HerokuPlatform.new
               heroku.delete_app(app_name)
