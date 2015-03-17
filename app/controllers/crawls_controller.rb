@@ -15,7 +15,7 @@ class CrawlsController < ApplicationController
   end
   
   def show
-    @project = current_user.using(:processor).crawls.find(params[:id])
+    @project = Crawl.where(user_id: current_user.id, id: params[:id]).using(:processor).first
     
     if @project.status == 'running' && !@project.redis_url.nil?
       redis = ActiveSupport::Cache.lookup_store(:redis_store, @project.redis_url)
