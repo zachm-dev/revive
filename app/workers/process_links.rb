@@ -46,7 +46,7 @@ class ProcessLinks
     
     if total_crawl_running <= 0
       puts 'shut down app and update crawl stats and user stats'
-      app = HerokuApp.using(:processor).where(crawl_id: options['crawl_id']).first
+      app = HerokuApp.where(crawl_id: options['crawl_id']).using(:processor).first
       if app.name.include?('revivecrawler')
         
         puts 'updating crawl stats before shutting down'

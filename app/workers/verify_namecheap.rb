@@ -7,7 +7,7 @@ class VerifyNamecheap
   
   def perform(page_id)
     puts 'performing verify namecheap'
-    page = Page.using(:master).where(id: page_id).first
+    page = Page.where(id: page_id).first
     
     begin
       if page
@@ -26,7 +26,7 @@ class VerifyNamecheap
             request["Accept"] = "application/json"
             response = http.request(request)
             json = JSON.parse(response.read_body)
-            Page.update(page.id, simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}")
+            # Page.update(page.id, simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}")
             puts 'saving verified domain'
             if json['available'].to_s == 'true'
               new_page = Page.using(:processor).create(status_code: page.status_code, url: page.url, internal: page.internal, site_id: page.site_id, found_on: "#{page.found_on}", simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}")
