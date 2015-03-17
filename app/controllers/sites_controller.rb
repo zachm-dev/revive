@@ -2,17 +2,17 @@ class SitesController < ApplicationController
   before_filter :authorize
   
   def index
-    crawl = current_user.crawls.find(params[:id])
+    crawl = Crawl.using(:processor).find(params[:id])
     @sites = crawl.sites.all
   end
   
   def show
-    @site = current_user.sites.find(params[:id])
+    @site = Site.using(:processor).find(params[:id])
     @stats_chart = Crawl.site_stats(params[:id])
   end
   
   def all_urls
-    @site = Site.find(params[:id])
+    @site = Site.using(:processor).find(params[:id])
     @urls = @site.pages.limit(50).uniq
   end
   
@@ -27,7 +27,7 @@ class SitesController < ApplicationController
   end
   
   def broken
-    @crawl = Crawl.find(params[:id])
+    @crawl = Crawl.using(:processor).find(params[:id])
     # @broken = @crawl.pages.where(status_code: '404').limit(50).uniq
     @broken = @crawl.pages.where(status_code: '404')
     @pages = @broken.page(params[:page]).per_page(25)
@@ -40,7 +40,7 @@ class SitesController < ApplicationController
   end
 
   def available
-    @crawl = Crawl.find(params[:id])
+    @crawl = Crawl.using(:processor).find(params[:id])
     @available = @crawl.pages.where(available: 'true')
 
     unless @crawl.moz_da.nil? || @crawl.moz_da == 0
@@ -71,17 +71,17 @@ class SitesController < ApplicationController
   end
   
   def save_bookmarked
-    Page.where(id: params[:page_ids]).update_all(bookmarked: true)
+    Page.where(id: params[:page_ids]).using(:processor).update_all(bookmarked: true)
     redirect_to bookmarked_sites_path(params[:id])
   end
   
   def unbookmark
-    Page.where(id: params[:page_ids]).update_all(bookmarked: false)
+    Page.where(id: params[:page_ids]).using(:processor).update_all(bookmarked: false)
     redirect_to bookmarked_sites_path(params[:id])
   end
   
   def bookmarked
-    @crawl = Crawl.find(params[:id])
+    @crawl = Crawl.using(:processor).find(params[:id])
     sort = params[:sort].nil? ? 'id' : params[:sort]
     @bookmarked = @crawl.pages.where(bookmarked: true)
     @pages = @bookmarked.order("#{sort} DESC").page(params[:page]).per_page(25)
