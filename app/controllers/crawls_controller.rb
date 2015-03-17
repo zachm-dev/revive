@@ -1,6 +1,6 @@
 class CrawlsController < ApplicationController
-  before_action :authorize, :except => [:api_create, :fetch_new_crawl, :migrate_db]
-  skip_before_action :verify_authenticity_token, :only => [:api_create, :fetch_new_crawl, :migrate_db]
+  before_action :authorize, :except => [:api_create, :migrate_db, :process_new_crawl]
+  skip_before_action :verify_authenticity_token, :only => [:api_create, :migrate_db, :process_new_crawl]
   
   def index
     @crawls = current_user.crawls.order('created_at').page(params[:page]).per_page(4)
@@ -45,8 +45,6 @@ class CrawlsController < ApplicationController
   end
   
   def create
-    # raise
-    #GatherLinks.sites(current_user.id, params[:urls], params[:crawl])
     Crawl.delay.save_new_crawl(current_user.id, params[:urls], params[:crawl])
     redirect_to crawls_path
   end
@@ -56,9 +54,15 @@ class CrawlsController < ApplicationController
   end
   
   def create_keyword_crawl
-    # raise
     Crawl.delay.save_new_keyword_crawl(current_user.id, params[:crawl][:keyword], params[:crawl])
     redirect_to crawls_path
+  end
+  
+  def process_new_crawl
+    @json = JSON.parse(request.body.read)
+    puts "crawl to process hash #{@json["options"]}"
+    Crawl.delay.decision_maker(@json["options"])
+    render :layout => false
   end
   
   def api_create
@@ -82,18 +86,6 @@ class CrawlsController < ApplicationController
     heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
     puts "migrating the database"
     HerokuPlatform.migrate_db(crawl.heroku_app.name)
-    render :layout => false
-  end
-  
-  def fetch_new_crawl
-    @json = JSON.parse(request.body.read)
-    Crawl.delay.decision_maker(@json["options"]["user_id"].to_i)
-    render :layout => false
-  end
-  
-  def call_crawl
-    @json = JSON.parse(request.body.read)
-    Api.delay.start_crawl(crawl_id: @json["options"]["crawl_id"].to_i)
     render :layout => false
   end
   

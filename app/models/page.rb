@@ -5,7 +5,7 @@ class Page < ActiveRecord::Base
   def verify_namecheap
     puts 'verifying namecheap'
     if status_code == '0' && internal == false
-      site = Site.using(:main_shard).find(site_id)
+      site = Site.using(:processor).find(site_id)
       if site.verify_namecheap_batch.nil?
         verify_namecheap_batch = Sidekiq::Batch.new
         VerifyNamecheapBatch.create(site_id: site.id, started_at: Time.now, status: "running", batch_id: verify_namecheap_batch.bid)
@@ -19,7 +19,7 @@ class Page < ActiveRecord::Base
       end
       
     elsif status_code == '404'
-      site = Site.using(:main_shard).find(site_id)
+      site = Site.using(:processor).find(site_id)
       site_total_broken = site.total_broken.to_i + 1
       crawl_total_broken = site.crawl.total_broken.to_i + 1
       site.crawl.update(total_broken: crawl_total_broken)

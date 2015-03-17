@@ -12,7 +12,7 @@ class ProcessLinks
       internal = l.include?("#{domain}") ? true : false
       if internal == true
         if "#{response.code}" == '404'
-          Page.using(:main_shard).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
+          Page.using(:processor).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
         end
       elsif internal == false
         Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}")
@@ -46,7 +46,7 @@ class ProcessLinks
     
     if total_crawl_running <= 0
       puts 'shut down app and update crawl stats and user stats'
-      app = HerokuApp.using(:main_shard).where(crawl_id: options['crawl_id']).first
+      app = HerokuApp.using(:processor).where(crawl_id: options['crawl_id']).first
       if app.name.include?('revivecrawler')
         
         puts 'updating crawl stats before shutting down'
@@ -54,15 +54,15 @@ class ProcessLinks
         expired_domains = "crawl/#{options['crawl_id']}/expired_domains"
         broken_domains = "crawl/#{options['crawl_id']}/broken_domains"
         stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
-        Crawl.using(:main_shard).update(options['crawl_id'], status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
+        Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
         
         puts 'shtting it down: the crawl is finished'
         heroku = HerokuPlatform.new
         heroku.delete_app(app.name)
       end
     elsif total_site_running <= 0
-      Site.using(:main_shard).update(options['site_id'], processing_status: 'finished', total_urls_found: total_site_urls)
-      Crawl.using(:main_shard).update(options['crawl_id'], total_urls_found: total_crawl_urls)
+      Site.using(:processor).update(options['site_id'], processing_status: 'finished', total_urls_found: total_site_urls)
+      Crawl.using(:processor).update(options['crawl_id'], total_urls_found: total_crawl_urls)
     else
       puts 'do something else'
     end

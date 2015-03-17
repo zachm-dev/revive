@@ -29,10 +29,10 @@ class GatherLinks
   
   def on_complete(status, options)
     puts "GatherLinks Just finished Batch #{options['bid']}"
-    batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:main_shard).first
+    batch = GatherLinksBatch.where(batch_id: "#{options['bid']}").using(:processor).first
     if !batch.nil?
       
-      site = Site.using(:main_shard).find(options['site_id'])
+      site = Site.using(:processor).find(options['site_id'])
       crawl = site.crawl
       
       total_crawl_urls = Rails.cache.read(["crawl/#{crawl.id}/urls_found"], raw: true).to_i
@@ -54,14 +54,14 @@ class GatherLinks
   def self.start(options = {})
     if options["crawl_id"]
       puts 'gather links start method'
-      running_crawl = Crawl.using(:main_shard).find(options["crawl_id"])
+      running_crawl = Crawl.using(:processor).find(options["crawl_id"])
       pending = running_crawl.gather_links_batches.where(status: 'pending').first
       if pending
         puts "the pending crawl is #{pending.id} on the site #{pending.site.id}"
         site = pending.site
       end
     else
-      site = Site.using(:main_shard).where(id: options["site_id"].to_i).first
+      site = Site.using(:processor).where(id: options["site_id"].to_i).first
     end
     
     if site

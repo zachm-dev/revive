@@ -129,7 +129,7 @@ class HerokuPlatform
                           verifydomains = heroku.start_dyno(to, 2, '1X', "verifydomains")
                           if !verifydomains.empty?
                             heroku_app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
-                            Crawl.using(:main_shard).update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url])
+                            Crawl.update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url])
                             puts 'done creating new app'
                           end
                         end

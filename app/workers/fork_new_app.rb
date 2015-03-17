@@ -24,8 +24,7 @@ class ForkNewApp
   end
   
   def self.start(user_id, number_of_apps_running)
-    user = User.find(user_id)
-    crawl_to_start = user.heroku_apps.where(status: 'pending').order(:position).first
+    crawl_to_start = HerokuApp.where(status: 'pending', user_id: user_id).order(:position).first
     
     batch = Sidekiq::Batch.new
     puts "heroku app bacth id is #{batch.bid}"

@@ -11,6 +11,14 @@ octopus:
       adapter: postgresql
       database: crawler_development
       pool: 80
+    processor:
+      adapter: postgresql
+      database: d20vpq28o48gs4
+      username: uaatonnj4p4fbc
+      password: p6tpu937gn4fk5ehvfnlru5aiq3
+      host: ec2-54-163-226-12.compute-1.amazonaws.com
+      port: 5482
+      pool: 1
   production:
     <% if ENV["DB_NAME"].present? %>
     master:
@@ -29,4 +37,12 @@ octopus:
       password: p9rem1q40biu605siarnkvp2i83
       host: ec2-184-73-202-38.compute-1.amazonaws.com
       port: 5532
+      pool: 1
+    processor:
+      adapter: postgresql
+      database: d20vpq28o48gs4
+      username: uaatonnj4p4fbc
+      password: p6tpu937gn4fk5ehvfnlru5aiq3
+      host: ec2-54-163-226-12.compute-1.amazonaws.com
+      port: 5482
       pool: 1
