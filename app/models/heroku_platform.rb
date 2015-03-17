@@ -109,16 +109,26 @@ class HerokuPlatform
       heroku = HerokuPlatform.new
       # check if there are any pending crawls before forking a new app from the user
       heroku.create_app(to)
+      sleep 10
       heroku.check_and_copy_slug(from, to)
+      sleep 10
       heroku.copy_config(from, to)
+      sleep 10
       heroku.upgrade_postgres(to)
+      sleep 10
       heroku.add_redis(to)
+      sleep 10
       heroku.add_librato(to)
+      sleep 5
       heroku.copy_rack_and_rails_env_again(from, to)
+      sleep 5
       heroku.enable_log_runtime_metrics(to)
+      sleep 5
       librato_env_vars = heroku.get_librato_env_variables_for(to)
       heroku.start_dynos(to, 3, '2X', ["processlinks"])
+      sleep 5
       heroku.start_dynos(to, 2, '1X', ["worker", "verifydomains"])
+      sleep 5
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
