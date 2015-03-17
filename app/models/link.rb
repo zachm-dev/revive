@@ -36,7 +36,7 @@ class Link < ActiveRecord::Base
       batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => site.crawl_id, 'site_id' => site.id, 'link_id' => id)
       
       batch.jobs do
-        links.each{|l| ProcessLinks.perform_async(l, site.id, found_on, domain)}
+        links.each{|l| ProcessLinks.perform_async(l, site.id, found_on, domain, site.crawl_id)}
       end
       
     end

@@ -29,7 +29,7 @@ class VerifyNamecheap
             # Page.update(page.id, simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}")
             puts 'saving verified domain'
             if json['available'].to_s == 'true'
-              new_page = Page.using(:processor).create(status_code: page.status_code, url: page.url, internal: page.internal, site_id: page.site_id, found_on: "#{page.found_on}", simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}")
+              new_page = Page.using(:processor).create(status_code: page.status_code, url: page.url, internal: page.internal, site_id: page.site_id, found_on: "#{page.found_on}", simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}", crawl_id: page.crawl_id)
               puts 'Majestic & Moz stats being saved'
               site = Site.using(:processor).find(page.site_id)
               crawl = site.crawl
