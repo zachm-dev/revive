@@ -90,11 +90,9 @@ class HerokuPlatform
     end
   end
   
-  def start_dynos(app_name, quantity, size, dynos)
-    puts 'starting dynos'
-    dynos.each do |type|
-      @heroku.formation.update(app_name, type, {"quantity"=>quantity, 'size'=>size})
-    end
+  def start_dyno(app_name, quantity, size, dyno)
+    puts 'starting dyno'
+    @heroku.formation.update(app_name, dyno, {"quantity"=>quantity, 'size'=>size})
   end
   
   def app_exists?(name)
@@ -104,27 +102,46 @@ class HerokuPlatform
   end
   
   def self.fork(from, to, heroku_app_id)
-    app = HerokuApp.where(id: heroku_app_id).first
-    if app && app.status != 'running'
+    heroku_app = HerokuApp.where(id: heroku_app_id).first
+    if heroku_app && heroku_app.status != 'running'
       heroku = HerokuPlatform.new
-      # check if there are any pending crawls before forking a new app from the user
-      heroku.create_app(to)
-      heroku.check_and_copy_slug(from, to)
-      heroku.copy_config(from, to)
-      heroku.upgrade_postgres(to)
-      heroku.add_redis(to)
-      heroku.add_librato(to)
-      heroku.copy_rack_and_rails_env_again(from, to)
-      heroku.enable_log_runtime_metrics(to)
-      librato_env_vars = heroku.get_librato_env_variables_for(to)
-      heroku.start_dynos(to, 3, '2X', ["processlinks"])
-      heroku.start_dynos(to, 2, '1X', ["worker", "verifydomains"])
-      # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
-      # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
-      app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
-      Crawl.using(:main_shard).update(app.crawl.id, redis_url: librato_env_vars[:redis_url])
-      # restart_app(to)
-      puts 'done creating new app'
+      app = heroku.create_app(to)
+      if !app.empty? && app['build_stack'].has_key?('id')
+        slug = heroku.check_and_copy_slug(from, to)
+        if !slug.empty? && slug['app'].has_value?(to)
+          config = heroku.copy_config(from, to)
+          if !config.empty?
+            postgres = heroku.upgrade_postgres(to)
+            if !postgres.empty?
+              redis = heroku.add_redis(to)
+              if !redis.empty? && redis['app'].has_value?(to)
+                librato = heroku.add_librato(to)
+                if !librato.empty? && librato['app'].has_value?(to)
+                  rack_envs = heroku.copy_rack_and_rails_env_again(from, to)
+                  if !rack_envs.empty?
+                    log_metrics = heroku.enable_log_runtime_metrics(to)
+                    if !log_metrics.empty? && log_metrics['enabled'] == true
+                      librato_env_vars = heroku.get_librato_env_variables_for(to)
+                      processlinks = heroku.start_dyno(to, 3, '2X', "processlinks")
+                      if !processlinks.empty?
+                        worker = heroku.start_dyno(to, 2, '1X', "worker")
+                        if !worker.empty?
+                          verifydomains = heroku.start_dyno(to, 2, '1X', "verifydomains")
+                          if !verifydomains.empty?
+                            heroku_app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
+                            Crawl.using(:main_shard).update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url])
+                            puts 'done creating new app'
+                          end
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
     end
   end
   
@@ -202,7 +219,6 @@ class HerokuPlatform
   def upgrade_postgres(to)
     puts 'upgrading postgres db'
     @heroku.addon.create(to, plan: "heroku-postgresql:standard-2")
-    puts 'making new db the primary'
   end
 
   def add_redis(to)

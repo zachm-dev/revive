@@ -7,7 +7,6 @@ octopus:
       adapter: postgresql
       database: crawler_development
       pool: 3
-      reaping_frequency: 3
     master:
       adapter: postgresql
       database: crawler_development
