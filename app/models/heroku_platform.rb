@@ -90,6 +90,13 @@ class HerokuPlatform
     end
   end
   
+  def start_dynos(app_name, quantity, size, dynos)
+    puts 'starting dynos'
+    dynos.each do |type|
+      @heroku.formation.update(app_name, type, {"quantity"=>quantity, 'size'=>size})
+    end
+  end
+  
   def app_exists?(name)
     @heroku.app.list.collect do |app|
       app if app['name'] == name
@@ -110,8 +117,8 @@ class HerokuPlatform
       heroku.copy_rack_and_rails_env_again(from, to)
       heroku.enable_log_runtime_metrics(to)
       librato_env_vars = heroku.get_librato_env_variables_for(to)
-      heroku.scale_dynos(app_name: to, quantity: 3, size: '2X', dynos: ["processlinks"])
-      heroku.scale_dynos(app_name: to, quantity: 2, size: '1X', dynos: ["worker", "verifydomains"])
+      heroku.start_dynos(to, 3, '2X', ["processlinks"])
+      heroku.start_dynos(to, 2, '1X', ["worker", "verifydomains"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["verifydomains"])
       # heroku.scale_dynos(app_name: to, quantity: 1, size: '1X', dynos: ["sidekiqstats"])
       app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
