@@ -42,7 +42,7 @@ class CrawlsController < ApplicationController
   end
 
   def new
-    @project = Crawl.where(user_id: current_user.id).new
+    @project = current_user.crawls.new
   end
   
   def create
