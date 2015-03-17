@@ -4,14 +4,14 @@ class MajesticStats
 
   def perform(page_id)
     puts 'majestic perform on perform'
-    page = Page.using(:main_shard).find(page_id)
+    page = Page.using(:processor).find(page_id)
     
     m = MajesticSeo::Api::Client.new(api_key: ENV['majestic_api_key'], environment: ENV['majestic_env'])
     res = m.get_index_item_info([page.simple_url])
     
     res.items.each do |r|
       puts "majestic block perform #{r.response['CitationFlow']}"
-      Page.using(:main_shard).update(page.id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
+      Page.using(:processor).update(page.id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
     end
   end
   
