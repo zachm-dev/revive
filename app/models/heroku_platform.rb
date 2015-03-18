@@ -249,7 +249,7 @@ class HerokuPlatform
   def copy_config(from, to)
     puts 'copying config'
     from_congig_vars = config_vars(from)
-    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_TEAL_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
+    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_RED_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
     @heroku.config_var.update(to, from_congig_vars)
   end
   
