@@ -36,10 +36,10 @@ class VerifyNamecheap
               # site.update(total_expired: site.total_expired.to_i+1)
               # crawl.update(total_expired: crawl.total_expired.to_i+1)
               
-              Rails.cache.increment(["crawl/#{crawl.id}/expired_domains"])
+              Rails.cache.increment(["crawl/#{crawl_id}/expired_domains"])
               
-              MozStats.perform_async(new_page.id)
-              MajesticStats.perform_async(new_page.id)
+              MozStats.perform_async(new_page.id, parsed_url)
+              MajesticStats.perform_async(new_page.id, parsed_url)
 
             end
           end

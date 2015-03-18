@@ -3,21 +3,21 @@ class MozStats
   include Sidekiq::Worker
   sidekiq_options :queue => :verify_domains
 
-  def perform(page_id)
+  def perform(page_id, simple_url)
     puts 'moz perform on perform'
-    page = Page.using(:processor).find(page_id)
+    # page = Page.using(:processor).find(page_id)
     client = Linkscape::Client.new(:accessID => "member-8967f7dff3", :secret => "8b98d4acd435d50482ebeded953e2331")
-    response = client.urlMetrics([page.simple_url], :cols => :all)
+    response = client.urlMetrics([simple_url], :cols => :all)
     
     response.data.map do |r|
       begin
         puts "moz block perform regular"
         url = Domainatrix.parse("#{r[:uu]}")
         parsed_url = url.domain + "." + url.public_suffix
-        Page.using(:processor).update(page.id, da: r[:pda].to_f, pa: r[:upa].to_f)
+        Page.using(:processor).update(page_id, da: r[:pda].to_f, pa: r[:upa].to_f)
       rescue
         puts "moz block perform zero"
-        Page.using(:processor).update(page.id, da: 0, pa: 0)
+        Page.using(:processor).update(page_id, da: 0, pa: 0)
       end
     end
   end
