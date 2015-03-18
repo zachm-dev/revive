@@ -35,7 +35,7 @@ class CrawlsController < ApplicationController
       @expired_domains = @project.total_expired.to_i
     end
     
-    @stats_chart = Crawl.crawl_stats(params[:id])
+    @stats_chart = Crawl.crawl_stats(@broken_domains, @expired_domains)
     # @sites = Site.find(@project.process_links_batches.map(&:site_id))
     @sites = @project.sites.page(params[:page]).per_page(10)
     @top_domains = @project.pages.where(available: 'true').limit(5)

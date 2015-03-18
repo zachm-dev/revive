@@ -161,10 +161,10 @@ class Crawl < ActiveRecord::Base
   end
   
   
-  def self.crawl_stats(crawl_id)
-    crawl = Crawl.using(:processor).find(crawl_id)
-    broken = crawl.total_broken.to_i
-    available = crawl.total_expired.to_i
+  def self.crawl_stats(broken, available)
+    # crawl = Crawl.using(:processor).find(crawl_id)
+    # broken = crawl.total_broken.to_i
+    # available = crawl.total_expired.to_i
     
     LazyHighCharts::HighChart.new('graph') do |f|
       #f.title(:text => "Population vs GDP For 5 Big Countries [2009]")
