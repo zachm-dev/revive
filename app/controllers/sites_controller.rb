@@ -61,12 +61,12 @@ class SitesController < ApplicationController
   end
   
   def save_bookmarked
-    Page.where(id: params[:page_ids]).using(:processor).update_all(bookmarked: true)
+    Page.using(:processor).where(id: params[:page_ids]).update_all(bookmarked: true)
     redirect_to bookmarked_sites_path(params[:id])
   end
   
   def unbookmark
-    Page.where(id: params[:page_ids]).using(:processor).update_all(bookmarked: false)
+    Page.using(:processor).where(id: params[:page_ids]).update_all(bookmarked: false)
     redirect_to bookmarked_sites_path(params[:id])
   end
   
