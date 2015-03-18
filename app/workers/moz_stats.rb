@@ -5,7 +5,6 @@ class MozStats
 
   def perform(page_id, simple_url)
     puts 'moz perform on perform'
-    # page = Page.using(:processor).find(page_id)
     client = Linkscape::Client.new(:accessID => "member-8967f7dff3", :secret => "8b98d4acd435d50482ebeded953e2331")
     response = client.urlMetrics([simple_url], :cols => :all)
     

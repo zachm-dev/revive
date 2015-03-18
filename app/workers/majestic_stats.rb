@@ -4,8 +4,6 @@ class MajesticStats
 
   def perform(page_id, simple_url)
     puts 'majestic perform on perform'
-    # page = Page.using(:processor).find(page_id)
-    
     m = MajesticSeo::Api::Client.new(api_key: ENV['majestic_api_key'], environment: ENV['majestic_env'])
     res = m.get_index_item_info([simple_url])
     
