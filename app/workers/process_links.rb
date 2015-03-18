@@ -7,7 +7,7 @@ class ProcessLinks
   # sidekiq_options :retry => false
   
   def perform(l, site_id, found_on, domain, crawl_id)
-    request = Typhoeus::Request.new(l, method: :head, followlocation: true)
+    request = Typhoeus::Request.new(l, method: :head, followlocation: true, timeout: 15)
     request.on_complete do |response|
       puts "total: #{response.total_time} connect: #{response.connect_time}"
       
@@ -68,7 +68,7 @@ class ProcessLinks
         stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
         Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
         
-        puts 'shtting it down: the crawl is finished'
+        puts 'shutting it down: the crawl is finished'
         heroku = HerokuPlatform.new
         heroku.delete_app(app.name)
       end
