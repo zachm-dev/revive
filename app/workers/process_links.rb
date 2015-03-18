@@ -25,7 +25,8 @@ class ProcessLinks
         request.run
       end
     rescue Timeout::Error
-      puts 'too slow'
+      puts "slow response from #{l}"
+      Rails.cache.increment(["crawl/#{crawl_id}/too_slow"])
     end
   end
   
