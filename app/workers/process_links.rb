@@ -21,9 +21,11 @@ class ProcessLinks
       end
     end
     begin
-      request.run
-    rescue
-      nil
+      Timeout::timeout(10) do
+        request.run
+      end
+    rescue Timeout::Error
+      puts 'too slow'
     end
   end
   
