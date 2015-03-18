@@ -10,6 +10,13 @@ class ProcessLinks
     request = Typhoeus::Request.new(l, method: :head, followlocation: true)
     request.on_complete do |response|
       puts "total: #{response.total_time} connect: #{response.connect_time}"
+      
+      tt = Rails.cache.read(["crawl/#{crawl_id}/connections/total_time"], raw: true).to_f
+      ct = Rails.cache.read(["crawl/#{crawl_id}/connections/connect_time"], raw: true).to_f
+      Rails.cache.write(["crawl/#{crawl_id}/connections/total_time"], tt+response.total_time.to_f, raw: true)
+      Rails.cache.write(["crawl/#{crawl_id}/connections/connect_time"], ct+response.connect_time.to_f, raw: true)
+      Rails.cache.increment(["crawl/#{crawl_id}/connections/total"])
+      
       internal = l.include?("#{domain}") ? true : false
       if internal == true && "#{response.code}" == '404'
         Page.using(:processor).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
@@ -27,7 +34,6 @@ class ProcessLinks
       end
     rescue Timeout::Error
       puts "slow response from #{l}"
-      Rails.cache.increment(["crawl/#{crawl_id}/too_slow"])
     end
   end
   
