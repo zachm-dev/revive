@@ -19,14 +19,13 @@ class Page < ActiveRecord::Base
       end
       
     elsif status_code == '404'
-      site = Site.using(:processor).find(site_id)
-      site_total_broken = site.total_broken.to_i + 1
-      crawl_total_broken = site.crawl.total_broken.to_i + 1
-      site.crawl.update(total_broken: crawl_total_broken)
-      site.update(total_broken: site_total_broken)
-      
-      Rails.cache.increment(["crawl/#{site.crawl.id}/broken_domains"])
-      
+      # site = Site.using(:processor).find(site_id)
+      # site_total_broken = site.total_broken.to_i + 1
+      # crawl_total_broken = site.crawl.total_broken.to_i + 1
+      # site.crawl.update(total_broken: crawl_total_broken)
+      # site.update(total_broken: site_total_broken)
+      Rails.cache.increment(["crawl/#{crawl_id}/broken_domains"])
+      Page.using(:processor).create(status_code: status_code, url: url, internal: internal, site_id: site_id, found_on: found_on, crawl_id: crawl_id)
     end
   end
   
