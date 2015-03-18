@@ -158,7 +158,7 @@ class Crawl < ActiveRecord::Base
   
   
   def self.crawl_stats(crawl_id)
-    crawl = Crawl.find(crawl_id)
+    crawl = Crawl.using(:processor).find(crawl_id)
     broken = crawl.total_broken.to_i
     available = crawl.total_expired.to_i
     
