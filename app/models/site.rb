@@ -10,12 +10,12 @@ class Site < ActiveRecord::Base
   has_one :verify_majestic_batch
   
   def self.save_url_domains(options = {})
-    crawl = Crawl.using(:main_shard).find(options[:crawl_id].to_i)
+    crawl = Crawl.using(:processor).find(options[:crawl_id].to_i)
     sites = crawl.sites
     sites.each do |s|
       url = Domainatrix.parse(s.base_url)
       parsed_url = 'www.' + url.domain + "." + url.public_suffix
-      Site.using(:main_shard).update(s.id, domain: parsed_url)
+      Site.using(:processor).update(s.id, domain: parsed_url)
     end
   end
   

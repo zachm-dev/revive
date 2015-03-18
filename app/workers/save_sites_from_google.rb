@@ -29,7 +29,9 @@ class SaveSitesFromGoogle
     
     urls_array.each do |u|
       puts "the gather links batch of keyword crawl #{u}"
-      site = Site.using(:processor).create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
+      url = Domainatrix.parse(u.to_s)
+      parsed_url = 'www.' + url.domain + "." + url.public_suffix
+      site = Site.using(:processor).create(domain: parsed_url, base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
       GatherLinksBatch.using(:processor).create(site_id: site.id, status: "pending")
     end
   end
@@ -37,7 +39,7 @@ class SaveSitesFromGoogle
   def on_complete(status, options)
     puts "finished saving sites from google for the crawl #{options['crawl_id']}"
     # crawl = Crawl.using(:main_shard).find(options['crawl_id'])
-    Site.using(:processor).save_url_domains(crawl_id: options['crawl_id'])
+    # Site.save_url_domains(crawl_id: options['crawl_id'])
     # Site.save_moz_data(crawl_id: options['crawl_id'])
     # Site.save_majestic_data(crawl_id: options['crawl_id'])
     # ids = Site.in_the_top_x_percent(20, options['crawl_id'])
