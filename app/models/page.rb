@@ -5,27 +5,23 @@ class Page < ActiveRecord::Base
   def verify_namecheap
     puts 'verifying namecheap'
     if status_code == '0' && internal == false
-      site = Site.using(:processor).find(site_id)
-      if site.verify_namecheap_batch.nil?
-        verify_namecheap_batch = Sidekiq::Batch.new
-        VerifyNamecheapBatch.create(site_id: site.id, started_at: Time.now, status: "running", batch_id: verify_namecheap_batch.bid)
-        verify_namecheap_batch.on(:complete, VerifyNamecheap, 'bid' => verify_namecheap_batch.bid)
-      else
-        verify_namecheap_batch = Sidekiq::Batch.new(site.verify_namecheap_batch.batch_id)
-      end
+      # site = Site.using(:processor).find(site_id)
+      # if site.verify_namecheap_batch.nil?
+      #   verify_namecheap_batch = Sidekiq::Batch.new
+      #   VerifyNamecheapBatch.create(site_id: site.id, started_at: Time.now, status: "running", batch_id: verify_namecheap_batch.bid)
+      #   verify_namecheap_batch.on(:complete, VerifyNamecheap, 'bid' => verify_namecheap_batch.bid)
+      # else
+      #   verify_namecheap_batch = Sidekiq::Batch.new(site.verify_namecheap_batch.batch_id)
+      # end
+      #
+      # verify_namecheap_batch.jobs do
+      #   VerifyNamecheap.perform_async(id)
+      # end
       
-      verify_namecheap_batch.jobs do
-        VerifyNamecheap.perform_async(id)
-      end
+      VerifyNamecheap.perform_async(id, crawl_id)
       
     elsif status_code == '404'
-      # site = Site.using(:processor).find(site_id)
-      # site_total_broken = site.total_broken.to_i + 1
-      # crawl_total_broken = site.crawl.total_broken.to_i + 1
-      # site.crawl.update(total_broken: crawl_total_broken)
-      # site.update(total_broken: site_total_broken)
       Rails.cache.increment(["crawl/#{crawl_id}/broken_domains"])
-      Page.using(:processor).create(status_code: status_code, url: url, internal: internal, site_id: site_id, found_on: found_on, crawl_id: crawl_id)
     end
   end
   

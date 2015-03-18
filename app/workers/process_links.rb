@@ -10,12 +10,14 @@ class ProcessLinks
     request = Typhoeus::Request.new(l, method: :head, followlocation: true)
     request.on_complete do |response|
       internal = l.include?("#{domain}") ? true : false
-      if internal == true
+      if internal == true && "#{response.code}" == '404'
+        Page.using(:processor).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
+      elsif internal == false
         if "#{response.code}" == '404'
           Page.using(:processor).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
+        else
+          Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
         end
-      elsif internal == false
-        Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
       end
     end
     begin
