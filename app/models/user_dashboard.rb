@@ -7,11 +7,11 @@ class UserDashboard < ActiveRecord::Base
     dash = UserDashboard.using(:main_shard).where(user_id: user_id.to_i).first
     
     domains_crawled = options['domains_crawled'].nil? ? 0 : options['domains_crawled'].to_i
-    domains_broken = options['domains_broken'].nil? 0 : options['domains_broken'].to_i
-    domains_expired = options['domains_expired'].nil? 0 : options['domains_expired'].to_i
-    finished_crawls = options['finished_crawls'].nil? 0 : options['finished_crawls'].to_i
-    pending_crawls = options['pending_crawls'].nil? 0 : options['pending_crawls'].to_i
-    running_crawls = options['running_crawls'].nil? 0 : options['running_crawls'].to_i
+    domains_broken = options['domains_broken'].nil? ? 0 : options['domains_broken'].to_i
+    domains_expired = options['domains_expired'].nil? ? 0 : options['domains_expired'].to_i
+    finished_crawls = options['finished_crawls'].nil? ? 0 : options['finished_crawls'].to_i
+    pending_crawls = options['pending_crawls'].nil? ? 0 : options['pending_crawls'].to_i
+    running_crawls = options['running_crawls'].nil? ? 0 : options['running_crawls'].to_i
     
     dash.update(domains_crawled: dash.domains_crawled.to_i + domains_crawled, 
                 domains_broken: dash.domains_broken.to_i + domains_broken, 
