@@ -29,7 +29,10 @@ class VerifyNamecheap
             puts 'saving verified domain'
             if json['available'].to_s == 'true'             
               new_page = Page.using(:processor).create(status_code: page.status_code, url: page.url, internal: page.internal, site_id: page.site_id, found_on: "#{page.found_on}", simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}", crawl_id: page.crawl_id)
+              
               Rails.cache.increment(["crawl/#{crawl_id}/expired_domains"])
+              Rails.cache.increment(["site/#{page.site_id}/expired_domains"])
+              
               MozStats.perform_async(new_page.id, parsed_url)
               MajesticStats.perform_async(new_page.id, parsed_url)
             end

@@ -8,6 +8,7 @@ class Page < ActiveRecord::Base
       VerifyNamecheap.perform_async(id, crawl_id)
     elsif status_code == '404'
       Rails.cache.increment(["crawl/#{crawl_id}/broken_domains"])
+      Rails.cache.increment(["site/#{site_id}/broken_domains"])
     end
   end
   

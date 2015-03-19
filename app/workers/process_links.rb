@@ -9,13 +9,12 @@ class ProcessLinks
   def perform(l, site_id, found_on, domain, crawl_id)
     request = Typhoeus::Request.new(l, method: :head, followlocation: true, timeout: 15)
     request.on_complete do |response|
-      puts "total: #{response.total_time} connect: #{response.connect_time}"
       
-      tt = Rails.cache.read(["crawl/#{crawl_id}/connections/total_time"], raw: true).to_f
-      ct = Rails.cache.read(["crawl/#{crawl_id}/connections/connect_time"], raw: true).to_f
-      Rails.cache.write(["crawl/#{crawl_id}/connections/total_time"], tt+response.total_time.to_f, raw: true)
-      Rails.cache.write(["crawl/#{crawl_id}/connections/connect_time"], ct+response.connect_time.to_f, raw: true)
-      Rails.cache.increment(["crawl/#{crawl_id}/connections/total"])
+      # tt = Rails.cache.read(["crawl/#{crawl_id}/connections/total_time"], raw: true).to_f
+      # ct = Rails.cache.read(["crawl/#{crawl_id}/connections/connect_time"], raw: true).to_f
+      # Rails.cache.write(["crawl/#{crawl_id}/connections/total_time"], tt+response.total_time.to_f, raw: true)
+      # Rails.cache.write(["crawl/#{crawl_id}/connections/connect_time"], ct+response.connect_time.to_f, raw: true)
+      # Rails.cache.increment(["crawl/#{crawl_id}/connections/total"])
       
       internal = l.include?("#{domain}") ? true : false
       if internal == true && "#{response.code}" == '404'
@@ -47,9 +46,7 @@ class ProcessLinks
     total_crawl_count = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/total"], raw: true).to_i
     total_crawl_running = Rails.cache.decrement(["crawl/#{options['crawl_id']}/processing_batches/running"])
     total_crawl_finished = Rails.cache.increment(["crawl/#{options['crawl_id']}/processing_batches/finished"])
-
-    total_crawl_urls = Rails.cache.read(["crawl/#{options['crawl_id']}/urls_found"], raw: true).to_i
-    total_site_urls = Rails.cache.read(["site/#{options['site_id']}/total_site_urls"], raw: true).to_i
+    
     progress = (total_crawl_finished.to_f/total_crawl_count.to_f)*100.to_f
     Rails.cache.write(["crawl/#{options['crawl_id']}/progress"], progress, raw: true)
     
@@ -62,19 +59,48 @@ class ProcessLinks
       if app.name.include?('revivecrawler')
         
         puts 'updating crawl stats before shutting down'
-        urls_found = "crawl/#{options['crawl_id']}/urls_found"
-        expired_domains = "crawl/#{options['crawl_id']}/expired_domains"
-        broken_domains = "crawl/#{options['crawl_id']}/broken_domains"
-        stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
-        Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
+        
+        crawl_urls_found = "crawl/#{options['crawl_id']}/urls_found"
+        crawl_expired_domains = "crawl/#{options['crawl_id']}/expired_domains"
+        crawl_broken_domains = "crawl/#{options['crawl_id']}/broken_domains"
+        
+        site_urls_found = "site/#{options['site_id']}/total_site_urls"
+        site_expired_domains = "site/#{options['site_id']}/expired_domains"
+        site_broken_domains = "site/#{options['site_id']}/broken_domains"
+
+        stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
+        
+        Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
+        
+        UserDashboard.update_crawl_stats(options['user_id'], 
+                                        'domains_broken' => stats[crawl_broken_domains], 
+                                        'domains_expired' => stats[crawl_expired_domains],
+                                        'domains_crawled' => stats[crawl_urls_found],
+                                        'finished_crawls' => 1,
+                                        'running_crawls' => -1
+                                        )
         
         puts 'shutting it down: the crawl is finished'
+        
         heroku = HerokuPlatform.new
         heroku.delete_app(app.name)
       end
     elsif total_site_running <= 0
-      Site.using(:processor).update(options['site_id'], processing_status: 'finished', total_urls_found: total_site_urls)
-      Crawl.using(:processor).update(options['crawl_id'], total_urls_found: total_crawl_urls)
+      
+      puts 'updating site stats'
+      
+      crawl_urls_found = "crawl/#{options['crawl_id']}/urls_found"
+      crawl_expired_domains = "crawl/#{options['crawl_id']}/expired_domains"
+      crawl_broken_domains = "crawl/#{options['crawl_id']}/broken_domains"
+      
+      site_urls_found = "site/#{options['site_id']}/total_site_urls"
+      site_expired_domains = "site/#{options['site_id']}/expired_domains"
+      site_broken_domains = "site/#{options['site_id']}/broken_domains"
+      
+      stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
+      
+      Site.using(:processor).update(options['site_id'], processing_status: 'finished', total_urls_found: stats[site_urls_found].to_i, total_expired: stats[site_expired_domains].to_i, total_broken: stats[site_broken_domains].to_i)
+      Crawl.using(:processor).update(options['crawl_id'], total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
     else
       puts 'do something else'
     end

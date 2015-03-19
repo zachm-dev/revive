@@ -15,6 +15,9 @@ class GatherLinks
       links = page.links
       links_count = links.count.to_i
       
+      Rails.cache.increment(["crawl/#{crawl_id}/urls_found"], links_count)
+      Rails.cache.increment(["site/#{site_id}/total_site_urls"], links_count)
+      
       if total_crawl_urls < max_pages_allowed
         process = true
       else
@@ -22,8 +25,6 @@ class GatherLinks
       end
       
       Link.create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id)
-      Rails.cache.increment(["crawl/#{crawl_id}/urls_found"], links_count)
-      Rails.cache.increment(["site/#{site_id}/total_site_urls"], links_count)
     end
   end
   
