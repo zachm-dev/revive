@@ -31,8 +31,7 @@ class SitesController < ApplicationController
 
   def available
     @crawl = Crawl.using(:processor).find(params[:id])
-    @available = Page.using(:processor).where(available: 'true', crawl_id: params[:id]).select('DISTINCT simple_url', 'id', 'pa', 'da', 'trustflow', 'citationflow', 'refdomains', 'backlinks', 'found_on')
-    
+    @available = Page.using(:processor).where(available: 'true', crawl_id: params[:id]).group_by(&:simple_url)
 
     unless @crawl.moz_da.nil? || @crawl.moz_da == 0
       moz_da = @available.where('da >= ?', @crawl.moz_da).order("#{sort} DESC")

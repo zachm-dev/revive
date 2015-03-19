@@ -122,11 +122,11 @@ class HerokuPlatform
                     log_metrics = heroku.enable_log_runtime_metrics(to)
                     if !log_metrics.empty? && log_metrics['enabled'] == true
                       librato_env_vars = heroku.get_librato_env_variables_for(to)
-                      processlinks = heroku.start_dyno(to, 4, '2X', "processlinks")
+                      processlinks = heroku.start_dyno(to, 6, '2X', "processlinks")
                       if !processlinks.empty?
-                        worker = heroku.start_dyno(to, 2, '2X', "worker")
+                        worker = heroku.start_dyno(to, 4, '2X', "worker")
                         if !worker.empty?
-                          verifydomains = heroku.start_dyno(to, 2, '1X', "verifydomains")
+                          verifydomains = heroku.start_dyno(to, 4, '1X', "verifydomains")
                           if !verifydomains.empty?
                             heroku_app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
                             Crawl.update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url])
