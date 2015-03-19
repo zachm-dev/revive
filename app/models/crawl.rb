@@ -35,6 +35,7 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/running"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/finished"], 0, raw: true)
     Rails.cache.write(["crawl/#{crawl.id}/processing_batches/ids"], [])
+    Rails.cache.write(["crawl/#{crawl.id}/available"], [])
     
     # Rails.cache.write(["crawl/#{crawl.id}/connections/total_time"], 0, raw: true)
     # Rails.cache.write(["crawl/#{crawl.id}/connections/connect_time"], 0, raw: true)
