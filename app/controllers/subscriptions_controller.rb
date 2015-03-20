@@ -10,7 +10,7 @@ class SubscriptionsController < ApplicationController
     # For ~> checkout
     # If the user already has a plan just redirect to dash
     # in the future this will redirect to account and billing.
-    if current_user.subscription.active?
+    if !current_user.subscription.nil? && current_user.subscription.active?
       redirect_to '/account#subscription'
     else
       render layout: 'checkout'
@@ -19,11 +19,10 @@ class SubscriptionsController < ApplicationController
 
   # New Stripe Subscription
   def create
-
     @subscription = Subscription.new(user: current_user, stripe_card_token: params['stripeToken'])
 
     # Plan
-    plan = Plan.find_by_name(subscription_params[:plan_id])
+    plan = Plan.find_by_name(subscription_params[:plan_id].to_s)
     @subscription.plan = plan
 
     # User Info

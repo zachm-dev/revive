@@ -60,19 +60,23 @@ class Crawl < ActiveRecord::Base
     user = User.using(:main_shard).find(options['user_id'].to_i)
     plan = user.subscription.plan
     
-    number_of_pending_crawls = Crawl.where(status: "pending", user_id: options['user_id'].to_i).count
-    number_of_running_crawls = Crawl.where(status: "running", user_id: options['user_id'].to_i).count
+    if user.minutes_used < user.minutes_available
+      
+      number_of_pending_crawls = Crawl.where(status: "pending", user_id: options['user_id'].to_i).count
+      number_of_running_crawls = Crawl.where(status: "running", user_id: options['user_id'].to_i).count
     
-    if number_of_running_crawls < plan.crawls_at_the_same_time
-      if number_of_pending_crawls > 0
-        number_of_apps_running = HerokuPlatform.new.app_list.count
-        if number_of_apps_running < 99
-          puts 'decision: starting new crawl'
-          ForkNewApp.delay.start(user.id, number_of_apps_running)
+      if number_of_running_crawls < plan.crawls_at_the_same_time
+        if number_of_pending_crawls > 0
+          number_of_apps_running = HerokuPlatform.new.app_list.count
+          if number_of_apps_running < 99
+            puts 'decision: starting new crawl'
+            ForkNewApp.delay.start(user.id, number_of_apps_running)
+          end
         end
+      else
+        puts 'decision: exceeded crawls that can be performed at the same time'
       end
-    else
-      puts 'decision: exceeded crawls that can be performed at the same time'
+      
     end
   end
   

@@ -70,16 +70,27 @@
           <h3>Click and drag to sort the order</h3>
         </div>
         <ul class="pending-crawls-container" data-update-url="<%= sort_pending_crawls_url %>">
-
 					<% @crawls.each do |c| %>
-						
+
 						<%= content_tag_for :li, c do %>
 							<div class='row'>
-								<div class='handle_div'>
+								<div class='handle_div col-xs-1'>
 									<span class="handle glyphicon glyphicon-align-justify" aria-hidden="true"></span>
 								</div>
-								<div class='name'>
+								<div class='name col-xs-3'>
 									<%= c.crawl.name %>
+								</div>
+								<div class='name col-xs-2'>
+									Pages Per Site: <%= c.crawl.maxpages %>
+								</div>
+								<div class='name col-xs-2'>
+									Type: <%= c.crawl.crawl_type %>
+								</div>
+								<div class='name col-xs-1 pull-right'>
+									<%= link_to "Delete", '#', class: 'btn btn-danger btn-sm' %>
+								</div>
+								<div class='name col-xs-1 pull-right'>
+									<%= link_to "Edit", '#', class: 'btn btn-warning btn-sm' %>
 								</div>
 							</div>
 						<% end %>

@@ -4,12 +4,15 @@
 
 .pending-crawls-list-container {
   margin-top: 0px !important;
+  padding: 0px;
 }
 
 .pending-crawls-container {
 
   color: #666;
-
+  list-style-type: none;
+  padding: 0px;
+  
   li {
     padding: 10px;
     border-bottom: 1px solid #ddd;

@@ -1,7 +1,6 @@
 class SessionsController < ApplicationController
   before_filter :check_login, :only => [:new]
   
-  
   def new
   end
   
@@ -27,7 +26,7 @@ class SessionsController < ApplicationController
   
   def check_login
     unless current_user.nil? 
-      redirect_to crawls_path
+      redirect_to dashboard_path
     end
   end  
   

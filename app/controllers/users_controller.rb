@@ -6,17 +6,15 @@ class UsersController < ApplicationController
   end
   
   def account
-
     @user = current_user
     @plan = current_user.subscription.plan
-
   end
 
   def create
     @user = User.new(params[:user].permit(:email, :password, :password_confirmation))
     if @user.save
       session[:user_id] = @user.id
-      redirect_to root_url, notice: "Thank you for signing up!"
+      redirect_to new_subscriptions_path(plan_id: 1), notice: "Thank you for signing up!"
     else
       render 'new'
     end

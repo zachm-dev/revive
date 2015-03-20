@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150319211934) do
+ActiveRecord::Schema.define(version: 20150320012852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(version: 20150319211934) do
     t.float    "price"
     t.integer  "crawls_per_day"
     t.integer  "crawls_per_hour"
+    t.float    "minutes_per_month"
   end
 
   create_table "process_links_batches", force: :cascade do |t|
@@ -260,8 +261,8 @@ ActiveRecord::Schema.define(version: 20150319211934) do
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
     t.string   "first_name"
     t.string   "last_name"
     t.string   "phone"
@@ -274,6 +275,8 @@ ActiveRecord::Schema.define(version: 20150319211934) do
     t.datetime "last_crawl"
     t.integer  "crawls_this_hour"
     t.datetime "first_crawl"
+    t.float    "minutes_used"
+    t.float    "minutes_available"
   end
 
   create_table "verify_majestic_batches", force: :cascade do |t|

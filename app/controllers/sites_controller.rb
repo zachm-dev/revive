@@ -32,30 +32,22 @@ class SitesController < ApplicationController
   def available
     @crawl = Crawl.using(:processor).find(params[:id])
     @available = @crawl.pages.where(available: 'true')
-
-    unless @crawl.moz_da.nil? || @crawl.moz_da == 0
-      moz_da = @available.where('da >= ?', @crawl.moz_da).order("#{sort} DESC")
-    end
-    
-    unless @crawl.majestic_tf.nil? || @crawl.majestic_tf == 0
-      majestic_tf = @available.where('trustflow >= ?', @crawl.majestic_tf).order("#{sort} DESC")
-    end
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
     
-    if moz_da && majestic_tf
-      if (moz_da.count + majestic_tf.count) > 0
-        @pages = (moz_da + majestic_tf).page(params[:page]).per_page(25)
-      else
-        @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
-      end
+    if !@crawl.moz_da.nil? && !@crawl.majestic_tf.nil?
+      @pages = @available.where('pages.da >= ? AND pages.trustflow >= ?', @crawl.moz_da, @crawl.majestic_tf).order("#{sort} DESC").page(params[:page]).per_page(25)
+    elsif !@crawl.moz_da.nil?
+      @pages = @available.where('pages.da >= ?', @crawl.moz_da).order("#{sort} DESC").page(params[:page]).per_page(25)
+    elsif !@crawl.majestic_tf.nil?
+      @pages = @available.where('pages.trustflow >= ?', @crawl.majestic_tf).order("#{sort} DESC").page(params[:page]).per_page(25)
     else
       @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
     end
     
     respond_to do |format|
       format.html
-      format.csv { send_data @available.to_csv }
+      format.csv { send_data @pages.to_csv }
     end
     
   end

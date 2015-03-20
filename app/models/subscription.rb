@@ -20,11 +20,10 @@ class Subscription < ActiveRecord::Base
 
       # Create customer and Set Card
       customer = Stripe::Customer.create(email: user.email, plan: stripe_plan_id, card: stripe_card_token)
-
-      customer.subscriptions.create(plan: stripe_plan)
-
+      # customer.subscriptions.create(plan: stripe_plan)
+      
       # Save Plan, Status and Customer Token
-      self.update({status: 'active', stripe_customer_token: customer.id})
+      self.update!(status: 'active', stripe_customer_token: customer.id)
 
     else
 
