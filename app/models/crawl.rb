@@ -86,9 +86,9 @@ class Crawl < ActiveRecord::Base
     plan = user.subscription.plan
     beta = true
     name = options[:name]
-    moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
-    majestic_tf = options[:majestic_tf].nil? ? 501 : options[:majestic_tf].to_i
-    notify_me_after = options[:notify_me_after].nil? ? 0 : options[:notify_me_after].to_i
+    moz_da = options[:moz_da].nil? ? nil : options[:moz_da].to_i
+    majestic_tf = options[:majestic_tf].nil? ? nil : options[:majestic_tf].to_i
+    notify_me_after = options[:notify_me_after].nil? ? nil : options[:notify_me_after].to_i
     
     if beta == true
       if options[:maxpages].nil?
@@ -106,7 +106,7 @@ class Crawl < ActiveRecord::Base
       urls_array = base_urls.split(",")
     end
     
-    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending', max_pages_allowed: plan.pages_per_crawl.to_i)
+    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending', max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after)
     new_heroku_app_object = HerokuApp.using(:processor).create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user.id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     Api.delay.process_new_crawl(user_id: user.id)
@@ -117,11 +117,11 @@ class Crawl < ActiveRecord::Base
     plan = user.subscription.plan
     beta = true
     name = options[:name]
-    moz_da = options[:moz_da].nil? ? 501 : options[:moz_da].to_i
-    majestic_tf = options[:majestic_tf].nil? ? 501 : options[:majestic_tf].to_i
-    notify_me_after = options[:notify_me_after].nil? ? 0 : options[:notify_me_after].to_i
-    crawl_start_date = options[:crawl_start_date].nil? ? '' : options[:crawl_start_date]
-    crawl_end_date = options[:crawl_end_date].nil? ? '' : options[:crawl_end_date]
+    moz_da = options[:moz_da].nil? ? nil : options[:moz_da].to_i
+    majestic_tf = options[:majestic_tf].nil? ? nil : options[:majestic_tf].to_i
+    notify_me_after = options[:notify_me_after].nil? ? nil : options[:notify_me_after].to_i
+    # crawl_start_date = options[:crawl_start_date].nil? ? '' : options[:crawl_start_date]
+    # crawl_end_date = options[:crawl_end_date].nil? ? '' : options[:crawl_end_date]
     
     if beta == true
       if options[:maxpages].nil?
@@ -133,7 +133,7 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i)
+    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after)
     new_heroku_app_object = HerokuApp.using(:processor).create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user_id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     # Crawl.decision_maker(user_id)
