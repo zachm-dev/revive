@@ -60,7 +60,7 @@ class Crawl < ActiveRecord::Base
     user = User.using(:main_shard).find(options['user_id'].to_i)
     plan = user.subscription.plan
     
-    if user.minutes_used < user.minutes_available
+    if user.minutes_used.to_i < user.minutes_available.to_i
       
       number_of_pending_crawls = Crawl.where(status: "pending", user_id: options['user_id'].to_i).count
       number_of_running_crawls = Crawl.where(status: "running", user_id: options['user_id'].to_i).count
