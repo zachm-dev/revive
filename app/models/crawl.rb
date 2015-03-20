@@ -120,8 +120,8 @@ class Crawl < ActiveRecord::Base
     moz_da = options[:moz_da].nil? ? nil : options[:moz_da].to_i
     majestic_tf = options[:majestic_tf].nil? ? nil : options[:majestic_tf].to_i
     notify_me_after = options[:notify_me_after].nil? ? nil : options[:notify_me_after].to_i
-    # crawl_start_date = options[:crawl_start_date].nil? ? '' : options[:crawl_start_date]
-    # crawl_end_date = options[:crawl_end_date].nil? ? '' : options[:crawl_end_date]
+    crawl_start_date = options[:crawl_start_date].nil? ? '' : options[:crawl_start_date]
+    crawl_end_date = options[:crawl_end_date].nil? ? '' : options[:crawl_end_date]
     
     if beta == true
       if options[:maxpages].nil?
