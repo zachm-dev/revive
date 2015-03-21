@@ -3,36 +3,45 @@ class Api
  
   def self.start_crawl(options = {})
     
-    crawl = Crawl.find(options[:crawl_id])
+    crawl = Crawl.using(:processor).find(options[:crawl_id])
+    db = crawl.db_url
+    uri = URI.parse(db)
+    Octopus.shards = {:test_connection => {:adapter => 'postgresql',
+                      :database => db.split('/').last,
+                      :username => uri.user,
+                      :password => uri.password,
+                      :host => uri.host,
+                      :port => uri.port}
+                    }
+                    
+    begin
+      Page.using(:test_connection).last
+      app_name = crawl.heroku_app.name
     
-    # Octopus.shards = {:test_connection => {:adapter => 'postgresql',
-    #                   :database => 'd4j8fmmt5rbcn1',
-    #                   :username => 'u452gido400b3d',
-    #                   :password => 'p3rgk4lnjtgoj2ffn8falelsqpe',
-    #                   :host => 'ec2-23-21-186-22.compute-1.amazonaws.com',
-    #                   :port => '5432'}
-    #                 }
-    
-    app_name = crawl.heroku_app.name
-    
-    if Rails.env.development?
-      uri = URI.parse("http://localhost:3000/api_create")
-      puts "production start #{app_name}"
-    else
-      uri = URI.parse("http://#{app_name}.herokuapp.com/api_create")
-      puts "production start #{app_name}"
-    end
+      if Rails.env.development?
+        uri = URI.parse("http://localhost:3000/api_create")
+        puts "production start #{app_name}"
+      else
+        uri = URI.parse("http://#{app_name}.herokuapp.com/api_create")
+        puts "production start #{app_name}"
+      end
         
-    post_params = {
-      :options => options
-    }
+      post_params = {
+        :options => options
+      }
  
-    # Convert the parameters into JSON and set the content type as application/json
-    req = Net::HTTP::Post.new(uri.path)
-    req.body = JSON.generate(post_params)
+      # Convert the parameters into JSON and set the content type as application/json
+      req = Net::HTTP::Post.new(uri.path)
+      req.body = JSON.generate(post_params)
   
-    http = Net::HTTP.new(uri.host, uri.port)
-    response = http.start {|htt| htt.request(req)}
+      http = Net::HTTP.new(uri.host, uri.port)
+      response = http.start {|htt| htt.request(req)}
+      
+    rescue
+      Api.migrate_db(crawl_id: crawl.id)
+      Api.delay_for(1.minute).start_crawl(crawl_id: crawl.id)
+    end
+    
   end
   
   def self.migrate_db(options = {})
