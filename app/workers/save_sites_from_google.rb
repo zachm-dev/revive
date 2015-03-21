@@ -5,15 +5,19 @@ class SaveSitesFromGoogle
   
   def perform(crawl_id, options = {})
     crawl = Crawl.using(:processor).find(crawl_id)
-    if !options['google_param'].nil?
-      if crawl.crawl_start_date.nil? && crawl.crawl_end_date.nil?
-        puts "the google query is https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"
-        uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701"))
-      else
-        puts "the timed google query is https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701&source=lnt&tbs=cdr%3A1%2Ccd_min%3A#{crawl.crawl_start_date}%2Ccd_max%3A#{crawl.crawl_end_date}&tbm="
-        uri = URI.parse(URI.encode("https://www.google.com/search?num=10&rlz=1C5CHFA_enUS561US561&es_sm=119&q=#{crawl.base_keyword}+#{options['google_param']}&spell=1&sa=X&ei=mx7SVKn0IoboUtrdgsAL&ved=0CBwQvwUoAA&biw=1280&bih=701&source=lnt&tbs=cdr%3A1%2Ccd_min%3A#{crawl.crawl_start_date}%2Ccd_max%3A#{crawl.crawl_end_date}&tbm="))
-      end
+    query = crawl.base_keyword
+    param = Crawl::GOOGLE_PARAMS[options['iteration'].to_i]
+    
+    if crawl.crawl_start_date.nil? && crawl.crawl_end_date.nil?
+      puts "the google query is #{link}"
+      link = "https://www.google.com/search?q=#{query}+#{param}&rlz=1C5CHFA_enUS561US561&oq=#{query}+#{param}&aqs=chrome..69i57.780j0j1&sourceid=chrome&es_sm=119&ie=UTF-8"
+      uri = URI.parse(URI.encode(link))
+    else
+      puts "the timed google query is #{link}"
+      link = "https://www.google.com/search?q=#{query}+#{param}&rlz=1C5CHFA_enUS561US561&es_sm=119&source=lnt&tbs=cdr%3A1%2Ccd_min%3A#{crawl.crawl_start_date}%2Ccd_max%3A#{crawl.crawl_end_date}&tbm="
+      uri = URI.parse(URI.encode(link))
     end
+    
     page = Nokogiri::HTML(open(uri))
     urls_array = []
     page.css('h3.r').map do |link|
@@ -26,6 +30,7 @@ class SaveSitesFromGoogle
         end
       end
     end
+    
     crawl.update(total_sites: crawl.total_sites.to_i+urls_array.count.to_i)
     urls_array.each do |u|
       puts "the gather links batch of keyword crawl #{u}"
@@ -52,20 +57,17 @@ class SaveSitesFromGoogle
     # Crawl.delay.decision_maker(crawl.user.id)
   end
   
-  def self.start_batch(crawl_id)
+  def self.start_batch(crawl_id, options={})
     google_links_batch = Sidekiq::Batch.new
     puts "the crawl id for this google batch is #{crawl_id}"
+    iteration = options['iteration'].nil? ? 0 : options['iteration']
     google_links_batch.on(:complete, self, 'bid' => google_links_batch.bid, 'crawl_id' => crawl_id)
     google_links_batch.jobs do
-      
-      Crawl::GOOGLE_PARAMS.each do |param|
-        begin
-          SaveSitesFromGoogle.perform_async(crawl_id, 'google_param' => param)
-        rescue
-          puts 'failed to save'
-        end
+      begin
+        SaveSitesFromGoogle.perform_async(crawl_id, 'iteration' => iteration)
+      rescue
+        puts 'failed to save'
       end
-
     end
   end
   

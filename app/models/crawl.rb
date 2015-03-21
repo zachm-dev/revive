@@ -11,7 +11,7 @@ class Crawl < ActiveRecord::Base
   has_many :process_links_batches, through: :sites
   has_one :heroku_app
   
-  GOOGLE_PARAMS = ['site:.gov', 'links', 'resources', 'intitle:links', 'intitle:resources', 'intitle:sites', 'intitle:websites', 'inurl:links', 'inurl:resources', 'inurl:sites', 'inurl:websites', '"useful links"', '"useful resources"', '"useful sites"', '"useful websites"', '"recommended links"', '"recommended resources"', '"recommended sites"', '"recommended websites"', '"suggested links"', '"suggested resources"', '"suggested sites"', '"suggested websites"', '"more links"', '"more resources"', '"more sites"', '"more websites"', '"favorite links"', '"favorite resources"', '"favorite sites"', '"favorite websites"', '"related links"', '"related resources"', '"related sites"', '"related websites"', 'intitle:"useful links"', 'intitle:"useful resources"', 'intitle:"useful sites"', 'intitle:"useful websites"', 'intitle:"recommended links"', 'intitle:"recommended resources"', 'intitle:"recommended sites"', 'intitle:"recommended websites"', 'intitle:"suggested links"', 'intitle:"suggested resources"', 'intitle:"suggested sites"', 'intitle:"suggested websites"', 'intitle:"more links"', 'intitle:"more resources"', 'intitle:"more sites"', 'intitle:"more websites"', 'intitle:"favorite links"', 'intitle:"favorite resources"', 'intitle:"favorite sites"', 'intitle:"favorite websites"', 'intitle:"related links"', 'intitle:"related resources"', 'intitle:"related sites"', 'intitle:"related websites"', 'inurl:"useful links"', 'inurl:"useful resources"', 'inurl:"useful sites"', 'inurl:"useful websites"', 'inurl:"recommended links"', 'inurl:"recommended resources"', 'inurl:"recommended sites"', 'inurl:"recommended websites"', 'inurl:"suggested links"', 'inurl:"suggested resources"', 'inurl:"suggested sites"', 'inurl:"suggested websites"', 'inurl:"more links"', 'inurl:"more resources"', 'inurl:"more sites"', 'inurl:"more websites"', 'inurl:"favorite links"', 'inurl:"favorite resources"', 'inurl:"favorite sites"', 'inurl:"favorite websites"', 'inurl:"related links"', 'inurl:"related resources"', 'inurl:"related sites"', 'inurl:"related websites"', 'list of links', 'list of resources', 'list of sites', 'list of websites', 'list of blogs', 'list of forums']
+  GOOGLE_PARAMS = ['links', 'resources', 'intitle:links', 'intitle:resources', 'intitle:sites', 'intitle:websites', 'inurl:links', 'inurl:resources', 'inurl:sites', 'inurl:websites', '"useful links"', '"useful resources"', '"useful sites"', '"useful websites"', '"recommended links"', '"recommended resources"', '"recommended sites"', '"recommended websites"', '"suggested links"', '"suggested resources"', '"suggested sites"', '"suggested websites"', '"more links"', '"more resources"', '"more sites"', '"more websites"', '"favorite links"', '"favorite resources"', '"favorite sites"', '"favorite websites"', '"related links"', '"related resources"', '"related sites"', '"related websites"', 'intitle:"useful links"', 'intitle:"useful resources"', 'intitle:"useful sites"', 'intitle:"useful websites"', 'intitle:"recommended links"', 'intitle:"recommended resources"', 'intitle:"recommended sites"', 'intitle:"recommended websites"', 'intitle:"suggested links"', 'intitle:"suggested resources"', 'intitle:"suggested sites"', 'intitle:"suggested websites"', 'intitle:"more links"', 'intitle:"more resources"', 'intitle:"more sites"', 'intitle:"more websites"', 'intitle:"favorite links"', 'intitle:"favorite resources"', 'intitle:"favorite sites"', 'intitle:"favorite websites"', 'intitle:"related links"', 'intitle:"related resources"', 'intitle:"related sites"', 'intitle:"related websites"', 'inurl:"useful links"', 'inurl:"useful resources"', 'inurl:"useful sites"', 'inurl:"useful websites"', 'inurl:"recommended links"', 'inurl:"recommended resources"', 'inurl:"recommended sites"', 'inurl:"recommended websites"', 'inurl:"suggested links"', 'inurl:"suggested resources"', 'inurl:"suggested sites"', 'inurl:"suggested websites"', 'inurl:"more links"', 'inurl:"more resources"', 'inurl:"more sites"', 'inurl:"more websites"', 'inurl:"favorite links"', 'inurl:"favorite resources"', 'inurl:"favorite sites"', 'inurl:"favorite websites"', 'inurl:"related links"', 'inurl:"related resources"', 'inurl:"related sites"', 'inurl:"related websites"', 'list of links', 'list of resources', 'list of sites', 'list of websites', 'list of blogs', 'list of forums']
   
   def self.stop_crawl(crawl_id)
     crawl = Crawl.using(:processor).find(crawl_id)
@@ -26,32 +26,35 @@ class Crawl < ActiveRecord::Base
   
   def self.start_crawl(options = {})
     crawl = Crawl.using(:processor).find(options["crawl_id"])
-    
-    Rails.cache.write(["crawl/#{crawl.id}/gathering_batches/total"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/gathering_batches/running"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/gathering_batches/finished"], 0, raw: true)
-
-    Rails.cache.write(["crawl/#{crawl.id}/processing_batches/total"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/processing_batches/running"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/processing_batches/finished"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/processing_batches/ids"], [])
-    Rails.cache.write(["crawl/#{crawl.id}/available"], [])
-    
-    # Rails.cache.write(["crawl/#{crawl.id}/connections/total_time"], 0, raw: true)
-    # Rails.cache.write(["crawl/#{crawl.id}/connections/connect_time"], 0, raw: true)
-    # Rails.cache.write(["crawl/#{crawl.id}/connections/total"], 0, raw: true)
-    
-    Rails.cache.write(["crawl/#{crawl.id}/urls_found"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/urls_crawled"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/expired_domains"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/broken_domains"], 0, raw: true)
-    Rails.cache.write(["crawl/#{crawl.id}/progress"], 0.00, raw: true)
-    
+    crawl.setCrawlStartingVariables(crawl.id)
     if crawl.crawl_type == 'url_crawl'
       Crawl.save_new_sites(crawl.id)
     elsif crawl.crawl_type == 'keyword_crawl'
       SaveSitesFromGoogle.start_batch(crawl.id)
     end
+  end
+  
+  def setCrawlStartingVariables
+    puts "setting crawl starting variables"
+    Rails.cache.write(["crawl/#{self.id}/gathering_batches/total"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/gathering_batches/running"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/gathering_batches/finished"], 0, raw: true)
+
+    Rails.cache.write(["crawl/#{self.id}/processing_batches/total"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/processing_batches/running"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/processing_batches/finished"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/processing_batches/ids"], [])
+    Rails.cache.write(["crawl/#{self.id}/available"], [])
+    
+    # Rails.cache.write(["crawl/#{crawl.id}/connections/total_time"], 0, raw: true)
+    # Rails.cache.write(["crawl/#{crawl.id}/connections/connect_time"], 0, raw: true)
+    # Rails.cache.write(["crawl/#{crawl.id}/connections/total"], 0, raw: true)
+    
+    Rails.cache.write(["crawl/#{self.id}/urls_found"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/urls_crawled"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/expired_domains"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/broken_domains"], 0, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/progress"], 0.00, raw: true)
   end
   
   def self.decision_maker(options={})
@@ -133,7 +136,7 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after)
+    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after, iteration: 0)
     new_heroku_app_object = HerokuApp.using(:processor).create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user_id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     # Crawl.decision_maker(user_id)

@@ -53,19 +53,15 @@ class GatherLinks
   end
   
   def self.start(options = {})
-    if options["crawl_id"]
-      puts 'gather links start method'
-      running_crawl = Crawl.using(:processor).find(options["crawl_id"])
-      pending = running_crawl.gather_links_batches.where(status: 'pending').first
-      if pending
-        puts "the pending crawl is #{pending.id} on the site #{pending.site.id}"
-        site = pending.site
-      end
-    else
-      site = Site.using(:processor).where(id: options["site_id"].to_i).first
-    end
     
-    if site
+    puts 'gather links start method'
+    running_crawl = Crawl.using(:processor).find(options["crawl_id"])
+    
+    if running_crawl.gather_links_batches.where(status: 'pending').count > 0
+      pending = running_crawl.gather_links_batches.where(status: 'pending').first
+      puts "the pending crawl is #{pending.id} on the site #{pending.site.id}"
+      site = pending.site
+
       puts 'there is a site and gathering the links'
       gather_links_batch = Sidekiq::Batch.new
       site.update(gather_status: 'running')
@@ -75,7 +71,15 @@ class GatherLinks
         puts 'starting to gather links'
         GatherLinks.perform_async(site.id, site.maxpages, site.base_url, running_crawl.max_pages_allowed, options["crawl_id"])
       end
+      
+    elsif running_crawl.crawl_type == 'keyword_crawl' && running_crawl.iteration.to_i < (Crawl::GOOGLE_PARAMS.count-1)
+      
+      new_iteration = (running_crawl.iteration.to_i+1)
+      Crawl.using(:processor).update(running_crawl.id, iteration: new_iteration)
+      SaveSitesFromGoogle.start_batch(options["crawl_id"], 'iteration' => new_iteration)
+      
     end
+    
   end
   
 end
