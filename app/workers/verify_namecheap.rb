@@ -27,7 +27,8 @@ class VerifyNamecheap
             response = http.request(request)
             json = JSON.parse(response.read_body)
             puts 'saving verified domain'
-            if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{crawl_id}/available"]).include?("#{parsed_url}")             
+            tlds = [".gov", ".edu"]
+            if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{crawl_id}/available"]).include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
               new_page = Page.using(:processor).create(status_code: page.status_code, url: page.url, internal: page.internal, site_id: page.site_id, found_on: "#{page.found_on}", simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}", crawl_id: page.crawl_id)
               
               urls = Rails.cache.read(["crawl/#{crawl_id}/available"])
