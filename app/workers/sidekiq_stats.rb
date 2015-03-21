@@ -46,7 +46,7 @@ class SidekiqStats
               expired_domains = "crawl/#{crawl.id}/expired_domains"
               broken_domains = "crawl/#{crawl.id}/broken_domains"
               stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
-              Crawl.using(:processor).update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i)
+              Crawl.using(:processor).update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app stalled')
               
               heroku = HerokuPlatform.new
               heroku.delete_app(app_name)

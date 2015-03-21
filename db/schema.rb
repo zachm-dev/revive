@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150320012852) do
+ActiveRecord::Schema.define(version: 20150321044025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20150320012852) do
     t.integer  "max_pages_allowed"
     t.string   "redis_url"
     t.float    "progress"
+    t.string   "msg"
   end
 
   create_table "expired_links", force: :cascade do |t|

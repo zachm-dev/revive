@@ -70,7 +70,7 @@ class ProcessLinks
 
         stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
         
-        Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
+        Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i, msg: 'crawl finished all processing batches')
         
         UserDashboard.update_crawl_stats(options['user_id'], 
                                         'domains_broken' => stats[crawl_broken_domains], 
