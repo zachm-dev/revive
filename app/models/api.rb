@@ -39,6 +39,7 @@ class Api
                     
     begin
       Page.using(:test_connection).last
+      puts 'db migration was sucessful '
       app_name = crawl.heroku_app.name
     
       if Rails.env.development?
@@ -61,7 +62,8 @@ class Api
       response = http.start {|htt| htt.request(req)}
       
     rescue
-      Api.migrate_db(crawl_id: crawl.id)
+      puts 'retrying db migration'
+      Api.delay.migrate_db(crawl_id: crawl.id)
       Api.delay_for(1.minute).start_crawl(crawl_id: crawl.id)
     end
     
