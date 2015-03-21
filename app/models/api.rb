@@ -3,16 +3,39 @@ class Api
  
   def self.start_crawl(options = {})
     
-    crawl = Crawl.find(options[:crawl_id])
+    crawl = Crawl.using(:processor).find(options[:crawl_id])
     db = crawl.db_url
     uri = URI.parse(db)
-    Octopus.shards = {:test_connection => {:adapter => 'postgresql',
-                      :database => db.split('/').last,
-                      :username => uri.user,
-                      :password => uri.password,
-                      :host => uri.host,
-                      :port => uri.port}
+    Octopus.setup do |config|
+      config.shards = {:test_connection => {
+                        :adapter => 'postgresql',
+                        :database => db.split('/').last,
+                        :username => uri.user,
+                        :password => uri.password,
+                        :host => uri.host,
+                        :port => uri.port
+                      },
+                      :main_shard => {
+                        :adapter => 'postgresql',
+                        :database => 'daji1hvabgdc0c',
+                        :username => 'ue9r4mdvjgsktq',
+                        :password => 'p9rem1q40biu605siarnkvp2i83',
+                        :host => 'ec2-184-73-202-38.compute-1.amazonaws.com',
+                        :port => 5532,
+                        :pool => 1
+                      },
+                      :processor => {
+                        :adapter => 'postgresql',
+                        :database => 'd20vpq28o48gs4',
+                        :username => 'uaatonnj4p4fbc',
+                        :password => 'p6tpu937gn4fk5ehvfnlru5aiq3',
+                        :host => 'ec2-54-163-226-12.compute-1.amazonaws.com',
+                        :port => 5482,
+                        :pool => 1
+                      }
                     }
+    end
+
                     
     begin
       Page.using(:test_connection).last
