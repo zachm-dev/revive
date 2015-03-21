@@ -26,7 +26,7 @@ class Crawl < ActiveRecord::Base
   
   def self.start_crawl(options = {})
     crawl = Crawl.using(:processor).find(options["crawl_id"])
-    crawl.setCrawlStartingVariables(crawl.id)
+    crawl.setCrawlStartingVariables
     if crawl.crawl_type == 'url_crawl'
       Crawl.save_new_sites(crawl.id)
     elsif crawl.crawl_type == 'keyword_crawl'
