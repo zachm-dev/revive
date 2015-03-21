@@ -3,7 +3,7 @@ class Api
  
   def self.start_crawl(options = {})
     
-    crawl = Crawl.using(:processor).find(options[:crawl_id])
+    crawl = Crawl.find(options[:crawl_id])
     db = crawl.db_url
     uri = URI.parse(db)
     Octopus.shards = {:test_connection => {:adapter => 'postgresql',
