@@ -3,7 +3,17 @@ class Api
  
   def self.start_crawl(options = {})
     
-    app_name = Crawl.find(options[:crawl_id]).heroku_app.name
+    crawl = Crawl.find(options[:crawl_id])
+    
+    # Octopus.shards = {:test_connection => {:adapter => 'postgresql',
+    #                   :database => 'd4j8fmmt5rbcn1',
+    #                   :username => 'u452gido400b3d',
+    #                   :password => 'p3rgk4lnjtgoj2ffn8falelsqpe',
+    #                   :host => 'ec2-23-21-186-22.compute-1.amazonaws.com',
+    #                   :port => '5432'}
+    #                 }
+    
+    app_name = crawl.heroku_app.name
     
     if Rails.env.development?
       uri = URI.parse("http://localhost:3000/api_create")
