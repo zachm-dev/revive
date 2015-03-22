@@ -91,6 +91,17 @@ class CrawlsController < ApplicationController
     render :layout => false
   end
   
+  def destroy
+    crawl = HerokuApp.using(:processor).find(params[:id])
+    crawl.destroy
+    redirect_to crawls_path
+  end
+  
+  def start_crawl
+    Api.delay.process_new_crawl(user_id: current_user.id)
+    redirect_to crawls_path
+  end
+  
   def stop_crawl
     Crawl.delay(retry: false).stop_crawl(params[:id])
     redirect_to crawls_path

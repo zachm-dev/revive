@@ -49,6 +49,7 @@ Rails.application.routes.draw do
   post 'call_crawl', to: 'crawls#call_crawl'
   post 'migrate_db', to: 'crawls#migrate_db'
   post 'process_new_crawl', to: 'crawls#process_new_crawl'
+  get 'start_crawl', to: 'crawls#start_crawl', as: :start_crawl
 
   resources :pending_crawls do
     collection {post :sort}

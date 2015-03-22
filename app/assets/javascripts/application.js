@@ -18,3 +18,7 @@
 //= require turbolinks
 //= require bootstrap-datepicker
 //= require_tree .
+	
+$(document).ready(function() {
+  $('.has-tooltip').tooltip();
+});

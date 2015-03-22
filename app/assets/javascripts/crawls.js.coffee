@@ -9,5 +9,5 @@ $(document).on 'ready page:load', ->
       max: 100)
     $('#crawl_notify_me_after').ionRangeSlider(
       min: 0,
-      max: 50000)
+      max: 3000)
 		
