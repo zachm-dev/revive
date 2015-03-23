@@ -15,7 +15,7 @@ class UsersController < ApplicationController
     @user.minutes_available = 4000.to_f
     if @user.save
       session[:user_id] = @user.id
-      redirect_to new_subscriptions_path(plan_id: 1), notice: "Thank you for signing up!"
+      redirect_to new_subscriptions_path(plan_id: 'revive1'), notice: "Thank you for signing up!"
     else
       render 'new'
     end
