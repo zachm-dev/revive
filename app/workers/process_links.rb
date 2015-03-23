@@ -79,7 +79,7 @@ class ProcessLinks
             Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i, msg: 'crawl finished all processing batches')
             crawl_total_time_in_minutes = (Time.now - Chronic.parse(Rails.cache.read(["crawl/#{options['crawl_id']}/start_time"], raw: true))).to_f/60.to_f
             user = User.using(:main_shard).find(app.user_id)
-            user.update(user.minutes_used.to_f+crawl_total_time_in_minutes)
+            user.update(minutes_used: user.minutes_used.to_f+crawl_total_time_in_minutes)
             
             UserDashboard.update_crawl_stats(options['user_id'], 
                                             'domains_broken' => stats[crawl_broken_domains], 

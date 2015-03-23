@@ -8,7 +8,7 @@
           .header_text
             p This Weeks Daily Activity
   .container-fluid.container_section
-    - if current_user.crawls.count >= 3
+    - if current_user.crawls.count <= 3
       .col-lg-12.text-center
         .panel.panel-success
           h1 Getting Started

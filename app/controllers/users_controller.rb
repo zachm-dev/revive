@@ -12,6 +12,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user].permit(:email, :password, :password_confirmation))
+    @user.minutes_available = 4000.to_f
     if @user.save
       session[:user_id] = @user.id
       redirect_to new_subscriptions_path(plan_id: 1), notice: "Thank you for signing up!"
