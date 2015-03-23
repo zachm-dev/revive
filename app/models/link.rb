@@ -11,6 +11,7 @@ class Link < ActiveRecord::Base
     if process == true
       puts 'starting processing method'
       site = Site.using(:processor).find(site_id)
+      crawl = site.crawl
       domain = Domainatrix.parse(site.base_url).domain
       ids = Rails.cache.read(["crawl/#{site.crawl_id}/processing_batches/ids"])
 
@@ -34,7 +35,7 @@ class Link < ActiveRecord::Base
       puts "process links on complete variables link id #{id} site id #{site.id} and crawl id #{site.crawl_id}"
       
       batch = Sidekiq::Batch.new
-      batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => site.crawl_id, 'site_id' => site.id, 'link_id' => id, 'user_id' => site.crawl.user_id)
+      batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => site.crawl_id, 'site_id' => site.id, 'link_id' => id, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i)
       
       batch.jobs do
         links.each{|l| ProcessLinks.perform_async(l, site.id, found_on, domain, site.crawl_id)}

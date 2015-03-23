@@ -34,6 +34,10 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def shutdown
+    return self
+  end
+  
   def setCrawlStartingVariables
     puts "setting crawl starting variables"
     Rails.cache.write(["crawl/#{self.id}/gathering_batches/total"], 0, raw: true)

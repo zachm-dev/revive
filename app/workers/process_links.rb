@@ -56,35 +56,42 @@ class ProcessLinks
     if total_crawl_running <= 0
       puts 'shut down app and update crawl stats and user stats'
       app = HerokuApp.using(:processor).where(crawl_id: options['crawl_id']).first
-      if app.name.include?('revivecrawler')
+      crawl = app.crawl
+      
+      if (options['crawl_type'] == 'keyword_crawl' && options['iteration'].to_i >= (Crawl::GOOGLE_PARAMS.count-1)) || options['crawl_type'] == "url_crawl"
+        # SHUT DOWN APP
+          if app.name.include?('revivecrawler')
         
-        puts 'updating crawl stats before shutting down'
+            puts 'updating crawl stats before shutting down'
         
-        crawl_urls_found = "crawl/#{options['crawl_id']}/urls_found"
-        crawl_expired_domains = "crawl/#{options['crawl_id']}/expired_domains"
-        crawl_broken_domains = "crawl/#{options['crawl_id']}/broken_domains"
+            crawl_urls_found = "crawl/#{options['crawl_id']}/urls_found"
+            crawl_expired_domains = "crawl/#{options['crawl_id']}/expired_domains"
+            crawl_broken_domains = "crawl/#{options['crawl_id']}/broken_domains"
         
-        site_urls_found = "site/#{options['site_id']}/total_site_urls"
-        site_expired_domains = "site/#{options['site_id']}/expired_domains"
-        site_broken_domains = "site/#{options['site_id']}/broken_domains"
+            site_urls_found = "site/#{options['site_id']}/total_site_urls"
+            site_expired_domains = "site/#{options['site_id']}/expired_domains"
+            site_broken_domains = "site/#{options['site_id']}/broken_domains"
 
-        stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
+            stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
         
-        Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i, msg: 'crawl finished all processing batches')
+            Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i, msg: 'crawl finished all processing batches')
         
-        UserDashboard.update_crawl_stats(options['user_id'], 
-                                        'domains_broken' => stats[crawl_broken_domains], 
-                                        'domains_expired' => stats[crawl_expired_domains],
-                                        'domains_crawled' => stats[crawl_urls_found],
-                                        'finished_crawls' => 1,
-                                        'running_crawls' => -1
-                                        )
+            UserDashboard.update_crawl_stats(options['user_id'], 
+                                            'domains_broken' => stats[crawl_broken_domains], 
+                                            'domains_expired' => stats[crawl_expired_domains],
+                                            'domains_crawled' => stats[crawl_urls_found],
+                                            'finished_crawls' => 1,
+                                            'running_crawls' => -1
+                                            )
         
-        puts 'shutting it down: the crawl is finished'
+            puts 'shutting it down: the crawl is finished'
         
-        heroku = HerokuPlatform.new
-        heroku.delete_app(app.name)
+            heroku = HerokuPlatform.new
+            heroku.delete_app(app.name)
+          end
+        # SHUT DOWN APP
       end
+
     elsif total_site_running <= 0
       
       puts 'updating site stats'
