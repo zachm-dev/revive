@@ -8,12 +8,14 @@
           .header_text
             p This Weeks Daily Activity
   .container-fluid.container_section
-    - if current_user.crawls.count <= 3
-      .col-lg-8.col-lg-offset-2.text-center
+    - if current_user.crawls.count >= 3
+      .col-lg-12.text-center
         .panel.panel-success
           h1 Getting Started
+          / .panel-body
+          /   | Lorem ipsum dolo/r sit amet, consectetur adipisicing elit. Asperiores dolores est ex maxime similique sit vero! Ad atque, blanditiis commodi deserunt dolore explicabo, iusto laudantium magni molestias nam neque tenetur.
           .panel-body
-            | Lorem ipsum dolo/r sit amet, consectetur adipisicing elit. Asperiores dolores est ex maxime similique sit vero! Ad atque, blanditiis commodi deserunt dolore explicabo, iusto laudantium magni molestias nam neque tenetur.
+            = render 'getting_started_videos'       
           .panel-body
             = link_to 'Start Crawling', new_crawl_path, class:'btn btn-lg btn-success'
 
