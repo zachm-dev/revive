@@ -37,7 +37,7 @@ octopus:
       password: pfulh5el80spt6ehv206vs9qs1u
       host: ec2-54-163-235-96.compute-1.amazonaws.com
       port: 5482
-      pool: 25
+      pool: 1
     processor:
       adapter: postgresql
       database: d570jqv21u9in0
@@ -45,4 +45,4 @@ octopus:
       password: p843pa73aoj8sm9sb4pj4ol72vo
       host: ec2-54-163-234-153.compute-1.amazonaws.com
       port: 5432
-      pool: 25
+      pool: 1
