@@ -101,7 +101,7 @@ class HerokuPlatform
     end.reject(&:nil?).any?
   end
   
-  def self.fork(from, to, heroku_app_id)
+  def self.fork(from, to, heroku_app_id, number_of_apps_running)
     heroku_app = HerokuApp.where(id: heroku_app_id).first
     if heroku_app && heroku_app.status != 'running'
       heroku = HerokuPlatform.new
@@ -128,9 +128,19 @@ class HerokuPlatform
                         if !worker.empty?
                           verifydomains = heroku.start_dyno(to, 4, '1X', "verifydomains")
                           if !verifydomains.empty?
-                            heroku_app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
-                            Crawl.update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url])
-                            puts 'done creating new app'
+                            
+                            if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
+                              puts 'done creating new app'
+                              heroku_app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], status: 'running', formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
+                              Crawl.update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url], status: 'running')
+                            else
+                              puts 'new app did not start properly'
+                              heroku_app.update(status: 'retry')
+                              Crawl.update(status: 'retry')
+                              heroku.delete_app(to)
+                              ForkNewApp.delay.retry(heroku_app_id, number_of_apps_running)
+                            end
+                            
                           end
                         end
                       end

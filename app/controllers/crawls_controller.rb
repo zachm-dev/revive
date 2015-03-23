@@ -103,7 +103,7 @@ class CrawlsController < ApplicationController
   end
   
   def stop_crawl
-    Crawl.delay(retry: false).stop_crawl(params[:id])
+    Crawl.delay.stop_crawl(params[:id])
     redirect_to crawls_path
   end
   
