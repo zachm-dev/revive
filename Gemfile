@@ -40,6 +40,7 @@ gem 'acts_as_list'
 gem 'bootstrap-datepicker-rails'
 gem 'ar-octopus'
 gem 'redis-rails'
+gem 'chronic'
 
 # Development Things
 group :development do

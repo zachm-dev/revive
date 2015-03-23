@@ -49,6 +49,11 @@ class SidekiqStats
                 expired_domains = "crawl/#{crawl.id}/expired_domains"
                 broken_domains = "crawl/#{crawl.id}/broken_domains"
                 stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
+                
+                crawl_total_time_in_minutes = (Time.now - Chronic.parse(Rails.cache.read(["crawl/#{crawl.id}/start_time"], raw: true))).to_f/60.to_f
+                user = User.using(:main_shard).find(app.user_id)
+                user.update(user.minutes_used.to_f+crawl_total_time_in_minutes)
+                
                 Crawl.using(:processor).update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app stalled')
               
                 heroku = HerokuPlatform.new

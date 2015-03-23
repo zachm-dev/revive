@@ -56,23 +56,23 @@
                       /= @plan.price
                 .limit-container
                   .limit
-                    p Pages Per Crawl
-                    p = @plan.pages_per_crawl
-                  .limit
-                    p Crawls Per Day
-                    p = @plan.crawls_per_day
+                    p Minutes Available
+                    p = (@plan.minutes_per_month.to_f-@user.minutes_used.to_f).to_i
                   .limit
                     p Crawls At Once
                     p = @plan.crawls_at_the_same_time
                   .limit
-                    p Crawl Speed
-                    p = @plan.crawl_speed
-                  .limit
-                    p Expired Domains
-                    p = @plan.expired_domains
-                  .limit
-                    p Broken Domains
-                    p = @plan.broken_domains
+                    p Pages Per Crawl
+                    p = @plan.pages_per_crawl
+                  / .limit
+                  /   p Crawl Speed
+                  /   p = @plan.crawl_speed
+                  / .limit
+                  /   p Expired Domains
+                  /   p = @plan.expired_domains
+                  / .limit
+                  /   p Broken Domains
+                  /   p = @plan.broken_domains
                 .row
                   .col-lg-6
                     - if @current_user.subscription.active?

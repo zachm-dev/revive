@@ -37,6 +37,9 @@ class Crawl < ActiveRecord::Base
   
   def setCrawlStartingVariables
     puts "setting crawl starting variables"
+    
+    Rails.cache.write(["crawl/#{self.id}/start_time"], Time.now, raw: true)
+    
     Rails.cache.write(["crawl/#{self.id}/gathering_batches/total"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/gathering_batches/running"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/gathering_batches/finished"], 0, raw: true)

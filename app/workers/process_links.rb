@@ -71,11 +71,16 @@ class ProcessLinks
             site_urls_found = "site/#{options['site_id']}/total_site_urls"
             site_expired_domains = "site/#{options['site_id']}/expired_domains"
             site_broken_domains = "site/#{options['site_id']}/broken_domains"
+            
+            
 
             stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
         
             Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i, msg: 'crawl finished all processing batches')
-        
+            crawl_total_time_in_minutes = (Time.now - Chronic.parse(Rails.cache.read(["crawl/#{options['crawl_id']}/start_time"], raw: true))).to_f/60.to_f
+            user = User.using(:main_shard).find(app.user_id)
+            user.update(user.minutes_used.to_f+crawl_total_time_in_minutes)
+            
             UserDashboard.update_crawl_stats(options['user_id'], 
                                             'domains_broken' => stats[crawl_broken_domains], 
                                             'domains_expired' => stats[crawl_expired_domains],
