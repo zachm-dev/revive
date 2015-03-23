@@ -32,17 +32,17 @@ octopus:
     <% end %>
     main_shard:
       adapter: postgresql
-      database: daji1hvabgdc0c
-      username: ue9r4mdvjgsktq
-      password: p9rem1q40biu605siarnkvp2i83
-      host: ec2-184-73-202-38.compute-1.amazonaws.com
-      port: 5532
-      pool: 1
+      database: d43keikloc7ejh
+      username: uda0tbtpqg53lu
+      password: pfulh5el80spt6ehv206vs9qs1u
+      host: ec2-54-163-235-96.compute-1.amazonaws.com
+      port: 5482
+      pool: 25
     processor:
       adapter: postgresql
-      database: d20vpq28o48gs4
-      username: uaatonnj4p4fbc
-      password: p6tpu937gn4fk5ehvfnlru5aiq3
-      host: ec2-54-163-226-12.compute-1.amazonaws.com
-      port: 5482
-      pool: 1
+      database: d570jqv21u9in0
+      username: u5fkjshgbhhncg
+      password: p843pa73aoj8sm9sb4pj4ol72vo
+      host: ec2-54-163-234-153.compute-1.amazonaws.com
+      port: 5432
+      pool: 25
