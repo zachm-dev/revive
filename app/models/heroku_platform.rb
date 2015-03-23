@@ -136,7 +136,7 @@ class HerokuPlatform
                             else
                               puts 'new app did not start properly'
                               heroku_app.update(status: 'retry')
-                              Crawl.update(status: 'retry')
+                              Crawl.update(heroku_app.crawl_id, status: 'retry')
                               heroku.delete_app(to)
                               ForkNewApp.delay.retry(heroku_app_id, number_of_apps_running)
                             end

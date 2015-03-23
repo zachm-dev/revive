@@ -62,9 +62,19 @@ class Api
       response = http.start {|htt| htt.request(req)}
       
     rescue
-      puts 'retrying db migration'
-      Api.delay.migrate_db(crawl_id: crawl.id)
-      Api.delay_for(1.minute).start_crawl(crawl_id: crawl.id)
+      # puts 'retrying db migration'
+      # Api.delay.migrate_db(crawl_id: crawl.id)
+      # Api.delay_for(1.minute).start_crawl(crawl_id: crawl.id)
+      #
+      app = crawl.heroku_app
+      puts 'new app did not start properly'
+      app.update(status: 'retry')
+      Crawl.update(crawl.id, status: 'retry')
+      heroku = HerokuPlatform.new
+      number_of_apps_running = heroku.app_list.count
+      heroku.delete_app(crawl.heroku_app.name)
+      ForkNewApp.delay.retry(app.id, number_of_apps_running)
+      
     end
     
   end
