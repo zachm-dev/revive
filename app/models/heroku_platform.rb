@@ -230,7 +230,7 @@ class HerokuPlatform
   
   def upgrade_postgres(to)
     puts 'upgrading postgres db'
-    @heroku.addon.create(to, plan: "heroku-postgresql:standard-2")
+    @heroku.addon.create(to, plan: "heroku-postgresql:standard-0")
   end
 
   def add_redis(to)
