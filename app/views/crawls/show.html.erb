@@ -49,6 +49,12 @@
 										<%= link_to 'Stop Crawl', stop_crawl_path(@project.id), data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
 									</div>
 									
+								<% else %>
+								
+									<div class="pull-right">
+										<%= link_to 'Delete Project', delete_crawl_path(@project.id), data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
+									</div>
+									
 								<% end %>
 			
 							</ul>
@@ -134,13 +140,24 @@
 					
 						<div class="row">
 							<div class="title_text">
-								<p>STATUS</p>
+								<% if @project.status.to_s == 'running' %>
+									<p>TIME RUNNING</p>
+								<% else %>
+									<p>STATUS</p>
+								<% end %>
+								
 							</div>
 						</div>
 					
 						<div class="row">
 							<div class="stat_circle_container glyph_pink">
-								<%= @project.status.to_s %>
+								<% if @project.status.to_s == 'running' %>
+									<%= content_tag "div", class: 'crawl_start_time', data: {start_time: (Time.now-@project.created_at).to_i} do %>
+									Loading...
+									<% end %>
+								<% else %>
+									<%= @project.status.to_s %>
+								<% end %>
 							</div>
 						</div>
 					

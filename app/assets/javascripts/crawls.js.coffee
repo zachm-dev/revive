@@ -10,4 +10,13 @@ $(document).on 'ready page:load', ->
     $('#crawl_notify_me_after').ionRangeSlider(
       min: 0,
       max: 3000)
+	  
+  startTimer = ->
+    start_time = $('.crawl_start_time').data('start-time')
+    $('.crawl_start_time').timer({
+      action: 'start',
+      seconds: start_time	
+    })
+	  
+  startTimer(); 
 		

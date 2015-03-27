@@ -10,15 +10,11 @@ octopus:
     master:
       adapter: postgresql
       database: crawler_development
-      pool: 80
+      pool: 25
     processor:
       adapter: postgresql
-      database: d20vpq28o48gs4
-      username: uaatonnj4p4fbc
-      password: p6tpu937gn4fk5ehvfnlru5aiq3
-      host: ec2-54-163-226-12.compute-1.amazonaws.com
-      port: 5482
-      pool: 1
+      database: crawler_development
+      pool: 25
   production:
     <% if ENV["DB_NAME"].present? %>
     master:

@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   get :dashboard, to: 'dashboard#index'
 
   get 'domains/:id' => "sites#index", as: :domains
-
+  
+  get 'copy_to_clipboard' => 'application#copy_to_clipboard', as: :copy_to_clipboard
+  
   resource :subscriptions
   resources :pages
 
@@ -50,6 +52,7 @@ Rails.application.routes.draw do
   post 'migrate_db', to: 'crawls#migrate_db'
   post 'process_new_crawl', to: 'crawls#process_new_crawl'
   get 'start_crawl', to: 'crawls#start_crawl', as: :start_crawl
+  get 'delete_crawl/:id', to: 'crawls#delete_crawl', as: :delete_crawl
 
   resources :pending_crawls do
     collection {post :sort}

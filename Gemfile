@@ -41,6 +41,7 @@ gem 'bootstrap-datepicker-rails'
 gem 'ar-octopus'
 gem 'redis-rails'
 gem 'chronic'
+gem 'clipboard'
 
 # Development Things
 group :development do

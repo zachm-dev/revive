@@ -24,6 +24,7 @@ class ForkNewApp
   end
   
   def self.retry(heroku_app_id, number_of_apps_running)
+    batch = Sidekiq::Batch.new
     batch.jobs do
       ForkNewApp.perform_async(heroku_app_id, number_of_apps_running)
     end

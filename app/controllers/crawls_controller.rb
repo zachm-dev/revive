@@ -97,6 +97,12 @@ class CrawlsController < ApplicationController
     redirect_to crawls_path
   end
   
+  def delete_crawl
+    crawl = Crawl.using(:processor).find(params[:id])
+    crawl.delete
+    redirect_to crawls_path
+  end
+  
   def start_crawl
     Api.delay.process_new_crawl(user_id: current_user.id)
     redirect_to crawls_path
