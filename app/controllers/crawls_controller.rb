@@ -24,13 +24,11 @@ class CrawlsController < ApplicationController
       expired_domains = "crawl/#{@project.id}/expired_domains"
       broken_domains = "crawl/#{@project.id}/broken_domains"
       progress = "crawl/#{@project.id}/progress"
-      start_time = "crawl/#{@project.id}}/start_time"
       stats = redis.read_multi(urls_found, expired_domains, broken_domains, progress, start_time, raw: true)
       @urls_found = stats[urls_found].to_i
       @broken_domains = stats[broken_domains].to_i
       @expired_domains = stats[expired_domains].to_i
       @progress = stats[progress].to_f
-      @start_time = Chronic.parse(stats[start_time])
     else
       @urls_found = @project.total_urls_found.to_i
       @broken_domains = @project.total_broken.to_i
