@@ -30,7 +30,7 @@ class CrawlsController < ApplicationController
       @broken_domains = stats[broken_domains].to_i
       @expired_domains = stats[expired_domains].to_i
       @progress = stats[progress].to_f
-      @start_time = Crhonic.parse(stats[start_time])
+      @start_time = Chronic.parse(stats[start_time])
     else
       @urls_found = @project.total_urls_found.to_i
       @broken_domains = @project.total_broken.to_i
