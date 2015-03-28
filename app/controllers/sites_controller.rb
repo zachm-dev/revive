@@ -31,7 +31,7 @@ class SitesController < ApplicationController
 
   def available
     @crawl = Crawl.using(:processor).find(params[:id])
-    @available = @crawl.pages.where(available: 'true')
+    @available = Page.using(:processor).where(crawl_id: @crawl.id, available: 'true')
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
     
