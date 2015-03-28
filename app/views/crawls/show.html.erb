@@ -43,6 +43,14 @@
 									<% end %>
 								</li>
 								
+								<li>
+									<%= link_to edit_crawl_path(@project.id) do %>
+									    <i class="glyphicon glyphicon-bookmark">
+											<span class="glyph_text">Settings</span>
+										</i>
+									<% end %>
+								</li>
+								
 								<% if @project.status != 'finished' %>
 									
 									<div class="pull-right">
@@ -152,7 +160,7 @@
 						<div class="row">
 							<div class="stat_circle_container glyph_pink">
 								<% if @project.status.to_s == 'running' %>
-									<%= content_tag "div", class: 'crawl_start_time', data: {start_time: (Time.now-@project.created_at).to_i} do %>
+									<%= content_tag "div", class: 'crawl_start_time', data: {start_time: (Time.now-@start_time).to_i} do %>
 									Loading...
 									<% end %>
 								<% else %>

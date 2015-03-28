@@ -35,6 +35,7 @@ class SitesController < ApplicationController
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
     @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
+
     # if !@crawl.moz_da.nil? && !@crawl.majestic_tf.nil?
     #   @pages = @available.where('pages.da >= ? AND pages.trustflow >= ?', @crawl.moz_da, @crawl.majestic_tf).order("#{sort} DESC").page(params[:page]).per_page(25)
     # elsif !@crawl.moz_da.nil?

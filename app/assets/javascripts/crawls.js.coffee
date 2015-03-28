@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'ready page:load', ->
-  if $('#crawls.new')[0]? or $('#crawls.new_keyword_crawl')[0]?
+  if $('#crawls.new')[0]? or $('#crawls.new_keyword_crawl')[0]? or $('#crawls.edit')[0]?
     $('#crawl_moz_da, #crawl_majestic_tf').ionRangeSlider(
       min: 0,
       max: 100)

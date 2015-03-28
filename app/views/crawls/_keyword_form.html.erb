@@ -62,17 +62,17 @@
 			
 		</div>
 		
-		<div class="field_container text-center">
-			
+		<!-- <div class="field_container text-center">
+
 			<div class="field_label">
-				<%= f.label :notify_me_after, "Notify Me After This Many Domains Are Found" %>
+				<%#= f.label :notify_me_after, "Notify Me After This Many Domains Are Found" %>
 			</div>
-			
+
 			<div class="field">
-				<%= f.text_field :notify_me_after, class: "form-control" %>
+				<%#= f.text_field :notify_me_after, class: "form-control" %>
 			</div>
-			
-		</div>
+
+		</div> -->
 		
 		<div class='col-xs-6' id="crawl_start_date_input">
 			<div class="field_container text-center">
@@ -122,7 +122,7 @@
 			</div>
 
 		</div> -->
-		
+		<% if @project.id.nil? %>
 		<div class="field_container text-center pink_form_submit_btn_container">
 			
 			<div class="field_label">
@@ -130,6 +130,7 @@
 			</div>
 			
 		</div>
+		<% end %>
 		
 	<% end %>
 	
