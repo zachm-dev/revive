@@ -22,7 +22,7 @@ class SubscriptionsController < ApplicationController
     @subscription = Subscription.new(user: current_user, stripe_card_token: params['stripeToken'])
 
     # Plan
-    plan = Plan.find_by_name(subscription_params[:plan_id].to_s)
+    plan = Plan.using(:main_shard).find_by_name(subscription_params[:plan_id].to_s)
     @subscription.plan = plan
 
     # User Info
