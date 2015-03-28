@@ -3,7 +3,9 @@
 	<h1>Sign Up</h1>
 
 	<%= form_for @user do |f| %>
-
+		
+		<%= hidden_field_tag "plan_id", params['plan_id'] %>
+		
 		<div class="field_container">
 
 			<div class="field_label">

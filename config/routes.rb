@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   
   resource :subscriptions
   resources :pages
+  resources :plans
 
   # Users
   resources :users

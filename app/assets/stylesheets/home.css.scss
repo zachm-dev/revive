@@ -465,6 +465,89 @@ body, html {
 	background-color: #fff;
 }
 
+.what_you_get_section {
+	background-color: #ff3b61;
+}
+
+.what_you_get_section_b {
+	background-color: #000;
+}
+
+.pricing_plan_container {
+	width: 300px;
+	background-color: #2a2836;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.plan_title {
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding: 1px 0px;
+	background-color: #393939;
+}
+
+.pink_title {
+	background-color: #FF3B61;
+}
+
+.yellow_title {
+	background-color: #e5c145;
+}
+
+
+
+.pricing_text_container h1 {
+	font-size: 70px;
+}
+
+.pricing_text_container h4 {
+	color: #666;
+}
+
+.yellow_sub h4 {
+	color: #e5c145;
+}
+
+.pricing_feature {
+	border-top: 1px solid #8c91a6;
+	padding: 0px 0px 2px 0px;
+}
+
+.light_blue_text {
+	color: #8c91a6;
+	font-weight: lighter;
+}
+
+
+.pricing_btn a {
+	display: block;
+	border-top: 1px solid #8c91a6;
+	padding: 25px 0px;
+	font-weight: bold;
+	color: #fff;
+	font-size: 20px;
+	text-decoration: none;
+}
+
+.pricing_btn a:hover {
+	color: #FF3B61;
+}
+
 
 
 
