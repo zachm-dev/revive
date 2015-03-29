@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   
   def copy_to_clipboard
     render :layout => false
-    return Clipboard.copy(params['msg'])
+    msg = Clipboard.copy(params['msg'])
   end
   
   private
