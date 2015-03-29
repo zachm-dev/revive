@@ -4,7 +4,8 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   
   def copy_to_clipboard
-    Clipboard.copy(params[:msg])
+    Clipboard.copy(params['msg'])
+    render :layout => false
   end
   
   private
