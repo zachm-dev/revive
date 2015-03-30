@@ -87,7 +87,7 @@ class CrawlsController < ApplicationController
     slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
     # slave_keys.delete_if{ |k| ENV[k] == master_url }
     db_url = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL"])
-    crawl.update(db_url: db_url)
+    crawl.update(db_url: db_url.first)
     heroku = HerokuPlatform.new
     puts "setting the database variables"
     heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
