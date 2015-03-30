@@ -17,7 +17,7 @@ class SitesController < ApplicationController
   end
   
   def broken
-    @crawl = Crawl.using(:processor).find(params[:id])
+    @crawl = Crawl.using(params["processor_name"]).find(params[:id])
     # @broken = @crawl.pages.where(status_code: '404').limit(50).uniq
     @broken = @crawl.pages.where(status_code: '404')
     @pages = @broken.page(params[:page]).per_page(25)
@@ -30,8 +30,8 @@ class SitesController < ApplicationController
   end
 
   def available
-    @crawl = Crawl.using(:processor).find(params[:id])
-    @available = Page.using(:processor).where(crawl_id: @crawl.id, available: 'true')
+    @crawl = Crawl.using(params["processor_name"]).find(params[:id])
+    @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true')
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
     @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
@@ -54,17 +54,17 @@ class SitesController < ApplicationController
   end
   
   def save_bookmarked
-    Page.using(:processor).where(id: params[:page_ids]).update_all(bookmarked: true)
+    Page.using(params["processor_name"]).where(id: params[:page_ids]).update_all(bookmarked: true)
     redirect_to bookmarked_sites_path(params[:id])
   end
   
   def unbookmark
-    Page.using(:processor).where(id: params[:page_ids]).update_all(bookmarked: false)
+    Page.using(params["processor_name"]).where(id: params[:page_ids]).update_all(bookmarked: false)
     redirect_to bookmarked_sites_path(params[:id])
   end
   
   def bookmarked
-    @crawl = Crawl.using(:processor).find(params[:id])
+    @crawl = Crawl.using(params["processor_name"]).find(params[:id])
     sort = params[:sort].nil? ? 'id' : params[:sort]
     @bookmarked = @crawl.pages.where(bookmarked: true)
     @pages = @bookmarked.order("#{sort} DESC").page(params[:page]).per_page(25)
