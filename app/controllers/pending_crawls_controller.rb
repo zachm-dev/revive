@@ -3,16 +3,15 @@ class PendingCrawlsController < ApplicationController
   
   def index
     
-    # processor_names = ['processor', 'processor_one', 'processor_two']
-    # crawls_array = []
-    # processor_names.each do |processor|
-    #   crawls_array << HerokuApp.using("#{processor}").where(status: 'pending', user_id: current_user.id).order('created_at').limit(10).flatten
-    # end
-    # page = params[:page].nil? ? 1 : params[:page]
-    # @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
+    processor_names = ['processor', 'processor_one', 'processor_two']
+    crawls_array = []
+    processor_names.each do |processor|
+      crawls_array << HerokuApp.using("#{processor}").where(status: 'pending', user_id: current_user.id).order(:position).includes(:crawl).flatten
+    end
+    page = params[:page].nil? ? 1 : params[:page]
+    @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
     
-    @crawls = HerokuApp.using(:processor).where(status: "pending", user_id: current_user.id).order(:position).includes(:crawl)
-    # @crawls = current_user.heroku_apps.order(:pos).limit(5).includes(:crawl)
+    # @crawls = HerokuApp.using(:processor).where(status: "pending", user_id: current_user.id).order(:position).includes(:crawl)
   end
   
   def sort
