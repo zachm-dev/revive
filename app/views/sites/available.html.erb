@@ -43,7 +43,7 @@
 								</li>
 								
 								<div class="download_csv_btn pull-right">
-									<%= link_to 'Download', available_path(@crawl.id, format: 'csv'), class: 'btn btn-success' %>
+									<%= link_to 'Download', available_path(@crawl.id, 'processor_name' => @crawl.processor_name, format: 'csv'), class: 'btn btn-success' %>
 								</div>
 			
 							</ul>
