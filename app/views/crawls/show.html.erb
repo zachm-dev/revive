@@ -54,7 +54,7 @@
 								<% if @project.status != 'finished' %>
 									
 									<div class="pull-right">
-										<%= link_to 'Stop Crawl', stop_crawl_path(@project.id), data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
+										<%= link_to 'Stop Crawl', stop_crawl_path(@project.id, 'processor_name' @project.processor_name), data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %>
 									</div>
 									
 								<% else %>
