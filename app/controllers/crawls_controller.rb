@@ -5,28 +5,44 @@ class CrawlsController < ApplicationController
   def index
     processor_names = ['processor', 'processor_one', 'processor_two']
     crawls_array = []
-    
     processor_names.each do |processor|
       crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10).flatten
     end
-    
     page = params[:page].nil? ? 1 : params[:page] 
-    
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
     
     # @crawls = Crawl.using(:processor).where(user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
   end
   
   def running
-    @crawls = Crawl.using(:processor).where(status: 'running', user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
+    
+    processor_names = ['processor', 'processor_one', 'processor_two']
+    crawls_array = []
+    processor_names.each do |processor|
+      crawls_array << Crawl.using("#{processor}").where(status: 'running', user_id: current_user.id).order('created_at').limit(10).flatten
+    end
+    page = params[:page].nil? ? 1 : params[:page] 
+    @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
+    
+    # @crawls = Crawl.using(:processor).where(status: 'running', user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
   end
   
   def finished
-    @crawls = Crawl.using(:processor).where(status: 'finished', user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
+    
+    processor_names = ['processor', 'processor_one', 'processor_two']
+    crawls_array = []
+    processor_names.each do |processor|
+      crawls_array << Crawl.using("#{processor}").where(status: 'finished', user_id: current_user.id).order('created_at').limit(10).flatten
+    end
+    page = params[:page].nil? ? 1 : params[:page] 
+    @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
+    
+    # @crawls = Crawl.using(:processor).where(status: 'finished', user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
   end
   
   def show
-    @project = Crawl.using(:processor).where(user_id: current_user.id, id: params[:id]).first
+    processor_name = params['processor_name']
+    @project = Crawl.using("#{processor_name}").where(user_id: current_user.id, id: params[:id]).first
     
     
     if @project.status == 'running' && !@project.redis_url.nil?

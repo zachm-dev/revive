@@ -12,7 +12,7 @@
 								<p><%= s.name %></p>
 							</div>
 							<div class="pull-right">
-								<p><%= link_to "VIEW", crawl_path_path(s.id) %></p>
+								<p><%= link_to "VIEW", crawl_path_path(s.id, 'processor_name' => s.processor_name) %></p>
 							</div>
 						</div>
 						<div class="panel-body">
