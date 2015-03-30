@@ -14,7 +14,8 @@ class Crawl < ActiveRecord::Base
   GOOGLE_PARAMS = ['links', 'resources', 'intitle:links', 'intitle:resources', 'intitle:sites', 'intitle:websites', 'inurl:links', 'inurl:resources', 'inurl:sites', 'inurl:websites', '"useful links"', '"useful resources"', '"useful sites"', '"useful websites"', '"recommended links"', '"recommended resources"', '"recommended sites"', '"recommended websites"', '"suggested links"', '"suggested resources"', '"suggested sites"', '"suggested websites"', '"more links"', '"more resources"', '"more sites"', '"more websites"', '"favorite links"', '"favorite resources"', '"favorite sites"', '"favorite websites"', '"related links"', '"related resources"', '"related sites"', '"related websites"', 'intitle:"useful links"', 'intitle:"useful resources"', 'intitle:"useful sites"', 'intitle:"useful websites"', 'intitle:"recommended links"', 'intitle:"recommended resources"', 'intitle:"recommended sites"', 'intitle:"recommended websites"', 'intitle:"suggested links"', 'intitle:"suggested resources"', 'intitle:"suggested sites"', 'intitle:"suggested websites"', 'intitle:"more links"', 'intitle:"more resources"', 'intitle:"more sites"', 'intitle:"more websites"', 'intitle:"favorite links"', 'intitle:"favorite resources"', 'intitle:"favorite sites"', 'intitle:"favorite websites"', 'intitle:"related links"', 'intitle:"related resources"', 'intitle:"related sites"', 'intitle:"related websites"', 'inurl:"useful links"', 'inurl:"useful resources"', 'inurl:"useful sites"', 'inurl:"useful websites"', 'inurl:"recommended links"', 'inurl:"recommended resources"', 'inurl:"recommended sites"', 'inurl:"recommended websites"', 'inurl:"suggested links"', 'inurl:"suggested resources"', 'inurl:"suggested sites"', 'inurl:"suggested websites"', 'inurl:"more links"', 'inurl:"more resources"', 'inurl:"more sites"', 'inurl:"more websites"', 'inurl:"favorite links"', 'inurl:"favorite resources"', 'inurl:"favorite sites"', 'inurl:"favorite websites"', 'inurl:"related links"', 'inurl:"related resources"', 'inurl:"related sites"', 'inurl:"related websites"', 'list of links', 'list of resources', 'list of sites', 'list of websites', 'list of blogs', 'list of forums']
   
   def self.stop_crawl(crawl_id, options={})
-    crawl = Crawl.using(:processor).find(crawl_id)
+    processor_name = options["processor_name"]
+    crawl = Crawl.using("#{processor_name}").find(crawl_id)
     status = options['status'].nil? ? 'finished' : options['status']
     heroku_app = crawl.heroku_app
     if heroku_app
@@ -26,12 +27,13 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.start_crawl(options = {})
-    crawl = Crawl.using(:processor).find(options["crawl_id"])
+    processor_name = options['processor_name']
+    crawl = Crawl.using("#{processor_name}").find(options["crawl_id"])
     crawl.setCrawlStartingVariables
     if crawl.crawl_type == 'url_crawl'
-      Crawl.save_new_sites(crawl.id)
+      Crawl.save_new_sites(crawl.id, 'processor_name' => processor_name)
     elsif crawl.crawl_type == 'keyword_crawl'
-      SaveSitesFromGoogle.start_batch(crawl.id)
+      SaveSitesFromGoogle.start_batch(crawl.id, 'processor_name' => processor_name)
     end
   end
   
@@ -64,20 +66,21 @@ class Crawl < ActiveRecord::Base
   def self.decision_maker(options={})
     puts 'making a decision'
     
+    processor_name = options['processor_name']
     user = User.using(:main_shard).find(options['user_id'].to_i)
     plan = user.subscription.plan
     
     if user.minutes_used.to_f < 4000.to_f
       
-      number_of_pending_crawls = Crawl.using(:processor).where(status: "pending", user_id: options['user_id'].to_i).count
-      number_of_running_crawls = Crawl.using(:processor).where(status: "running", user_id: options['user_id'].to_i).count
+      number_of_pending_crawls = Crawl.using("#{processor_name}").where(status: "pending", user_id: options['user_id'].to_i).count
+      number_of_running_crawls = Crawl.using("#{processor_name}").where(status: "running", user_id: options['user_id'].to_i).count
     
       if number_of_running_crawls < plan.crawls_at_the_same_time
         if number_of_pending_crawls > 0
           number_of_apps_running = HerokuPlatform.new.app_list.count
           if number_of_apps_running < 99
             puts 'decision: starting new crawl'
-            ForkNewApp.delay.start(user.id, number_of_apps_running)
+            ForkNewApp.delay.start(user.id, number_of_apps_running, 'processor_name' => processor_name)
           end
         end
       else
@@ -115,19 +118,17 @@ class Crawl < ActiveRecord::Base
     
     processors_hash = {}
     processors_array = ['processor', 'processor_one', 'processor_two']
-    
     processors_array.each do |processor_name|
       running_count = Crawl.using(processor_name).where(status: 'running').count
       processors_hash[processor_name] = running_count
     end
+    processor_name = processors_hash.sort_by{|k,v|v}[0][0]
     
-    processor_shard_name = processors_hash.sort_by{|k,v|v}[0][0]
-    
-    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending', max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after)
-    new_heroku_app_object = HerokuApp.using(:processor).create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user.id)
-    ShardInfo.using(:main_shard).create(user_id: user.id, processor_name: processor_shard_name, crawl_id: new_crawl.id, heroku_app_id: new_heroku_app_object.id)
+    new_crawl = Crawl.using("#{processor_name}").create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending', max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after)
+    new_heroku_app_object = HerokuApp.using("#{processor_name}").create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user.id)
+    ShardInfo.using(:main_shard).create(user_id: user.id, processor_name: processor_name, crawl_id: new_crawl.id, heroku_app_id: new_heroku_app_object.id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
-    Api.delay.process_new_crawl(user_id: user.id)
+    Api.delay.process_new_crawl(user_id: user.id, processor_name: processor_name)
   end
   
   def self.save_new_keyword_crawl(user_id, keyword, options = {})
@@ -151,22 +152,32 @@ class Crawl < ActiveRecord::Base
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
     
-    new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after, iteration: 0)
-    new_heroku_app_object = HerokuApp.using(:processor).create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user_id)
+    processors_hash = {}
+    processors_array = ['processor', 'processor_one', 'processor_two']
+    processors_array.each do |processor_name|
+      running_count = Crawl.using(processor_name).where(status: 'running').count
+      processors_hash[processor_name] = running_count
+    end
+    processor_name = processors_hash.sort_by{|k,v|v}[0][0]
+    
+    new_crawl = Crawl.using("#{processor_name}").create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'keyword_crawl', base_keyword: keyword, status: 'pending', crawl_start_date: crawl_start_date, crawl_end_date: crawl_end_date, max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after, iteration: 0)
+    new_heroku_app_object = HerokuApp.using("#{processor_name}").create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user_id)
+    ShardInfo.using(:main_shard).create(user_id: user.id, processor_name: processor_name, crawl_id: new_crawl.id, heroku_app_id: new_heroku_app_object.id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     # Crawl.decision_maker(user_id)
-    Api.delay.process_new_crawl(user_id: user_id)
+    Api.delay.process_new_crawl(user_id: user_id, processor_name: processor_name)
   end
   
-  def self.save_new_sites(crawl_id)
-    crawl = Crawl.using(:processor).find(crawl_id)
+  def self.save_new_sites(crawl_id, options={})
+    processor_name = options['processor_name']
+    crawl = Crawl.using("#{processor_name}").find(crawl_id)
     
     crawl.base_urls.each do |u|
-      new_site = Site.using(:processor).create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
+      new_site = Site.using("#{processor_name}").create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
       new_site.create_gather_links_batch(status: "pending")
     end
     
-    GatherLinks.delay.start('crawl_id' => crawl.id)
+    GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
   end
   
   def self.update_all_crawl_stats(user_id)

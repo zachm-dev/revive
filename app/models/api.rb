@@ -2,8 +2,9 @@ class Api
   require 'json'
  
   def self.start_crawl(options = {})
+    processor_name = options['processor_name']
+    crawl = Crawl.using("#{processor_name}").find(options[:crawl_id])
     
-    crawl = Crawl.using(:processor).find(options[:crawl_id])
     db = crawl.db_url
     uri = URI.parse(db)
     Octopus.setup do |config|
@@ -32,7 +33,25 @@ class Api
                         :host => 'ec2-54-163-234-153.compute-1.amazonaws.com',
                         :port => 5432,
                         :pool => 1
-                      }                      
+                      },
+                      :processor_one => {
+                        :adapter => 'postgresql',
+                        :database => 'dbdfeisb2cpu9o',
+                        :username => 'u42cj46ifes9mp',
+                        :password => 'p7sgm4r42gq8niengm8ignn2pt7',
+                        :host => 'ec2-54-163-236-202.compute-1.amazonaws.com',
+                        :port => 5542,
+                        :pool => 1
+                      },
+                      :processor_two => {
+                        :adapter => 'postgresql',
+                        :database => 'd9po7h5a2tkblk',
+                        :username => 'u4p8o1fm5l007q',
+                        :password => 'p48p6ff9atah28dm360flr4g3sq',
+                        :host => 'ec2-54-163-237-255.compute-1.amazonaws.com',
+                        :port => 5502,
+                        :pool => 1
+                      }               
                     }
     end
 
@@ -69,19 +88,19 @@ class Api
       app = crawl.heroku_app
       puts 'new app did not start properly'
       app.update(status: 'retry')
-      Crawl.update(crawl.id, status: 'retry')
+      Crawl.using("#{processor_name}").update(crawl.id, status: 'retry')
       heroku = HerokuPlatform.new
       number_of_apps_running = heroku.app_list.count
       heroku.delete_app(crawl.heroku_app.name)
-      ForkNewApp.delay.retry(app.id, number_of_apps_running)
+      ForkNewApp.delay.retry(app.id, number_of_apps_running, 'processor_name' => processor_name)
       
     end
     
   end
   
   def self.migrate_db(options = {})
-    
-    app_name = Crawl.find(options[:crawl_id]).heroku_app.name
+    processor_name = options['processor_name']
+    app_name = Crawl.using("#{processor_name}").find(options[:crawl_id]).heroku_app.name
     
     if Rails.env.development?
       uri = URI.parse("http://localhost:3000/migrate_db")

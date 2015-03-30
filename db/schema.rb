@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150330030723) do
+ActiveRecord::Schema.define(version: 20150330061529) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,15 +114,16 @@ ActiveRecord::Schema.define(version: 20150330030723) do
 
   create_table "links", force: :cascade do |t|
     t.integer  "site_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.text     "links",                    array: true
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.text     "links",                       array: true
     t.text     "found_on"
     t.string   "status"
     t.integer  "links_count"
     t.boolean  "started"
     t.boolean  "process"
     t.integer  "crawl_id"
+    t.string   "processor_name"
   end
 
   create_table "pages", force: :cascade do |t|
@@ -151,6 +152,7 @@ ActiveRecord::Schema.define(version: 20150330030723) do
     t.integer  "refdomains"
     t.integer  "backlinks"
     t.integer  "crawl_id"
+    t.string   "processor_name"
   end
 
   create_table "plans", force: :cascade do |t|

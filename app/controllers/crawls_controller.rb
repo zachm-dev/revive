@@ -80,7 +80,8 @@ class CrawlsController < ApplicationController
   
   def migrate_db
     @json = JSON.parse(request.body.read)
-    crawl = Crawl.using(:processor).find(@json["options"]["crawl_id"].to_i)
+    processor_name = @json["options"]['processor_name']
+    crawl = Crawl.using("#{processor_name}").find(@json["options"]["crawl_id"].to_i)
     puts "the crawl id is #{crawl.id}"
     master_url = ENV['DATABASE_URL']
     slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}

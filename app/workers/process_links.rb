@@ -6,7 +6,8 @@ class ProcessLinks
   sidekiq_options :queue => :process_links
   # sidekiq_options :retry => false
   
-  def perform(l, site_id, found_on, domain, crawl_id)
+  def perform(l, site_id, found_on, domain, crawl_id, options={})
+    processor_name = options['processor_name']
     request = Typhoeus::Request.new(l, method: :head, followlocation: true, timeout: 15)
     request.on_complete do |response|
       
@@ -18,12 +19,12 @@ class ProcessLinks
       
       internal = l.include?("#{domain}") ? true : false
       if internal == true && "#{response.code}" == '404'
-        Page.using(:processor).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
+        Page.using("#{processor_name}").create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
       elsif internal == false
         if "#{response.code}" == '404'
-          Page.using(:processor).create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
+          Page.using("#{processor_name}").create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
         else
-          Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
+          Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name)
         end
       end
     end
@@ -38,6 +39,8 @@ class ProcessLinks
   
   def on_complete(status, options={})
     puts "finished processing batch #{options}"
+    
+    processor_name = options['processor_name']
     
     total_site_count = Rails.cache.read(["site/#{options['site_id']}/processing_batches/total"], raw: true).to_i
     total_site_running = Rails.cache.decrement(["site/#{options['site_id']}/processing_batches/running"])
@@ -55,7 +58,7 @@ class ProcessLinks
     
     if total_crawl_running <= 0
       puts 'shut down app and update crawl stats and user stats'
-      app = HerokuApp.using(:processor).where(crawl_id: options['crawl_id']).first
+      app = HerokuApp.using("#{processor_name}").where(crawl_id: options['crawl_id']).first
       crawl = app.crawl
       
       if (options['crawl_type'] == 'keyword_crawl' && options['iteration'].to_i >= (Crawl::GOOGLE_PARAMS.count-1)) || options['crawl_type'] == "url_crawl"
@@ -76,7 +79,7 @@ class ProcessLinks
 
             stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
         
-            Crawl.using(:processor).update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i, msg: 'crawl finished all processing batches')
+            Crawl.using("#{processor_name}").update(options['crawl_id'], status: 'finished', total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i, msg: 'crawl finished all processing batches')
             crawl_total_time_in_minutes = (Time.now - Chronic.parse(Rails.cache.read(["crawl/#{options['crawl_id']}/start_time"], raw: true))).to_f/60.to_f
             user = User.using(:main_shard).find(app.user_id)
             user.update(minutes_used: user.minutes_used.to_f+crawl_total_time_in_minutes)
@@ -111,8 +114,8 @@ class ProcessLinks
       
       stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, site_urls_found, site_expired_domains, site_broken_domains, raw: true)
       
-      Site.using(:processor).update(options['site_id'], processing_status: 'finished', total_urls_found: stats[site_urls_found].to_i, total_expired: stats[site_expired_domains].to_i, total_broken: stats[site_broken_domains].to_i)
-      Crawl.using(:processor).update(options['crawl_id'], total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
+      Site.using("#{processor_name}").update(options['site_id'], processing_status: 'finished', total_urls_found: stats[site_urls_found].to_i, total_expired: stats[site_expired_domains].to_i, total_broken: stats[site_broken_domains].to_i)
+      Crawl.using("#{processor_name}").update(options['crawl_id'], total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
     else
       puts 'do something else'
     end

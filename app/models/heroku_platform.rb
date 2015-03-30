@@ -101,8 +101,9 @@ class HerokuPlatform
     end.reject(&:nil?).any?
   end
   
-  def self.fork(from, to, heroku_app_id, number_of_apps_running)
-    heroku_app = HerokuApp.where(id: heroku_app_id).first
+  def self.fork(from, to, heroku_app_id, number_of_apps_running, options={})
+    processor_name = options['processor_name']
+    heroku_app = HerokuApp.using("#{processor_name}").where(id: heroku_app_id).first
     if heroku_app && heroku_app.status != 'running'
       heroku = HerokuPlatform.new
       app = heroku.create_app(to)
@@ -138,7 +139,7 @@ class HerokuPlatform
                               heroku_app.update(status: 'retry')
                               Crawl.update(heroku_app.crawl_id, status: 'retry')
                               heroku.delete_app(to)
-                              ForkNewApp.delay.retry(heroku_app_id, number_of_apps_running)
+                              ForkNewApp.delay.retry(heroku_app_id, number_of_apps_running, 'processor_name' => processor_name)
                             end
                             
                           end
