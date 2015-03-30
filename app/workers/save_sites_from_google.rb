@@ -4,7 +4,8 @@ class SaveSitesFromGoogle
   # sidekiq_options retry: false
   
   def perform(crawl_id, options = {})
-    crawl = Crawl.using(:processor).find(crawl_id)
+    processor_name = options['processor_name']
+    crawl = Crawl.using("#{processor_name}").find(crawl_id)
     query = crawl.base_keyword
     param = Crawl::GOOGLE_PARAMS[options['iteration'].to_i]
     
@@ -36,8 +37,8 @@ class SaveSitesFromGoogle
       puts "the gather links batch of keyword crawl #{u}"
       url = Domainatrix.parse(u.to_s)
       parsed_url = 'www.' + url.domain + "." + url.public_suffix
-      site = Site.using(:processor).create(domain: parsed_url, base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
-      GatherLinksBatch.using(:processor).create(site_id: site.id, status: "pending")
+      site = Site.using("#{processor_name}").create(domain: parsed_url, base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
+      GatherLinksBatch.using("#{processor_name}").create(site_id: site.id, status: "pending")
     end
   end
   
@@ -53,18 +54,19 @@ class SaveSitesFromGoogle
     #   site.update(processing_status: "pending")
     #   GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
     # end
-    GatherLinks.delay.start('crawl_id' => options['crawl_id'])
+    GatherLinks.delay.start('crawl_id' => options['crawl_id'], 'processor_name' => options['processor_name'])
     # Crawl.delay.decision_maker(crawl.user.id)
   end
   
   def self.start_batch(crawl_id, options={})
+    processor_name = options['processor_name']
     google_links_batch = Sidekiq::Batch.new
     puts "the crawl id for this google batch is #{crawl_id}"
     iteration = options['iteration'].nil? ? 0 : options['iteration']
-    google_links_batch.on(:complete, self, 'bid' => google_links_batch.bid, 'crawl_id' => crawl_id)
+    google_links_batch.on(:complete, self, 'bid' => google_links_batch.bid, 'crawl_id' => crawl_id, 'processor_name' => processor_name)
     google_links_batch.jobs do
       begin
-        SaveSitesFromGoogle.perform_async(crawl_id, 'iteration' => iteration)
+        SaveSitesFromGoogle.perform_async(crawl_id, 'iteration' => iteration, 'processor_name' => processor_name)
       rescue
         puts 'failed to save'
       end
