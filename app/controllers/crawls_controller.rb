@@ -12,7 +12,7 @@ class CrawlsController < ApplicationController
     
     page = params[:page].nil? ? 1 : params[:page] 
     
-    @crawls = crawls_array.paginate(:page => params[:page], :per_page => 10)
+    @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
     
     # @crawls = Crawl.using(:processor).where(user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
   end
