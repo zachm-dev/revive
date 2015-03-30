@@ -48,7 +48,7 @@ class SitesController < ApplicationController
     
     respond_to do |format|
       format.html
-      format.csv { send_data @pages.to_csv }
+      format.csv { send_data @available.to_csv }
     end
     
   end
