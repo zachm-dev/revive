@@ -3,7 +3,16 @@ class CrawlsController < ApplicationController
   skip_before_action :verify_authenticity_token, :only => [:api_create, :migrate_db, :process_new_crawl]
   
   def index
-    @crawls = Crawl.using(:processor).where(user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
+    processor_names = ['processor', 'processor_one', 'processor_two']
+    crawls_array = []
+    
+    processor_names.each do |processor|
+      crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10)
+    end
+    
+    @crawls = crawls_array.paginate(:page => params[:page], :per_page => 10)
+    
+    # @crawls = Crawl.using(:processor).where(user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
   end
   
   def running
