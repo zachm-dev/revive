@@ -74,7 +74,7 @@ class CrawlsController < ApplicationController
     @json = JSON.parse(request.body.read)
     puts "here is the json hash #{@json["options"]}"
     Crawl.delay.start_crawl(@json["options"])
-    # SidekiqStats.delay.start(@json["options"])
+    SidekiqStats.delay.start(@json["options"])
     render :layout => false
   end
   
@@ -85,8 +85,8 @@ class CrawlsController < ApplicationController
     puts "the crawl id is #{crawl.id}"
     master_url = ENV['DATABASE_URL']
     slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
-    slave_keys.delete_if{ |k| ENV[k] == master_url }
-    db_url = ENV[slave_keys.first]
+    # slave_keys.delete_if{ |k| ENV[k] == master_url }
+    db_url = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL"])
     crawl.update(db_url: db_url)
     heroku = HerokuPlatform.new
     puts "setting the database variables"
