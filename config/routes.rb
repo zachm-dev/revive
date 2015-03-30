@@ -2,7 +2,8 @@ require 'sidekiq/pro/web'
 
 Rails.application.routes.draw do
 
-  root 'home#index'
+  # root 'home#index'
+  root 'plans#index'
   get 'home', to: 'home#index', as: 'home'
   get :dashboard, to: 'dashboard#index'
 
