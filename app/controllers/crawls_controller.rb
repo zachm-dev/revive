@@ -7,7 +7,7 @@ class CrawlsController < ApplicationController
     crawls_array = []
     
     processor_names.each do |processor|
-      crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10)
+      crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10).flatten
     end
     
     page = params[:page].nil? ? 1 : params[:page] 
