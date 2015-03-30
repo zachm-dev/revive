@@ -170,6 +170,7 @@ class HerokuPlatform
   end
   
   def set_db_config_vars(to, db_url)
+    puts "here is the db_url #{db_url}"
     db_split = db_url.split(':')[1..3]
     db_user = db_split[0].split('//')[1]
     db_pass = db_split[1].split('@')[0]
