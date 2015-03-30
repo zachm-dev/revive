@@ -14,7 +14,7 @@
 			URLS
 		</div>
 		<div class="stat_value">
-			<%= link_to s.total_urls_found.to_i, all_urls_path(s.id) %>
+			<%= link_to s.total_urls_found.to_i, '#' %>
 		</div>
 	</li>
 	
@@ -23,7 +23,7 @@
 			BROKEN
 		</div>
 		<div class="stat_value">
-			<%= link_to s.total_broken.to_i, broken_path(s.id) %>
+			<%= link_to s.total_broken.to_i, broken_path(s.id, 'processor_name' => s.processor_name) %>
 		</div>
 	</li>
 	
@@ -32,7 +32,7 @@
 			AVAILABLE
 		</div>
 		<div class="stat_value">
-			<%= link_to s.total_expired.to_i, available_path(id: s.id) %>
+			<%= link_to s.total_expired.to_i, available_path(id: s.id, 'processor_name' => s.processor_name) %>
 		</div>
 	</li>
 	
