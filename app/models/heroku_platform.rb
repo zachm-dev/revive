@@ -133,11 +133,11 @@ class HerokuPlatform
                             if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
                               puts 'done creating new app'
                               heroku_app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], status: 'running', formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
-                              Crawl.update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url], status: 'running')
+                              Crawl.using("#{processor_name}").update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url], status: 'running')
                             else
                               puts 'new app did not start properly'
                               heroku_app.update(status: 'retry')
-                              Crawl.update(heroku_app.crawl_id, status: 'retry')
+                              Crawl.using("#{processor_name}").update(heroku_app.crawl_id, status: 'retry')
                               heroku.delete_app(to)
                               ForkNewApp.delay.retry(heroku_app_id, number_of_apps_running, 'processor_name' => processor_name)
                             end

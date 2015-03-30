@@ -3,10 +3,10 @@ class SidekiqStats
   include Sidekiq::Worker
   # sidekiq_options :queue => :sidekiq_stats
   
-  def perform(crawl_id)
+  def perform(crawl_id, options={})
     puts 'getting sidekiq stats'
-    
-    SidekiqStats.delay.start('crawl_id' => crawl_id)
+    processor_name = options['processor_name']
+    SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
     
     if Sidekiq::Stats.new.enqueued < 100
       
@@ -30,7 +30,7 @@ class SidekiqStats
                 puts 'stats have been the same for the past two minutes: restarting app: increasing verify count'
                 Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
               
-                app = HerokuApp.using(:processor).where(crawl_id: crawl_id).first
+                app = HerokuApp.using("#{processor_name}").where(crawl_id: crawl_id).first
                 app_name = app.name
               
                 heroku = HerokuPlatform.new
@@ -40,7 +40,7 @@ class SidekiqStats
                 Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
               elsif stats_verify_count >= 3
                 puts 'app has stalled shutting it down'
-                app = HerokuApp.using(:processor).where(crawl_id: crawl_id).first
+                app = HerokuApp.using("#{processor_name}").where(crawl_id: crawl_id).first
                 app_name = app.name
                 crawl = app.crawl
               
@@ -54,7 +54,7 @@ class SidekiqStats
                 user = User.using(:main_shard).find(app.user_id)
                 user.update(minutes_used: user.minutes_used.to_f+crawl_total_time_in_minutes)
                 
-                Crawl.using(:processor).update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app stalled')
+                Crawl.using("#{processor_name}").update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app stalled')
               
                 heroku = HerokuPlatform.new
                 heroku.delete_app(app_name)
@@ -113,6 +113,7 @@ class SidekiqStats
   
   def self.start(options={})
     puts 'start sidekiq and dyno stats'
+    processor_name = options['processor_name']
     
     # if options["crawl_id"]
     #   crawl = Crawl.using(:main_shard).find(options["crawl_id"])
@@ -124,7 +125,7 @@ class SidekiqStats
     # puts 'checking dyno stats'
     # DynoStats.delay.last_checked?(heroku_app_id: heroku_app_id)
     puts 'scheduling sidekiq and dyno stats'
-    SidekiqStats.perform_in(1.minute, options['crawl_id'])
+    SidekiqStats.perform_in(1.minute, options['crawl_id'], 'processor_name' => processor_name)
   end
   
 end
