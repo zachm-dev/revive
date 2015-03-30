@@ -10,6 +10,8 @@ class CrawlsController < ApplicationController
       crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10)
     end
     
+    page = params[:page].nil? ? 1 : params[:page] 
+    
     @crawls = crawls_array.paginate(:page => params[:page], :per_page => 10)
     
     # @crawls = Crawl.using(:processor).where(user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
