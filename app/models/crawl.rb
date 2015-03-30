@@ -113,8 +113,19 @@ class Crawl < ActiveRecord::Base
       urls_array = base_urls.split(",")
     end
     
+    processors_hash = {}
+    processors_array = ['processor', 'processor_one', 'processor_two']
+    
+    processors_array.each do |processor_name|
+      running_count = Crawl.using(processor_name).where(status: 'running').count
+      processors_hash[processor_name] = running_count
+    end
+    
+    processor_shard_name = processors_hash.sort_by{|k,v|v}[0][0]
+    
     new_crawl = Crawl.using(:processor).create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending', max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after)
     new_heroku_app_object = HerokuApp.using(:processor).create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user.id)
+    ShardInfo.using(:main_shard).create(user_id: user.id, processor_name: processor_shard_name, crawl_id: new_crawl.id, heroku_app_id: new_heroku_app_object.id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     Api.delay.process_new_crawl(user_id: user.id)
   end
