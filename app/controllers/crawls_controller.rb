@@ -82,7 +82,7 @@ class CrawlsController < ApplicationController
   end
   
   def edit
-    @project = Crawl.using(:processor).find(params[:id])
+    @project = Crawl.using(params["processor_name"]).find(params[:id])
   end
   
   def create_keyword_crawl
@@ -125,13 +125,13 @@ class CrawlsController < ApplicationController
   end
   
   def destroy
-    crawl = HerokuApp.using(:processor).find(params[:id])
+    crawl = HerokuApp.using(params["processor_name"]).find(params[:id])
     crawl.destroy
     redirect_to crawls_path
   end
   
   def delete_crawl
-    crawl = Crawl.using(:processor).find(params[:id])
+    crawl = Crawl.using(params["processor_name"]).find(params[:id])
     crawl.delete
     redirect_to crawls_path
   end
