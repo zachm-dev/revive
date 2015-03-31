@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   after_create :create_user_dashboard
-  before_create { generate_token(:auth_token) }
+  # before_create { generate_token(:auth_token) }
 
   has_secure_password
 
