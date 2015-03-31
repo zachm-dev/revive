@@ -33,8 +33,8 @@ class SidekiqStats
                 app = HerokuApp.using("#{processor_name}").where(crawl_id: crawl_id).first
                 app_name = app.name
               
-                heroku = HerokuPlatform.new
-                heroku.restart_app(app_name)
+                # heroku = HerokuPlatform.new
+                # heroku.restart_app(app_name)
               elsif stats_verify_count == 2
                 puts 'stats have been the same for the past three minutes: increasing verify count'
                 Rails.cache.increment(["stats/#{crawl_id}/verify_count"])

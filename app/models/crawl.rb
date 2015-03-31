@@ -16,13 +16,15 @@ class Crawl < ActiveRecord::Base
   def self.stop_crawl(crawl_id, options={})
     processor_name = options["processor_name"]
     crawl = Crawl.using("#{processor_name}").find(crawl_id)
-    status = options['status'].nil? ? 'finished' : options['status']
-    heroku_app = crawl.heroku_app
-    if heroku_app
-      heroku_app.update(status: status)
-      crawl.update(status: status)
-      heroku = HerokuPlatform.new
-      heroku.delete_app(heroku_app.name)
+    if crawl && crawl.status != 'finished'
+      status = options['status'].nil? ? 'finished' : options['status']
+      heroku_app = crawl.heroku_app
+      if heroku_app
+        heroku_app.update(status: status)
+        crawl.update(status: status)
+        heroku = HerokuPlatform.new
+        heroku.delete_app(heroku_app.name)
+      end
     end
   end
   
