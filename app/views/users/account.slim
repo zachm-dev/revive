@@ -48,11 +48,11 @@
                 .row
                   .col-xs-6.col-sm-6
                     h3
-                      | Basic
+                      = @current_user.subscription.plan_name.to_s
                       /= @plan.name
                   .col-xs-6.col-sm-6
                     h3.pull-right
-                      |$200/mo
+                      = @current_user.subscription.plan.price
                       /= @plan.price
                 .limit-container
                   .limit
