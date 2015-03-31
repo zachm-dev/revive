@@ -46,16 +46,22 @@ class CrawlsController < ApplicationController
     
     
     if @project.status == 'running' && !@project.redis_url.nil?
-      redis = ActiveSupport::Cache.lookup_store(:redis_store, @project.redis_url)
-      urls_found = "crawl/#{@project.id}/urls_found"
-      expired_domains = "crawl/#{@project.id}/expired_domains"
-      broken_domains = "crawl/#{@project.id}/broken_domains"
-      progress = "crawl/#{@project.id}/progress"
-      stats = redis.read_multi(urls_found, expired_domains, broken_domains, progress, raw: true)
-      @urls_found = stats[urls_found].to_i
-      @broken_domains = stats[broken_domains].to_i
-      @expired_domains = stats[expired_domains].to_i
-      @progress = stats[progress].to_f
+      begin
+        redis = ActiveSupport::Cache.lookup_store(:redis_store, @project.redis_url)
+        urls_found = "crawl/#{@project.id}/urls_found"
+        expired_domains = "crawl/#{@project.id}/expired_domains"
+        broken_domains = "crawl/#{@project.id}/broken_domains"
+        progress = "crawl/#{@project.id}/progress"
+        stats = redis.read_multi(urls_found, expired_domains, broken_domains, progress, raw: true)
+        @urls_found = stats[urls_found].to_i
+        @broken_domains = stats[broken_domains].to_i
+        @expired_domains = stats[expired_domains].to_i
+        @progress = stats[progress].to_f
+      rescue
+        @urls_found = @project.total_urls_found.to_i
+        @broken_domains = @project.total_broken.to_i
+        @expired_domains = @project.total_expired.to_i
+      end
     else
       @urls_found = @project.total_urls_found.to_i
       @broken_domains = @project.total_broken.to_i
