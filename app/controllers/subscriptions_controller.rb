@@ -7,6 +7,11 @@ class SubscriptionsController < ApplicationController
 
   def new
     @subscription = Subscription.new
+    if params['plan_id'] == "1"
+      @price = '199.00'
+    else
+      @price = '297.00'
+    end
     # For ~> checkout
     # If the user already has a plan just redirect to dash
     # in the future this will redirect to account and billing.
