@@ -87,13 +87,13 @@
 									Type: <%= c.crawl.crawl_type %>
 								</div>
 								<div class='name col-xs-1 pull-right'>
-									<%= link_to "Delete", crawl_path(c.id), class: 'btn btn-danger btn-sm', method: :delete, data: { confirm: "Are you sure?" } %>
+									<%= link_to "Delete", crawl_path(c.id, 'processor_name' => c.processor_name), class: 'btn btn-danger btn-sm', method: :delete, data: { confirm: "Are you sure?" } %>
 								</div>
 								<!-- <div class='name col-xs-1 pull-right'>
 									<%= link_to "Edit", '#', class: 'btn btn-warning btn-sm' %>
 								</div> -->
 								<div class='name col-xs-1 pull-right'>
-									<%= link_to "Start", start_crawl_path, class: 'btn btn-success btn-sm'%>
+									<%= link_to "Start", start_crawl_path('processor_name' => c.processor_name), class: 'btn btn-success btn-sm'%>
 								</div>
 							</div>
 						<% end %>

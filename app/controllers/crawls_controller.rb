@@ -143,7 +143,7 @@ class CrawlsController < ApplicationController
   end
   
   def start_crawl
-    Api.delay.process_new_crawl(user_id: current_user.id)
+    Api.delay.process_new_crawl(user_id: current_user.id, 'processor_name' => params['processor_name'])
     redirect_to crawls_path
   end
   
