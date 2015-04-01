@@ -16,6 +16,7 @@ class Crawl < ActiveRecord::Base
   def self.stop_crawl(crawl_id, options={})
     processor_name = options["processor_name"]
     crawl = Crawl.using("#{processor_name}").find(crawl_id)
+    puts "here is the crawl to stop #{crawl.id} on the processor #{crawl.processor_name}"
     if crawl && crawl.status != 'finished'
       status = options['status'].nil? ? 'finished' : options['status']
       heroku_app = crawl.heroku_app
@@ -30,12 +31,15 @@ class Crawl < ActiveRecord::Base
   
   def self.start_crawl(options = {})
     processor_name = options['processor_name']
-    crawl = Crawl.using("#{processor_name}").find(options["crawl_id"])
-    crawl.setCrawlStartingVariables
-    if crawl.crawl_type == 'url_crawl'
-      Crawl.save_new_sites(crawl.id, 'processor_name' => processor_name)
-    elsif crawl.crawl_type == 'keyword_crawl'
-      SaveSitesFromGoogle.start_batch(crawl.id, 'processor_name' => processor_name)
+    crawl = Crawl.using("#{processor_name}").find(options["crawl_id"].to_i)
+    puts "here is the crawl to start #{crawl.id} on the processor #{crawl.processor_name}"
+    if crawl
+      crawl.setCrawlStartingVariables
+      if crawl.crawl_type == 'url_crawl'
+        Crawl.save_new_sites(crawl.id, 'processor_name' => processor_name)
+      elsif crawl.crawl_type == 'keyword_crawl'
+        SaveSitesFromGoogle.start_batch(crawl.id, 'processor_name' => processor_name)
+      end
     end
   end
   
