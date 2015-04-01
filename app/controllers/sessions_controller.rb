@@ -5,10 +5,11 @@ class SessionsController < ApplicationController
   end
   
   def create
+    # raise
     user = User.using(:main_shard).find_by_email(params[:email])
     if user && user.authenticate(params[:password])
-      # cookies.permanent[:auth_token] = user.auth_token
-      session[:user_id] = user.id
+      cookies.permanent[:auth_token] = user.auth_token
+      # session[:user_id] = user.id
       redirect_to dashboard_path, notice: "Logged In"
     else
       flash.now.alert = "Email or password is invalid"
@@ -17,8 +18,8 @@ class SessionsController < ApplicationController
   end
   
   def destroy
-    session[:user_id] = nil
-    # cookies.delete(:auth_token)
+    # session[:user_id] = nil
+    cookies.delete(:auth_token)
     redirect_to root_url
   end  
   

@@ -11,8 +11,14 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||= User.find(session[:user_id]) if session[:user_id]
+    # @current_user ||= User.find(session[:user_id]) if session[:user_id]    #
     # @current_user ||= User.using(:main_shard).find_by_auth_token!(cookies[:auth_token]) if cookies[:auth_token]
+    
+    @current_user ||= User.where("auth_token = ?", cookies[:auth_token]).first if cookies[:auth_token]
+    rescue ActiveRecord::RecordNotFound
+      cookies.delete(:auth_token)
+      redirect_to root_path
+    
   end
   helper_method :current_user
 

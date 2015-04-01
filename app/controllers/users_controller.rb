@@ -15,7 +15,8 @@ class UsersController < ApplicationController
     plan = Plan.using(:main_shard).find(params['plan_id'].to_i)
     @user.minutes_available = plan.minutes_per_month.to_f
     if @user.save
-      session[:user_id] = @user.id
+      # session[:user_id] = @user.id
+      cookies[:auth_token] = @user.auth_token
       redirect_to new_subscriptions_path(plan_id: params['plan_id']), notice: "Thank you for signing up!"
     else
       render 'new'

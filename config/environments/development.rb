@@ -19,11 +19,11 @@ Rails.application.configure do
    config.action_mailer.raise_delivery_errors = true
    config.action_mailer.delivery_method = :smtp
    config.action_mailer.smtp_settings = {
-     address: 'smtp.sendgrid.net',
+     address: 'smtp.gmail.com',
      port: 587,
-     domain: 'sourcerehunter.org',
-     user_name: ENV['send_grid_username'],
-     password: ENV['send_grid_password'],
+     domain: 'sourcererevive.net',
+     user_name: ENV['GMAIL_USER'],
+     password: ENV['GMAIL_PASS'],
      authentication: 'plain',
      enable_starttls_auto: true}
    Rails.application.routes.default_url_options[:host] = 'http://lvh.me:3000'
