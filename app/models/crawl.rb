@@ -66,7 +66,7 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.decision_maker(options={})
-    puts 'making a decision'
+    puts "making a decision #{options}"
     
     processor_name = options['processor_name']
     user = User.using(:main_shard).find(options['user_id'].to_i)

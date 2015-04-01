@@ -3,6 +3,7 @@ class Api
  
   def self.start_crawl(options = {})
     processor_name = options['processor_name']
+    puts "the processor_name is ##{options['processor_name']}"
     crawl = Crawl.using("#{processor_name}").find(options[:crawl_id])
     
     db = crawl.db_url
