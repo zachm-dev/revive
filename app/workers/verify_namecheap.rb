@@ -23,7 +23,7 @@ class VerifyNamecheap
             http = Net::HTTP.new(uri.host, uri.port)
             http.use_ssl = true
             request = Net::HTTP::Get.new(uri.request_uri)
-            request["X-Mashape-Key"] = "mPFRSsEZO6mshKl5Fyhvj8BxqunQp19PVM9jsntVJ4Q7Em4HkC"
+            request["X-Mashape-Key"] = "6CWhVxnwLhmshW8UaLSYUSlMocdqp1kkOR4jsnmEFj0MrrHB5T"
             request["Accept"] = "application/json"
             response = http.request(request)
             json = JSON.parse(response.read_body)
@@ -64,11 +64,12 @@ class VerifyNamecheap
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     request = Net::HTTP::Get.new(uri.request_uri)
-    request["X-Mashape-Key"] = "mPFRSsEZO6mshKl5Fyhvj8BxqunQp19PVM9jsntVJ4Q7Em4HkC"
+    request["X-Mashape-Key"] = "6CWhVxnwLhmshW8UaLSYUSlMocdqp1kkOR4jsnmEFj0MrrHB5T"
     request["Accept"] = "application/json"
     response = http.request(request)
     json = JSON.parse(response.read_body)
     json['available']
+    return json
   end
   
 end
