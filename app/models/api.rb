@@ -105,33 +105,39 @@ class Api
   
   def self.migrate_db(options = {})
     processor_name = options['processor_name']
-    app_name = Crawl.using("#{processor_name}").find(options[:crawl_id]).heroku_app.name
+    crawl = Crawl.using("#{processor_name}").where(id: options[:crawl_id].to_i).first
     
-    if Rails.env.development?
-      uri = URI.parse("http://localhost:3000/migrate_db")
-      puts "production start #{app_name}"
-    else
-      uri = URI.parse("http://#{app_name}.herokuapp.com/migrate_db")
-      puts "production start #{app_name}"
-    end
+    if crawl
+      app_name = crawl.heroku_app.name
+      
+      if Rails.env.development?
+        uri = URI.parse("http://localhost:3000/migrate_db")
+        puts "production start #{app_name}"
+      else
+        uri = URI.parse("http://#{app_name}.herokuapp.com/migrate_db")
+        puts "production start #{app_name}"
+      end
         
-    post_params = {
-      :options => options
-    }
+      post_params = {
+        :options => options
+      }
     
-    # post_params = {
-    #   :user_id => user_id,
-    #   :urls => urls,
-    #   :options => options
-    # }
+      # post_params = {
+      #   :user_id => user_id,
+      #   :urls => urls,
+      #   :options => options
+      # }
  
-    # Convert the parameters into JSON and set the content type as application/json
-    req = Net::HTTP::Post.new(uri.path)
-    req.body = JSON.generate(post_params)
-    #req["Content-Type"] = "application/json"
+      # Convert the parameters into JSON and set the content type as application/json
+      req = Net::HTTP::Post.new(uri.path)
+      req.body = JSON.generate(post_params)
+      #req["Content-Type"] = "application/json"
   
-    http = Net::HTTP.new(uri.host, uri.port)
-    response = http.start {|htt| htt.request(req)}
+      http = Net::HTTP.new(uri.host, uri.port)
+      response = http.start {|htt| htt.request(req)}
+      
+    end
+
   end
   
   def self.process_new_crawl(options={})
