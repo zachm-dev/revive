@@ -15,7 +15,7 @@ class Crawl < ActiveRecord::Base
   
   def self.stop_crawl(crawl_id, options={})
     processor_name = options["processor_name"]
-    crawl = Crawl.using("#{processor_name}").find(crawl_id)
+    crawl = Crawl.using("#{processor_name}").where(id: crawl_id).first
     puts "here is the crawl to stop #{crawl.id} on the processor #{crawl.processor_name}"
     if crawl && crawl.status != 'finished'
       status = options['status'].nil? ? 'finished' : options['status']
