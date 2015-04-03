@@ -54,7 +54,25 @@ class Api
                           :host => 'ec2-54-163-237-255.compute-1.amazonaws.com',
                           :port => 5502,
                           :pool => 1
-                        }               
+                        },
+                        :processor_three => {
+                          :adapter => 'postgresql',
+                          :database => 'ddl8pqb6olhsh7',
+                          :username => 'uu1230jnk7rhe6j',
+                          :password => 'p9alv86sk57jb14jed8vuuqr41h',
+                          :host => 'ec2-23-21-207-111.compute-1.amazonaws.com',
+                          :port => 5452,
+                          :pool => 1
+                        },
+                        :processor_four => {
+                          :adapter => 'postgresql',
+                          :database => 'dd2a4lld9f69j2',
+                          :username => 'u7r3qia870f4ea',
+                          :password => 'p6ku9ua71s44j598umh2iln6ied',
+                          :host => 'ec2-54-163-239-48.compute-1.amazonaws.com',
+                          :port => 5432,
+                          :pool => 1
+                        }       
                       }
       end
 

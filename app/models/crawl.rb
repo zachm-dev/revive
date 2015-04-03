@@ -123,7 +123,7 @@ class Crawl < ActiveRecord::Base
     end
     
     processors_hash = {}
-    processors_array = ['processor', 'processor_one', 'processor_two']
+    processors_array = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     processors_array.each do |processor_name|
       running_count = Crawl.using(processor_name).where(status: 'running').count
       processors_hash[processor_name] = running_count
@@ -159,7 +159,7 @@ class Crawl < ActiveRecord::Base
     end
     
     processors_hash = {}
-    processors_array = ['processor', 'processor_one', 'processor_two']
+    processors_array = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     processors_array.each do |processor_name|
       running_count = Crawl.using(processor_name).where(status: 'running').count
       processors_hash[processor_name] = running_count
