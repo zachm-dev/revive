@@ -32,6 +32,7 @@ class SitesController < ApplicationController
   def available
     @crawl = Crawl.using(params["processor_name"]).find(params[:id])
     @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true')
+    # @available = Rails.cache.read(['crawl/392/available/processor_two'])
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
     @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)

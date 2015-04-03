@@ -78,6 +78,13 @@ class SubscriptionsController < ApplicationController
       end
     end
   end
+  
+  # def upgrade_to_charter
+  #   customer = Stripe::Customer.retrieve({CUSTOMER_ID})
+  #   subscription = customer.subscriptions.retrieve({SUBSCRIPTION_ID})
+  #   subscription.plan = {PLAN_ID}
+  #   subscription.save
+  # end
 
   private
 
