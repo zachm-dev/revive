@@ -3,7 +3,7 @@ class CrawlsController < ApplicationController
   skip_before_action :verify_authenticity_token, :only => [:api_create, :migrate_db, :process_new_crawl]
   
   def index
-    processor_names = ['processor', 'processor_one', 'processor_two']
+    processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
       crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10).flatten
@@ -16,7 +16,7 @@ class CrawlsController < ApplicationController
   
   def running
     
-    processor_names = ['processor', 'processor_one', 'processor_two']
+    processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
       crawls_array << Crawl.using("#{processor}").where(status: 'running', user_id: current_user.id).order('created_at').limit(10).flatten
@@ -29,7 +29,7 @@ class CrawlsController < ApplicationController
   
   def finished
     
-    processor_names = ['processor', 'processor_one', 'processor_two']
+    processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
       crawls_array << Crawl.using("#{processor}").where(status: 'finished', user_id: current_user.id).order('created_at').limit(10).flatten
@@ -119,7 +119,7 @@ class CrawlsController < ApplicationController
     master_url = ENV['DATABASE_URL']
     slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
     # slave_keys.delete_if{ |k| ENV[k] == master_url }
-    db_url_name = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL"])
+    db_url_name = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL","HEROKU_POSTGRESQL_WHITE_URL", "HEROKU_POSTGRESQL_BROWN_URL"])
     db_url = ENV[db_url_name[0]]
     crawl.update(db_url: db_url)
     heroku = HerokuPlatform.new
