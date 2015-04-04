@@ -58,7 +58,7 @@ class Api
                         :processor_three => {
                           :adapter => 'postgresql',
                           :database => 'ddl8pqb6olhsh7',
-                          :username => 'uu1230jnk7rhe6j',
+                          :username => 'u1230jnk7rhe6j',
                           :password => 'p9alv86sk57jb14jed8vuuqr41h',
                           :host => 'ec2-23-21-207-111.compute-1.amazonaws.com',
                           :port => 5452,
