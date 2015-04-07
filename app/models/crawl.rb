@@ -244,4 +244,17 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def available_sites
+    cache = Rails.cache.read(["crawl/#{self.id}/available/#{self.processor_name}"])
+    
+    if cache.nil?
+      puts "setting available sites cache for the crawl #{self.id}"
+      return Page.using("#{self.processor_name}").where(crawl_id: self.id, available: 'true')
+    else
+      puts "gettin available sites from cache for crawl #{self.id}"
+      return cache
+    end
+    
+  end
+  
 end
