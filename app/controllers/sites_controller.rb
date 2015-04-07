@@ -31,10 +31,11 @@ class SitesController < ApplicationController
 
   def available
     @crawl = Crawl.using(params["processor_name"]).find(params[:id])
-    # @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true')
-    
-    @available = @crawl.available_sites
-    
+    if @crawl.status == 'running'
+      @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true')
+    else
+      @available = @crawl.available_sites
+    end
     # @available = Rails.cache.fetch(["crawl/#{params[:id]}/available/#{params["processor_name"]}"]){Page.using(params["processor_name"]).where(crawl_id: params[:id], available: 'true')}
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
