@@ -41,6 +41,42 @@
 		<div class="field_container text-center">
 			
 			<div class="field_label">
+				<%= f.label :crawl_total_time, "Crawl Total Time" %>
+			</div>
+			
+		</div>
+		
+		<div class='col-xs-6' id="crawl_start_date_input">
+			<div class="field_container text-center">
+			
+				<div class="field_label">
+					<%= f.label :hours, "Total Hours" %>
+				</div>
+			
+				<div class="field">
+					<%= f.number_field :hours, max: 12, class: "form-control" %>
+				</div>
+			
+			</div>
+		</div>
+		
+		<div class='col-xs-6' id='crawl_end_date_input'>
+			<div class="field_container text-center">
+			
+				<div class="field_label">
+					<%= f.label :minutes, "Total Minutes" %>
+				</div>
+			
+				<div class="field">
+					<%= f.number_field :minutes, max: 59, class: "form-control" %>
+				</div>
+			
+			</div>
+		</div>
+		
+		<div class="field_container text-center">
+			
+			<div class="field_label">
 				<%= f.label :moz_da, "Moz DA" %>
 			</div>
 			
