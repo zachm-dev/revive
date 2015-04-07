@@ -6,7 +6,8 @@ class CrawlsController < ApplicationController
     processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
-      crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10).flatten
+      # crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10).flatten
+      crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').flatten
     end
     page = params[:page].nil? ? 1 : params[:page] 
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
@@ -19,7 +20,8 @@ class CrawlsController < ApplicationController
     processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
-      crawls_array << Crawl.using("#{processor}").where(status: 'running', user_id: current_user.id).order('created_at').limit(10).flatten
+      # crawls_array << Crawl.using("#{processor}").where(status: 'running', user_id: current_user.id).order('created_at').limit(10).flatten
+      crawls_array << Crawl.using("#{processor}").where(status: 'running', user_id: current_user.id).order('created_at').flatten
     end
     page = params[:page].nil? ? 1 : params[:page] 
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
@@ -32,7 +34,8 @@ class CrawlsController < ApplicationController
     processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
-      crawls_array << Crawl.using("#{processor}").where(status: 'finished', user_id: current_user.id).order('created_at').limit(10).flatten
+      # crawls_array << Crawl.using("#{processor}").where(status: 'finished', user_id: current_user.id).order('created_at').limit(10).flatten
+      crawls_array << Crawl.using("#{processor}").where(status: 'finished', user_id: current_user.id).order('created_at').flatten
     end
     page = params[:page].nil? ? 1 : params[:page] 
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
