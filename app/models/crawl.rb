@@ -108,7 +108,7 @@ class Crawl < ActiveRecord::Base
     majestic_tf = options[:majestic_tf].nil? ? nil : options[:majestic_tf].to_i
     notify_me_after = options[:notify_me_after].nil? ? nil : options[:notify_me_after].to_i
     total_crawl_minutes = ((options[:hours].to_i*60)+options[:minutes].to_i)
-    puts "the total crawl minutes are #{total_minutes}"
+    puts "the total crawl minutes are #{total_crawl_minutes}"
     
     
     if beta == true
@@ -153,7 +153,7 @@ class Crawl < ActiveRecord::Base
     crawl_start_date = options[:crawl_start_date].nil? ? '' : options[:crawl_start_date]
     crawl_end_date = options[:crawl_end_date].nil? ? '' : options[:crawl_end_date]
     total_crawl_minutes = ((options[:hours].to_i*60)+options[:minutes].to_i)
-    puts "the total crawl minutes are #{total_minutes}"
+    puts "the total crawl minutes are #{total_crawl_minutes}"
     
     if beta == true
       if options[:maxpages].nil?
