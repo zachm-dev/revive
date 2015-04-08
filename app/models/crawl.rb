@@ -36,7 +36,7 @@ class Crawl < ActiveRecord::Base
     crawl = Crawl.using("#{processor_name}").find(options["crawl_id"].to_i)
     puts "here is the crawl to start #{crawl.id} on the processor #{crawl.processor_name}"
     if crawl
-      crawl.setCrawlStartingVariables
+      crawl.setCrawlStartingVariables('total_minutes' => crawl.total_minutes.to_i)
       if crawl.crawl_type == 'url_crawl'
         Crawl.save_new_sites(crawl.id, 'processor_name' => processor_name)
       elsif crawl.crawl_type == 'keyword_crawl'
@@ -45,10 +45,11 @@ class Crawl < ActiveRecord::Base
     end
   end
   
-  def setCrawlStartingVariables
+  def setCrawlStartingVariables(options={})
     puts "setting crawl starting variables"
     
     Rails.cache.write(["crawl/#{self.id}/start_time"], Time.now, raw: true)
+    Rails.cache.write(["crawl/#{self.id}/total_minutes_to_run"], options['total_minutes'].to_i, raw: true)
     
     Rails.cache.write(["crawl/#{self.id}/gathering_batches/total"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/gathering_batches/running"], 0, raw: true)

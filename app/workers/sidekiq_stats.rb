@@ -8,6 +8,41 @@ class SidekiqStats
     processor_name = options['processor_name']
     SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
     
+    #
+    # CHECK IF THE CRAWL HAS EXCEEDED THE AMOUNT OF MINUTES SPECIFIED
+    #
+    
+    total_minutes_to_run = Rails.cache.read(["crawl/#{crawl_id}/total_minutes_to_run"], raw: true).to_i
+    if total_minutes_to_run > 0
+      total_minutes_running = ((Time.now - Rails.cache.read(["crawl/#{crawl_id}/start_time"], raw: true).to_time)/60).to_i
+      if total_minutes_running > total_minutes_to_run
+        puts 'shutting down crawl it has been running for longer than the time specified'
+        
+        app = HerokuApp.using("#{processor_name}").where(crawl_id: crawl_id).first
+        app_name = app.name
+        crawl = app.crawl
+      
+        puts 'updating crawl stats before shutting down'
+        urls_found = "crawl/#{crawl.id}/urls_found"
+        expired_domains = "crawl/#{crawl.id}/expired_domains"
+        broken_domains = "crawl/#{crawl.id}/broken_domains"
+        stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
+        
+        crawl_total_time_in_minutes = (Time.now - Chronic.parse(Rails.cache.read(["crawl/#{crawl.id}/start_time"], raw: true))).to_f/60.to_f
+        user = User.using(:main_shard).find(app.user_id)
+        user.update(minutes_used: user.minutes_used.to_f+crawl_total_time_in_minutes)
+        
+        Crawl.using("#{processor_name}").update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app exceeded crawl minutes specified')
+      
+        heroku = HerokuPlatform.new
+        heroku.delete_app(app_name)
+      end
+    end
+
+    #
+    # CHECK IF CRAWL HAS STALLED
+    #
+
     if Sidekiq::Stats.new.enqueued < 100
       
       current_stats = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/running"], raw: true).to_i
@@ -72,43 +107,6 @@ class SidekiqStats
       
     end
 
-    # stats = Sidekiq::Stats.new
-    # if stats.enqueued < 100
-    #   sidekiq_stats = SidekiqStat.where(heroku_app_id: heroku_app_id)
-    #
-    #   if sidekiq_stats.count == 0
-    #     puts 'sidekiq stats did not exist creating it now'
-    #     SidekiqStat.create(workers_size: stats.workers_size, enqueued: stats.enqueued, processed: stats.processed, heroku_app_id: heroku_app_id)
-    #   else
-    #     last_stats = sidekiq_stats.last
-    #     if last_stats.try_count.nil?
-    #       puts 'app has less than 100 in the queue'
-    #       SidekiqStat.create(workers_size: stats.workers_size, enqueued: stats.enqueued, processed: stats.processed, try_count: 1, heroku_app_id: heroku_app_id)
-    #     elsif last_stats.enqueued <= stats.enqueued && last_stats.try_count != 2
-    #       if last_stats.try_count == 1
-    #         puts 'app has less than 100 and seems to be stalling for the second time'
-    #         SidekiqStat.create(workers_size: stats.workers_size, enqueued: stats.enqueued, processed: stats.processed, try_count: 2, heroku_app_id: heroku_app_id)
-    #       else
-    #         puts 'app has less than 100 but is still processing'
-    #         SidekiqStat.create(workers_size: stats.workers_size, enqueued: stats.enqueued, processed: stats.processed, try_count: 1, heroku_app_id: heroku_app_id)
-    #       end
-    #     else
-    #       puts 'app has stalled and shutting down'
-    #       # crawl = app.crawl
-    #       # crawl.update(status: 'finished')
-    #       # app.update(status: 'finished', finished_at: Time.now, shutdown: true)
-    #       # user = crawl.user
-    #       # Api.fetch_new_crawl(user_id: user.id)
-    #       # UserDashboard.add_finished_crawl(user.user_dashboard.id)
-    #       # # Crawl.decision_maker(user.id)
-    #       # if app.name.include?('revivecrawler')
-    #       #   heroku = Heroku.new
-    #       #   heroku.delete_app(app.name)
-    #       # end
-    #     end
-    #   end
-    #
-    # end
   end
   
   def self.start(options={})
