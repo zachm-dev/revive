@@ -524,6 +524,29 @@ Licensed under MIT
 	background-color: #F2DEDE;
 }
 
+.footer_links_container {
+	text-align: center;
+}
+
+.footer_links_container li {
+	display: inline;
+	list-style-type: none;
+	padding: 0px 10px;
+	font-size: 12px;
+}
+
+.footer_links_container li a {
+	color: #999;
+	text-family: helvetica;
+}
+
+.footer_copyright_footer_text {
+	text-align: center;
+	color: #999;
+	font-family: helvetica;
+	font-size: 10px;
+}
+
 
 
 

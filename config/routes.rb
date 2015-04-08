@@ -4,9 +4,12 @@ Rails.application.routes.draw do
 
   # root 'home#index'
   root 'plans#index'
-  get 'terms', to: 'home#terms', as: 'terms'
   get 'home', to: 'home#index', as: 'home'
   get :dashboard, to: 'dashboard#index'
+  
+  get 'terms', to: 'home#terms', as: 'terms'
+  get 'earnings_disclaimer', to: 'home#earnings_disclaimer', as: 'earnings_disclaimer'
+  get 'general_disclaimer', to: 'home#general_disclaimer', as: 'general_disclaimer'
 
   get 'domains/:id' => "sites#index", as: :domains
   
