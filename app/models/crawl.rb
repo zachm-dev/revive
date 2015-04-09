@@ -262,7 +262,11 @@ class Crawl < ActiveRecord::Base
       puts "gettin available sites from cache for crawl #{self.id}"
       return cache
     end
-    
+  end
+  
+  def save_available_sites(options={})
+    self.available_sites = Page.using(options['processor_name']).where(crawl_id: self.id, available: 'true').flatten
+    self.save!
   end
   
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150407091423) do
+ActiveRecord::Schema.define(version: 20150409064915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 20150407091423) do
     t.integer  "processor_id"
     t.string   "processor_name"
     t.integer  "total_minutes"
+    t.text     "available_sites",                 default: [], array: true
   end
 
   create_table "expired_links", force: :cascade do |t|
