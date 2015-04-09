@@ -12,8 +12,18 @@
 					<div class="navbar-text white_text">Logged in as <%= current_user.email %>.</div>
 					<div class="navbar-text"><%= link_to "Log Out", logout_path, class: 'top_nav_link' %></div>
 				<% else %>
-					<div class="navbar-text"><%= link_to 'Sign Up', signup_path, class: 'top_nav_link' %></div>
-					<div class="navbar-text"><%= link_to 'Log In', login_path, class: 'top_nav_link' %></div>
+					<div class="logged_out_nav_text navbar-text">
+						<%= link_to 'Home', root_path, class: 'top_nav_link' %>
+					</div>
+					<div class="logged_out_nav_text navbar-text">
+						<%= link_to 'Register', plans_path, class: 'top_nav_link' %>
+					</div>
+					<div class="logged_out_nav_text navbar-text">
+						<%= link_to 'Member Login', login_path, class: 'top_nav_link' %>
+					</div>
+					<div class="logged_out_nav_text navbar-text">
+						<%= link_to 'Support', 'https://www.facebook.com/groups/1557416241176094/', class: 'top_nav_link' %>
+					</div>
 				<% end %>
 
 			</div>
