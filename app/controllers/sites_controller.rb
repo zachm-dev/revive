@@ -31,21 +31,17 @@ class SitesController < ApplicationController
 
   def available
     
-    page = params[:page].nil? ? 1 : params[:page].to_i
-    offset = ((page-1)*25).to_i
-    
     @crawl = Crawl.using(params["processor_name"]).find(params[:id])
-    # if @crawl.status == 'running'
-    #   @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true')
-    # else
-    #   @available = @crawl.available_sites
-    # end
     
-    @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true').limit(25)
+    if @crawl.status == 'running'
+      @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true')
+    elsif @crawl.available_sites.count > 0 && @crawl.available_sites[0].count > 7
+      @available = @crawl.available_sites
+    else
+      @available = @crawl.save_available_sites
+    end
     
     # @available = Rails.cache.fetch(["crawl/#{params[:id]}/available/#{params["processor_name"]}"]){Page.using(params["processor_name"]).where(crawl_id: params[:id], available: 'true')}
-    
-    sort = params[:sort].nil? ? 'id' : params[:sort]
 
     # if !@crawl.moz_da.nil? && !@crawl.majestic_tf.nil?
     #   @pages = @available.where('pages.da >= ? AND pages.trustflow >= ?', @crawl.moz_da, @crawl.majestic_tf).order("#{sort} DESC").page(params[:page]).per_page(25)
@@ -57,9 +53,12 @@ class SitesController < ApplicationController
     #   @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
     # end
     
+    page = params[:page].nil? ? 1 : params[:page].to_i
+    sort = params[:sort].nil? ? 'id' : params[:sort]
+    
     respond_to do |format|
       format.csv { send_data @available.to_csv }
-      format.html { @pages = @available.order("#{sort} DESC") }
+      format.html { @pages = @available.order("#{sort} DESC").paginate(:page => page, :per_page => 25) }
     end
     
   end
