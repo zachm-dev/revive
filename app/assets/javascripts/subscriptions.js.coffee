@@ -13,7 +13,11 @@ $(document).on 'ready page:load', ->
     $('#subscription-submit').on 'click', (e)->
       # Stop Submit
       e.preventDefault()
-      stripeRequestToken()
+	  
+      if $("input[name=accept_terms]:checked").length > 0
+        stripeRequestToken()
+      else
+        alert 'Please accept the terms before continuing'
 
     disableButton = ($button) ->
       # Disable Button
