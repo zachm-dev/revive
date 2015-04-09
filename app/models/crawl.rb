@@ -269,6 +269,7 @@ class Crawl < ActiveRecord::Base
     user_ids_array.each do |user_id|
       processors_array = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
       processors_array.each do |processor|
+        puts "saving new available sites"
         Crawl.delay.using("#{processor}").where(user_id: user_id).each{|c| c.save_available_sites}
       end
     end
