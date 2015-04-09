@@ -22,4 +22,14 @@ class Page < ActiveRecord::Base
     end
   end
   
+  def self.available_to_csv
+    attributes = %w[simple_url da pa trustflow citationflow refdomains backlinks]
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+      all.each do |page|
+        csv << [page[1], page[2], page[3], page[4], page[5], page[6], page[7]]
+      end
+    end
+  end
+  
 end
