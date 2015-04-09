@@ -15,6 +15,22 @@ octopus:
       adapter: postgresql
       database: crawler_development
       pool: 25
+    processor_one:
+      adapter: postgresql
+      database: crawler_development
+      pool: 25
+    processor_two:
+      adapter: postgresql
+      database: crawler_development
+      pool: 25
+    processor_three:
+      adapter: postgresql
+      database: crawler_development
+      pool: 25
+    processor_four:
+      adapter: postgresql
+      database: crawler_development
+      pool: 25
   production:
     <% if ENV["DB_NAME"].present? %>
     master:

@@ -59,7 +59,7 @@ class SitesController < ApplicationController
     
     respond_to do |format|
       format.csv { send_data @available.to_csv }
-      format.html { @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25) }
+      format.html { @pages = @available.order("#{sort} DESC") }
     end
     
   end
