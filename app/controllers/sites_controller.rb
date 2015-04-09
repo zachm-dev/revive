@@ -32,6 +32,7 @@ class SitesController < ApplicationController
   def available
     
     page = params[:page].nil? ? 1 : params[:page].to_i
+    offset = ((page-1)*25).to_i
     
     @crawl = Crawl.using(params["processor_name"]).find(params[:id])
     # if @crawl.status == 'running'
@@ -40,7 +41,7 @@ class SitesController < ApplicationController
     #   @available = @crawl.available_sites
     # end
     
-    @available = Page.using(:processor).where(crawl_id: @crawl.id, available: 'true').limit(25).offset((page-1)*25)
+    @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true').limit(25).offset(offset)
     
     # @available = Rails.cache.fetch(["crawl/#{params[:id]}/available/#{params["processor_name"]}"]){Page.using(params["processor_name"]).where(crawl_id: params[:id], available: 'true')}
     
