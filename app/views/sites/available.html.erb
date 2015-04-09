@@ -85,23 +85,23 @@
 										<th class="col-xs-1"></th>
 										<th>DOMAIN</th>
 										<th class="col-xs-1">											
-											<%= link_to 'DA', available_path(id: params[:id], sort: 'da', 'processor_name' => @crawl.processor_name) %>
+											<%= link_to 'DA', available_path(id: params[:id], sort: '2', 'processor_name' => @crawl.processor_name) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'PA', available_path(id: params[:id], sort: 'pa', 'processor_name' => @crawl.processor_name) %>
+											<%= link_to 'PA', available_path(id: params[:id], sort: '3', 'processor_name' => @crawl.processor_name) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'TF', available_path(id: params[:id], sort: 'trustflow', 'processor_name' => @crawl.processor_name) %>
+											<%= link_to 'TF', available_path(id: params[:id], sort: '4', 'processor_name' => @crawl.processor_name) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'CF', available_path(id: params[:id], sort: 'citationflow', 'processor_name' => @crawl.processor_name) %>
+											<%= link_to 'CF', available_path(id: params[:id], sort: '5', 'processor_name' => @crawl.processor_name) %>
 										</th>
 										<th class="col-xs-1">TF/CF</th>
 										<th class="col-xs-1">
-											<%= link_to 'RF', available_path(id: params[:id], sort: 'refdomains', 'processor_name' => @crawl.processor_name) %>
+											<%= link_to 'RF', available_path(id: params[:id], sort: '6', 'processor_name' => @crawl.processor_name) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'BL', available_path(id: params[:id], sort: 'backlinks', 'processor_name' => @crawl.processor_name) %>
+											<%= link_to 'BL', available_path(id: params[:id], sort: '7', 'processor_name' => @crawl.processor_name) %>
 										</th>
 										<!-- <th>FOUND ON</th> -->
 									</tr>

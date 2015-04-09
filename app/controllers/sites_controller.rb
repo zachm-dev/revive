@@ -54,11 +54,11 @@ class SitesController < ApplicationController
     # end
     
     page = params[:page].nil? ? 1 : params[:page].to_i
-    sort = params[:sort].nil? ? 'id' : params[:sort]
+    sort = params[:sort].nil? ? 2 : params[:sort].to_i
     
     respond_to do |format|
       format.csv { send_data @available.to_csv }
-      format.html { @pages = @available.paginate(:page => page, :per_page => 25) }
+      format.html { @pages = @availablex.sort_by{|k|k[sort]}.paginate(:page => page, :per_page => 25) }
     end
     
   end
