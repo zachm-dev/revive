@@ -41,7 +41,7 @@ class SitesController < ApplicationController
     #   @available = @crawl.available_sites
     # end
     
-    @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true').limit(25).offset(offset)
+    @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true').limit(25)
     
     # @available = Rails.cache.fetch(["crawl/#{params[:id]}/available/#{params["processor_name"]}"]){Page.using(params["processor_name"]).where(crawl_id: params[:id], available: 'true')}
     
