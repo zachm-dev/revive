@@ -58,7 +58,7 @@ class SitesController < ApplicationController
     
     respond_to do |format|
       format.csv { send_data @available.to_csv }
-      format.html { @pages = @available.sort_by{|k|k[sort]}.reverse.paginate(:page => page, :per_page => 25) }
+      format.html { @pages = @available.sort_by{|k|k[sort].to_i}.reverse.paginate(:page => page, :per_page => 25) }
     end
     
   end
