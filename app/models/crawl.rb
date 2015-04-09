@@ -265,7 +265,7 @@ class Crawl < ActiveRecord::Base
   end
   
   def save_available_sites(options={})
-    self.available_sites = Page.using(options['processor_name']).where(crawl_id: self.id, available: 'true').flatten
+    self.available_sites = Page.using("#{self.processor_name}").where(available: 'true', crawl_id: self.id).pluck(:da, :pa, :trustflow, :citationflow, :refdomains, :backlinks)
     self.save!
   end
   
