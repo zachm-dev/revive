@@ -267,10 +267,11 @@ class Crawl < ActiveRecord::Base
   def self.save_all_available_sites
     user_ids_array = Subscription.using(:main_shard).where(status: 'active').map(&:user_id)
     user_ids_array.each do |user_id|
+      puts "the user id is #{user_id}"
       processors_array = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
       processors_array.each do |processor|
         puts "saving new available sites"
-        Crawl.delay.using("#{processor}").where(user_id: user_id).each{|c| c.save_available_sites}
+        Crawl.using("#{processor}").where(user_id: user_id.to_i).each{|c| c.save_available_sites}
       end
     end
   end
