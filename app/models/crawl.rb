@@ -264,8 +264,18 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def self.save_all_available_sites
+    user_ids_array = Subscription.using(:main_shard).where(status: 'active').map(&:user_id)
+    user_ids_array.each do |user_id|
+      processors_array = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
+      processors_array.each do |processor|
+        Crawl.delay.using("#{processor}").where(user_id: user_id).each{|c| c.save_available_sites}
+      end
+    end
+  end
+  
   def save_available_sites(options={})
-    self.available_sites = Page.using("#{self.processor_name}").where(available: 'true', crawl_id: self.id).pluck(:da, :pa, :trustflow, :citationflow, :refdomains, :backlinks)
+    self.available_sites = Page.using("#{self.processor_name}").where(available: 'true', crawl_id: self.id).pluck(:simple_url, :da, :pa, :trustflow, :citationflow, :refdomains, :backlinks)
     self.save!
   end
   
