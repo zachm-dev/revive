@@ -26,7 +26,7 @@ class Page < ActiveRecord::Base
     attributes = %w[simple_url da pa trustflow citationflow refdomains backlinks]
     CSV.generate(headers: true) do |csv|
       csv << attributes
-      all.each do |page|
+      self.available_sites.each do |page|
         csv << [page[1], page[2], page[3], page[4], page[5], page[6], page[7]]
       end
     end
