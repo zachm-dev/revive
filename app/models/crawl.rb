@@ -252,7 +252,7 @@ class Crawl < ActiveRecord::Base
     end
   end
   
-  def available_sites
+  def cache_available_sites
     cache = Rails.cache.read(["crawl/#{self.id}/available/#{self.processor_name}"])
     
     if cache.nil?
