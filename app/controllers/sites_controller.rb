@@ -39,7 +39,6 @@ class SitesController < ApplicationController
     # @available = Rails.cache.fetch(["crawl/#{params[:id]}/available/#{params["processor_name"]}"]){Page.using(params["processor_name"]).where(crawl_id: params[:id], available: 'true')}
     
     sort = params[:sort].nil? ? 'id' : params[:sort]
-    @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
 
     # if !@crawl.moz_da.nil? && !@crawl.majestic_tf.nil?
     #   @pages = @available.where('pages.da >= ? AND pages.trustflow >= ?', @crawl.moz_da, @crawl.majestic_tf).order("#{sort} DESC").page(params[:page]).per_page(25)
@@ -52,8 +51,8 @@ class SitesController < ApplicationController
     # end
     
     respond_to do |format|
-      format.html
       format.csv { send_data @available.to_csv }
+      format.html { @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25) }
     end
     
   end
