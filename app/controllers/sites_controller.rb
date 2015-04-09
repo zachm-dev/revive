@@ -34,7 +34,7 @@ class SitesController < ApplicationController
     @crawl = Crawl.using(params["processor_name"]).find(params[:id])
     
     if @crawl.status == 'running'
-      @available = Page.using(params["processor_name"]).where(crawl_id: @crawl.id, available: 'true')
+      @available = @crawl.save_available_sites
     elsif @crawl.available_sites.count > 0 && @crawl.available_sites[0].count > 7
       @available = @crawl.available_sites
     else
