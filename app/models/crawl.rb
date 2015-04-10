@@ -87,7 +87,10 @@ class Crawl < ActiveRecord::Base
       
       number_of_pending_crawls = Crawl.using("#{processor_name}").where(status: "pending", user_id: options['user_id'].to_i).count
       number_of_running_crawls = Crawl.using("#{processor_name}").where(status: "running", user_id: options['user_id'].to_i).count
-    
+      
+      puts "the number of pending crawls is #{umber_of_pending_crawls}"
+      puts "the number of running crawls is #{number_of_running_crawls}"
+      
       if number_of_running_crawls < plan.crawls_at_the_same_time
         if number_of_pending_crawls > 0
           number_of_apps_running = HerokuPlatform.new.app_list.count
