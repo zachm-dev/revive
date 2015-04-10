@@ -10,7 +10,9 @@
             p This Weeks Daily Activity
         = link_to 'Help & Support', 'https://www.facebook.com/groups/1557416241176094/', class: 'pull-right'
   .container-fluid.container_section
-    - if current_user.crawls.count <= 50
+    .col-xs-12
+      = render 'minutes/used_minutes'
+    - if current_user.crawls.count <= 3
       .col-lg-12.text-center
         .panel.panel-success
           h1 Watch These Best Practices Videos
