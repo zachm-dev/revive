@@ -125,12 +125,21 @@ class CrawlsController < ApplicationController
       db_url_name = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL","HEROKU_POSTGRESQL_WHITE_URL", "HEROKU_POSTGRESQL_BROWN_URL"])
       puts "migrate db: the db url name is #{db_url_name[0]}"
       db_url = ENV[db_url_name[0]]
+      
+      db_split = db_url.split(':')[1..3]
+      
+      db_user = db_split[0].split('//')[1]
+      db_pass = db_split[1].split('@')[0]
+      db_host = db_split[1].split('@')[1]
+      db_port = db_split[2].split('/')[0].to_i
+      db_name = db_split[2].split('/')[1]
+      
       # crawl.update(db_url: db_url)
       puts "setting the database variables"
       
       heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
       heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
-      heroku.put_config_vars("revivecrawler#{@json["options"]["crawl_id"]}", 'DATABASE_URL' => db_url)
+      heroku.put_config_vars("revivecrawler#{@json["options"]["crawl_id"]}", 'DATABASE_URL' => db_url, 'DB_USER' => db_user, 'DB_PASS' => db_pass, 'DB_HOST' => db_host, 'DB_PORT' => db_port, 'DB_NAME' => db_name)
       
       # heroku.set_db_config_vars("revivecrawler#{@json["options"]["crawl_id"]}", db_url)
       
