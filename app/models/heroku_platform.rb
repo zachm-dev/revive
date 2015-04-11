@@ -178,11 +178,13 @@ class HerokuPlatform
     # db_host = db_split[1].split('@')[1]
     # db_port = db_split[2].split('/')[0].to_i
     # db_name = db_split[2].split('/')[1]
-    db_hash = {'DATABASE_URL' => db_url}
+    heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
+    heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+    heroku.put_config_vars("#{to}", 'DATABASE_URL' => db_url)
     
-    puts "set_db_config_vars: db_hash is #{db_hash}"
-    
-    @heroku.config_var.update(to, db_hash)
+    # puts "set_db_config_vars: db_hash is #{db_hash}"
+    #
+    # @heroku.config_var.update(to, db_hash)
     return db_hash
   end
   

@@ -124,16 +124,27 @@ class CrawlsController < ApplicationController
       slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
       db_url_name = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL","HEROKU_POSTGRESQL_WHITE_URL", "HEROKU_POSTGRESQL_BROWN_URL"])
       puts "migrate db: the db url name is #{db_url_name[0]}"
-      db_url = ENV[db_url_name][0]
-      # crawl.update(db_url: db_url)
+      db_url = ENV[db_url_name[0]]
+      crawl.update(db_url: db_url)
       heroku = HerokuPlatform.new
       puts "setting the database variables"
-      heroku.set_db_config_vars("revivecrawler#{@json["options"]["crawl_id"]}", db_url)
+      
+      heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
+      heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+      heroku.put_config_vars("revivecrawler#{@json["options"]["crawl_id"]}", 'DATABASE_URL' => db_url)
+      
+      # heroku.set_db_config_vars("revivecrawler#{@json["options"]["crawl_id"]}", db_url)
       
     elsif @json["options"]["iteration"].to_i == 2
       
       puts "second iteration about to migrate the database"
-      HerokuPlatform.migrate_db("revivecrawler#{@json["options"]["crawl_id"]}")
+      
+      heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
+      heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+      heroku.post_ps("#{app_name}", "rake db:migrate")
+      sleep 5
+      puts "migrate_db: database migrate and restarting app"
+      heroku.post_ps("#{app_name}", "restart")
       
     end
     render :layout => false
