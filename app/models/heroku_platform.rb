@@ -164,8 +164,10 @@ class HerokuPlatform
     puts 'migrating db'
     heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+    puts "set_db_config_vars: about to migrate teh database"
     heroku.post_ps("#{app_name}", "rake db:migrate")
     sleep 5
+    puts "set_db_config_vars: database migrate and restarting app"
     heroku.post_ps("#{app_name}", "restart")
   end
   
@@ -178,6 +180,9 @@ class HerokuPlatform
     db_port = db_split[2].split('/')[0].to_i
     db_name = db_split[2].split('/')[1]
     db_hash = {'DATABASE_URL' => db_url, 'DB_USER' => db_user, 'DB_PASS' => db_pass, 'DB_HOST' => db_host, 'DB_PORT' => db_port, 'DB_NAME' => db_name}
+    
+    puts "set_db_config_vars: db_hash is #{db_hash}"
+    
     @heroku.config_var.update(to, db_hash)
     return db_hash
   end

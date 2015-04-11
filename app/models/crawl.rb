@@ -37,9 +37,11 @@ class Crawl < ActiveRecord::Base
   
   def self.start_crawl(options = {})
     processor_name = options['processor_name']
+    puts "start_crawl: the processor name is #{processor_name}"
     crawl = Crawl.using("#{processor_name}").find(options["crawl_id"].to_i)
     puts "here is the crawl to start #{crawl.id} on the processor #{crawl.processor_name}"
     if crawl
+      puts "crawl total minutes are #{crawl.total_minutes.to_i}"
       crawl.setCrawlStartingVariables('total_minutes' => crawl.total_minutes.to_i)
       if crawl.crawl_type == 'url_crawl'
         Crawl.save_new_sites(crawl.id, 'processor_name' => processor_name)
@@ -136,7 +138,7 @@ class Crawl < ActiveRecord::Base
     end
     
     processors_hash = {}
-    processors_array = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
+    processors_array = ['processor_three', 'processor_four', 'processor', 'processor_one', 'processor_two']
     processors_array.each do |processor_name|
       running_count = Crawl.using(processor_name).where(status: 'running').count
       processors_hash[processor_name] = running_count
@@ -174,7 +176,7 @@ class Crawl < ActiveRecord::Base
     end
     
     processors_hash = {}
-    processors_array = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
+    processors_array = ['processor_three', 'processor_four', 'processor', 'processor_one', 'processor_two']
     processors_array.each do |processor_name|
       running_count = Crawl.using(processor_name).where(status: 'running').count
       processors_hash[processor_name] = running_count
