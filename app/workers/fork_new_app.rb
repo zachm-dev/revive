@@ -21,7 +21,7 @@ class ForkNewApp
         HerokuPlatform.migrate_db(batch.name)
         # UserDashboard.add_running_crawl(crawl.user.user_dashboard.id)
         Api.delay_for(2.minute).migrate_db(crawl_id: batch.crawl_id, 'processor_name' => processor_name)
-        Api.delay_for(3.minute).start_crawl(crawl_id: batch.crawl_id, 'processor_name' => processor_name)
+        Api.delay_for(4.minute).start_crawl(crawl_id: batch.crawl_id, 'processor_name' => processor_name)
         # Api.delay.start_crawl(crawl_id: batch.crawl_id)
       end
     end
