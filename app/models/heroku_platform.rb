@@ -164,23 +164,14 @@ class HerokuPlatform
     puts "migrate_db: the app name is #{app_name}"
     heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
-    puts "migrate_db: the heroku object is #{heroku}"
-    puts "migrate_db: about to migrate teh database"
     heroku.post_ps("#{app_name}", "rake db:migrate")
     sleep 5
     puts "migrate_db: database migrate and restarting app"
     heroku.post_ps("#{app_name}", "restart")
   end
   
-  def set_db_config_vars(to, db_url, db_url_name)
+  def set_db_config_vars(to, db_url)
     puts "here is the db_url #{db_url}"
-    
-    heroku_main = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
-    heroku_main = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
-    heroku_main.post_ps("#{to}", "pg:promote #{db_url_name}")
-    
-    sleep 10
-    
     db_split = db_url.split(':')[1..3]
     db_user = db_split[0].split('//')[1]
     db_pass = db_split[1].split('@')[0]
@@ -192,12 +183,6 @@ class HerokuPlatform
     puts "set_db_config_vars: db_hash is #{db_hash}"
     
     @heroku.config_var.update(to, db_hash)
-    
-    heroku_main.post_ps("#{to}", "rake db:migrate")
-    sleep 15
-    puts "migrate_db: database migrate and restarting app"
-    heroku_main.post_ps("#{to}", "restart")
-    
     return db_hash
   end
   
