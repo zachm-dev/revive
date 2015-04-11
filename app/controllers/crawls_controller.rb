@@ -146,7 +146,6 @@ class CrawlsController < ApplicationController
     else
       
       puts "second iteration about to migrate the database"
-      
       heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
       heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
       heroku.post_ps("revivecrawler#{@json["options"]["crawl_id"]}", "rake db:migrate")
