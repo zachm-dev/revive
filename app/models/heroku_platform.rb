@@ -162,10 +162,11 @@ class HerokuPlatform
   
   def self.migrate_db(app_name)
     puts "migrate_db: sleeping for 1 minutes before attempting to migrate the database"
-    sleep 60
+    sleep 30
     puts "migrate_db: the app name is #{app_name}"
     heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+    puts "migrate_db: the heroku object is #{heroku}"
     puts "migrate_db: about to migrate teh database"
     heroku.post_ps("#{app_name}", "rake db:migrate")
     sleep 5

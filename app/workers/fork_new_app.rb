@@ -18,7 +18,7 @@ class ForkNewApp
         puts "heroku app is going to retry recreating"
       else
         puts "heroku app is created with the following id #{options['bid']}"
-        HerokuPlatform.migrate_db(batch.name)
+        # HerokuPlatform.migrate_db(batch.name)
         # UserDashboard.add_running_crawl(crawl.user.user_dashboard.id)
         Api.delay_for(2.minute).migrate_db(crawl_id: batch.crawl_id, 'processor_name' => processor_name)
         Api.delay_for(4.minute).start_crawl(crawl_id: batch.crawl_id, 'processor_name' => processor_name)
