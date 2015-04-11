@@ -172,13 +172,13 @@ class HerokuPlatform
   
   def set_db_config_vars(to, db_url)
     puts "here is the db_url #{db_url}"
-    db_split = db_url.split(':')[1..3]
-    db_user = db_split[0].split('//')[1]
-    db_pass = db_split[1].split('@')[0]
-    db_host = db_split[1].split('@')[1]
-    db_port = db_split[2].split('/')[0].to_i
-    db_name = db_split[2].split('/')[1]
-    db_hash = {'DATABASE_URL' => db_url, 'DB_USER' => db_user, 'DB_PASS' => db_pass, 'DB_HOST' => db_host, 'DB_PORT' => db_port, 'DB_NAME' => db_name}
+    # db_split = db_url.split(':')[1..3]
+    # db_user = db_split[0].split('//')[1]
+    # db_pass = db_split[1].split('@')[0]
+    # db_host = db_split[1].split('@')[1]
+    # db_port = db_split[2].split('/')[0].to_i
+    # db_name = db_split[2].split('/')[1]
+    db_hash = {'DATABASE_URL' => db_url}
     
     puts "set_db_config_vars: db_hash is #{db_hash}"
     
