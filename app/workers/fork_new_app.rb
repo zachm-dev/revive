@@ -20,9 +20,9 @@ class ForkNewApp
         puts "heroku app is created with the following id #{options['bid']}"
         # HerokuPlatform.migrate_db(batch.name)
         # UserDashboard.add_running_crawl(crawl.user.user_dashboard.id)
-        Api.delay_for(2.minute).migrate_db(crawl_id: batch.crawl_id, 'processor_name' => processor_name, 'iteration' => 1)
-        Api.delay_for(3.minute).migrate_db(crawl_id: batch.crawl_id, 'processor_name' => processor_name, 'iteration' => 2)
-        Api.delay_for(4.minute).start_crawl(crawl_id: batch.crawl_id, 'processor_name' => processor_name)
+        Api.delay_for(1.minute).migrate_db(crawl_id: batch.crawl_id, 'processor_name' => processor_name, 'iteration' => 1)
+        Api.delay_for(3.minutes).migrate_db(crawl_id: batch.crawl_id, 'processor_name' => processor_name, 'iteration' => 2)
+        Api.delay_for(4.minutes).start_crawl(crawl_id: batch.crawl_id, 'processor_name' => processor_name)
         # Api.delay.start_crawl(crawl_id: batch.crawl_id)
       end
     end
