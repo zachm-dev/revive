@@ -96,6 +96,7 @@ class Crawl < ActiveRecord::Base
       if number_of_running_crawls < plan.crawls_at_the_same_time
         if number_of_pending_crawls > 0
           number_of_apps_running = HerokuPlatform.new.app_list.count
+          puts "the number of apps running are #{number_of_apps_running}"
           if number_of_apps_running < 99
             puts 'decision: starting new crawl'
             ForkNewApp.delay.start(user.id, number_of_apps_running, 'processor_name' => processor_name)
