@@ -62,18 +62,18 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
   
   # ActionMailer settings
-   config.action_mailer.perform_deliveries = true
-   config.action_mailer.raise_delivery_errors = true
-   config.action_mailer.delivery_method = :smtp
-   config.action_mailer.smtp_settings = {
-     address: 'smtp.gmail.com',
-     port: 587,
-     domain: 'sourcererevive.net',
-     user_name: ENV['GMAIL_USER'],
-     password: ENV['GMAIL_PASS'],
-     authentication: 'plain',
-     enable_starttls_auto: true}
-   Rails.application.routes.default_url_options[:host] = 'http://sourcerevive.net'
+   # config.action_mailer.perform_deliveries = true
+   # config.action_mailer.raise_delivery_errors = true
+   # config.action_mailer.delivery_method = :smtp
+   # config.action_mailer.smtp_settings = {
+   #   address: 'smtp.gmail.com',
+   #   port: 587,
+   #   domain: 'sourcererevive.net',
+   #   user_name: ENV['GMAIL_USER'],
+   #   password: ENV['GMAIL_PASS'],
+   #   authentication: 'plain',
+   #   enable_starttls_auto: true}
+   # Rails.application.routes.default_url_options[:host] = 'http://sourcerevive.net'
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

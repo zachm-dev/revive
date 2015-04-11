@@ -119,22 +119,19 @@ class CrawlsController < ApplicationController
     processor_name = @json["options"]['processor_name']
     crawl = Crawl.using("#{processor_name}").find(@json["options"]["crawl_id"].to_i)
     puts "migrate_db: the current iteration is #{@json['options']['iteration'].to_i} for the crawl #{crawl.id}"
-    if @json['options']['iteration'].to_i == 1
-      puts "migrate db: the crawl id is #{crawl.id}"
-      master_url = ENV['DATABASE_URL']
-      slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
-      # slave_keys.delete_if{ |k| ENV[k] == master_url }
-      db_url_name = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL","HEROKU_POSTGRESQL_WHITE_URL", "HEROKU_POSTGRESQL_BROWN_URL"])
-      puts "migrate db: the db url name is #{db_url_name[0]}"
-      db_url = ENV[db_url_name[0]]
-      crawl.update(db_url: db_url)
-      heroku = HerokuPlatform.new
-      puts "setting the database variables"
-      heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
-    elsif @json['options']['iteration'].to_i == 2
-      puts "migrate_db: 60 seconds passed about to migrate the database"
-      HerokuPlatform.migrate_db("revivecrawler#{crawl.id}")
-    end
+    puts "migrate db: the crawl id is #{crawl.id}"
+    master_url = ENV['DATABASE_URL']
+    slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
+    # slave_keys.delete_if{ |k| ENV[k] == master_url }
+    db_url_name = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL","HEROKU_POSTGRESQL_WHITE_URL", "HEROKU_POSTGRESQL_BROWN_URL"])
+    puts "migrate db: the db url name is #{db_url_name[0]}"
+    db_url = ENV[db_url_name[0]]
+    crawl.update(db_url: db_url)
+    heroku = HerokuPlatform.new
+    puts "setting the database variables"
+    heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
+    puts "migrate_db: 60 seconds passed about to migrate the database"
+    HerokuPlatform.migrate_db("revivecrawler#{crawl.id}")
     render :layout => false
   end
   
