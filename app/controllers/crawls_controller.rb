@@ -119,12 +119,12 @@ class CrawlsController < ApplicationController
     processor_name = @json["options"]['processor_name']
     if @json["options"]["iteration"].to_i == 1
       
-      crawl = Crawl.using("#{processor_name}").find(@json["options"]["crawl_id"].to_i)
+      # crawl = Crawl.using("#{processor_name}").find(@json["options"]["crawl_id"].to_i)
       master_url = ENV['DATABASE_URL']
       slave_keys = ENV.keys.select{|k| k =~ /HEROKU_POSTGRESQL_.*_URL/}
       db_url_name = (slave_keys - ["HEROKU_POSTGRESQL_COPPER_URL", "HEROKU_POSTGRESQL_AMBER_URL","HEROKU_POSTGRESQL_NAVY_URL","HEROKU_POSTGRESQL_WHITE_URL", "HEROKU_POSTGRESQL_BROWN_URL"])
       puts "migrate db: the db url name is #{db_url_name[0]}"
-      db_url = ENV[db_url_name[0]]
+      db_url = ENV[db_url_name][0]
       # crawl.update(db_url: db_url)
       heroku = HerokuPlatform.new
       puts "setting the database variables"
