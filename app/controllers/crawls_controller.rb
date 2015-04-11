@@ -129,7 +129,7 @@ class CrawlsController < ApplicationController
     crawl.update(db_url: db_url)
     heroku = HerokuPlatform.new
     puts "setting the database variables"
-    heroku.set_db_config_vars(crawl.heroku_app.name, db_url)
+    heroku.set_db_config_vars("revivecrawler#{crawl.id}", db_url, db_url_name)
     puts "migrate_db: 60 seconds passed about to migrate the database"
     HerokuPlatform.migrate_db("revivecrawler#{crawl.id}")
     render :layout => false
