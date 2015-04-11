@@ -13,7 +13,7 @@ Rails.application.configure do
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
-  config.cache_store = :redis_store, ENV['REDISTOGO_URL']
+  config.cache_store = :redis_store, 'redis://redistogo:a4ff2e6aa42f74b3808f8e61bff6afe5@cod.redistogo.com:10906/'
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
