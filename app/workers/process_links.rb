@@ -56,7 +56,7 @@ class ProcessLinks
     ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
     Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
     
-    if total_crawl_running <= 0
+    if total_crawl_running <= 0 && Sidekiq::Stats.new.enqueued == 0
       puts "shut down app and update crawl stats and user stats, crawl id #{options['crawl_id']}"
       
       puts "total_site_count, crawl id #{options['crawl_id']}: #{total_site_count}"
