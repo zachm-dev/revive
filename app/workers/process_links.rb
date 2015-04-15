@@ -59,7 +59,7 @@ class ProcessLinks
     if total_crawl_running <= 0 && Sidekiq::Stats.new.enqueued == 0
       puts "shut down app and update crawl stats and user stats, crawl id #{options['crawl_id']}"
       
-      puts "the sidekiq bofore shutting down crawl #{options['crawl_id']} are #{Sidekiq::Stats.new}"
+      puts "the sidekiq bofore shutting down crawl #{options['crawl_id']} are #{Sidekiq::Stats.new.instance_values}"
       
       puts "total_site_count, crawl id #{options['crawl_id']}: #{total_site_count}"
       puts "total_site_running, crawl id #{options['crawl_id']}: #{total_site_running}"
