@@ -57,7 +57,19 @@ class ProcessLinks
     Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
     
     if total_crawl_running <= 0
-      puts 'shut down app and update crawl stats and user stats'
+      puts "shut down app and update crawl stats and user stats, crawl id #{options['crawl_id']}"
+      
+      puts "total_site_count, crawl id #{options['crawl_id']}: #{total_site_count}"
+      puts "total_site_running, crawl id #{options['crawl_id']}: #{total_site_running}"
+      puts "total_site_finished, crawl id #{options['crawl_id']}: #{total_site_finished}"
+      
+      puts "total_crawl_count, crawl id #{options['crawl_id']}: #{total_crawl_count}"
+      puts "total_crawl_running, crawl id #{options['crawl_id']}: #{total_crawl_running}"
+      puts "total_crawl_finished, crawl id #{options['crawl_id']}: #{total_crawl_finished}"
+      
+      puts "progress, crawl id #{options['crawl_id']}: #{progress}"
+      
+      
       app = HerokuApp.using("#{processor_name}").where(crawl_id: options['crawl_id']).first
       crawl = app.crawl
       
