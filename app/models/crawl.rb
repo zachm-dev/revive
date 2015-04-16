@@ -30,7 +30,7 @@ class Crawl < ActiveRecord::Base
       
       crawl.update(status: status)
       heroku = HerokuPlatform.new
-      heroku.delete_app("revivecrawler#{crawl.id}")
+      heroku.delete_app("revivecrawler#{crawl.id}#{processor_name.gsub('_', '')}")
       
     end
   end
