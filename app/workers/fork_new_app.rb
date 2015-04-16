@@ -5,7 +5,7 @@ class ForkNewApp
     processor_name = options['processor_name']
     heroku_app = HerokuApp.using("#{processor_name}").where(id: heroku_app_id).first
     if heroku_app
-      heroku_app.update(name: "revivecrawler#{heroku_app.crawl_id}")
+      heroku_app.update(name: "revivecrawler_id_#{heroku_app.crawl_id}_processor_#{options['processor_name']}")
       HerokuPlatform.fork(HerokuPlatform::APP_NAME, "revivecrawler#{heroku_app.crawl_id}", heroku_app_id, number_of_apps_running, 'processor_name' => processor_name)
     end
   end
