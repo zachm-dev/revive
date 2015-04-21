@@ -96,9 +96,9 @@
 						<div class="panel-body">
 							
 							<% if @project.crawl_type == 'url_crawl' %>
-								<%= render 'form' %>
+								<%= render 'url_edit' %>
 							<% else %>
-								<%= render 'keyword_form' %>
+								<%= render 'keyword_edit' %>
 							<% end %>
 							
 						</div>

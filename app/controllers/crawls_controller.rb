@@ -92,6 +92,20 @@ class CrawlsController < ApplicationController
   
   def edit
     @project = Crawl.using(params["processor_name"]).find(params[:id])
+    total_minutes = @project.total_minutes.to_f
+    if total_minutes > 0
+      if total_minutes > 60
+        split_total_time = (total_minutes.to_f/60.to_f).round(2).to_s.split('.')
+        @hours = split_total_time[0]
+        @minutes = split_total_time[1]
+      else
+        @hours = 0
+        @minutes = total_minutes
+      end
+    else
+      @hours = 0
+      @minutes = 0
+    end
   end
   
   def create_keyword_crawl
