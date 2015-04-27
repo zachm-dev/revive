@@ -24,7 +24,13 @@ class ProcessLinks
         if "#{response.code}" == '404'
           Page.using("#{processor_name}").create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
         else
-          Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name)
+          # Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name)
+          
+          redis_id = SecureRandom.hex+Time.now.to_i.to_s
+          
+          $redis.set(redis_id, {status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name}.to_json)
+          Page.verify_namecheap('redis_id' => redis_id)
+          
         end
       end
     end

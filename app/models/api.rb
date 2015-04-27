@@ -4,7 +4,7 @@ class Api
   def self.start_crawl(options = {})
     processor_name = options['processor_name']
     puts "the processor_name is #{options['processor_name']}"
-    crawl = Crawl.using("#{processor_name}").where(id: options[:crawl_id].to_i).first
+    crawl = Crawl.using("#{processor_name}").where(id: options['crawl_id'].to_i).first
     
     if crawl
       

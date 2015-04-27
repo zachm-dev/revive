@@ -99,7 +99,11 @@ class Crawl < ActiveRecord::Base
           puts "the number of apps running are #{number_of_apps_running}"
           if number_of_apps_running < 99
             puts 'decision: starting new crawl'
-            ForkNewApp.delay.start(user.id, number_of_apps_running, 'processor_name' => processor_name)
+            
+            available_apps = Rails.cache.read(['available_apps']){['revivecrawler3495']}
+            
+            # ForkNewApp.delay.start(user.id, number_of_apps_running, 'processor_name' => processor_name)
+            Api.delay.start_crawl('app_name' => available_apps[0], 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
           end
         end
       else
@@ -150,7 +154,8 @@ class Crawl < ActiveRecord::Base
     new_heroku_app_object = HerokuApp.using("#{processor_name}").create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user.id, processor_name: processor_name)
     ShardInfo.using(:main_shard).create(user_id: user.id, processor_name: processor_name, crawl_id: new_crawl.id, heroku_app_id: new_heroku_app_object.id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
-    Api.delay.process_new_crawl(user_id: user.id, processor_name: processor_name)
+    # Api.delay.process_new_crawl(user_id: user.id, processor_name: processor_name)
+    Crawl.decision_maker('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
   end
   
   def self.save_new_keyword_crawl(user_id, keyword, options = {})
@@ -189,7 +194,8 @@ class Crawl < ActiveRecord::Base
     ShardInfo.using(:main_shard).create(user_id: user.id, processor_name: processor_name, crawl_id: new_crawl.id, heroku_app_id: new_heroku_app_object.id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     # Crawl.decision_maker(user_id)
-    Api.delay.process_new_crawl(user_id: user_id, processor_name: processor_name)
+    # Api.delay.process_new_crawl(user_id: user_id, processor_name: processor_name)
+    Crawl.decision_maker('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
   end
   
   def self.save_new_sites(crawl_id, options={})
