@@ -102,7 +102,6 @@ class Crawl < ActiveRecord::Base
             
             available_apps = Rails.cache.fetch(['available_apps']){['revivecrawler3495']}
             
-            # ForkNewApp.delay.start(user.id, number_of_apps_running, 'processor_name' => processor_name)
             Api.delay.start_crawl('app_name' => available_apps[0], 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
           end
         end
