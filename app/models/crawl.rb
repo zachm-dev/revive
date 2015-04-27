@@ -197,7 +197,10 @@ class Crawl < ActiveRecord::Base
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
     # Crawl.decision_maker(user_id)
     # Api.delay.process_new_crawl(user_id: user_id, processor_name: processor_name)
-    Crawl.decision_maker('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
+    
+    Api.delay.process_new_crawl('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
+    
+    # Crawl.decision_maker('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
   end
   
   def self.save_new_sites(crawl_id, options={})

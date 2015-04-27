@@ -12,6 +12,8 @@
   .container-fluid.container_section
     .col-xs-12
       = render 'minutes/used_minutes'
+    .col-xs-12
+      = render 'attn'
     - if current_user.crawls.count <= 50
       .col-lg-12.text-center
         .panel.panel-success
