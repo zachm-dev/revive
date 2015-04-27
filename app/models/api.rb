@@ -9,16 +9,16 @@ class Api
     if crawl
       
       db = crawl.db_url
-      uri = URI.parse(db)
+      # uri = URI.parse(db)
       Octopus.setup do |config|
-        config.shards = {:test_connection => {
-                          :adapter => 'postgresql',
-                          :database => db.split('/').last,
-                          :username => uri.user,
-                          :password => uri.password,
-                          :host => uri.host,
-                          :port => uri.port
-                        },
+        config.shards = {# :test_connection => {
+#                           :adapter => 'postgresql',
+#                           :database => db.split('/').last,
+#                           :username => uri.user,
+#                           :password => uri.password,
+#                           :host => uri.host,
+#                           :port => uri.port
+#                         },
                         :main_shard => {
                           :adapter => 'postgresql',
                           :database => 'd43keikloc7ejh',
@@ -78,7 +78,7 @@ class Api
 
                     
       begin
-        Page.using(:test_connection).last
+        # Page.using(:test_connection).last
         puts 'db migration was sucessful '
         app_name = crawl.heroku_app.name
     
