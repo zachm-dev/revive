@@ -98,9 +98,9 @@ class Crawl < ActiveRecord::Base
           number_of_apps_running = HerokuPlatform.new.app_list.count
           puts "the number of apps running are #{number_of_apps_running}"
           if number_of_apps_running < 99
-            puts 'decision: starting new crawl'
+            puts "decision: starting new crawl with the options #{options}"
             
-            available_apps = Rails.cache.read(['available_apps']){['revivecrawler3495']}
+            available_apps = Rails.cache.fetch(['available_apps']){['revivecrawler3495']}
             
             # ForkNewApp.delay.start(user.id, number_of_apps_running, 'processor_name' => processor_name)
             Api.delay.start_crawl('app_name' => available_apps[0], 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
