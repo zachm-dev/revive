@@ -1,1 +1,1 @@
-$redis = Redis.new(:url => ENV["REDISCLOUD_URL"])
+$redis = Redis.new(:url => 'redis://rediscloud:pd15YzZtfOwmmyTL@pub-redis-19855.us-east-1-2.3.ec2.garantiadata.com:19855')
