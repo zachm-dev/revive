@@ -102,7 +102,7 @@ class Crawl < ActiveRecord::Base
             
             available_apps = Rails.cache.fetch(['available_apps']){['revivecrawler3495']}
             
-            Api.delay.start_crawl('app_name' => available_apps[0], 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
+            Api.delay.start_crawl('app_name' => 'revivecrawler3495', 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
           end
         end
       else

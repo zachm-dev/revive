@@ -5,21 +5,11 @@ class Api
     processor_name = options['processor_name']
     puts "the processor_name is #{options['processor_name']}"
     crawl = Crawl.using("#{processor_name}").where(id: options['crawl_id'].to_i).first
-    
+    puts "start crawl: #{crawl}"
     if crawl
       
-      db = crawl.db_url
-      # uri = URI.parse(db)
       Octopus.setup do |config|
-        config.shards = {# :test_connection => {
-#                           :adapter => 'postgresql',
-#                           :database => db.split('/').last,
-#                           :username => uri.user,
-#                           :password => uri.password,
-#                           :host => uri.host,
-#                           :port => uri.port
-#                         },
-                        :main_shard => {
+        config.shards = {:main_shard => {
                           :adapter => 'postgresql',
                           :database => 'd43keikloc7ejh',
                           :username => 'uda0tbtpqg53lu',
@@ -78,9 +68,8 @@ class Api
 
                     
       begin
-        # Page.using(:test_connection).last
         puts 'db migration was sucessful '
-        app_name = crawl.heroku_app.name
+        app_name = 'revivecrawler3495'
     
         if Rails.env.development?
           uri = URI.parse("http://localhost:3000/api_create")
