@@ -23,7 +23,7 @@ class Page < ActiveRecord::Base
   def verify_namecheap
     puts 'verifying namecheap'
     if status_code == '0' && internal == false
-      VerifyNamecheap.perform_async(id, crawl_id, 'processor_name' => processor_name)
+      VerifyNamecheap.perform_async(redis_id, crawl_id, 'processor_name' => processor_name)
     elsif status_code == '404'
       Rails.cache.increment(["crawl/#{crawl_id}/broken_domains"])
       Rails.cache.increment(["site/#{site_id}/broken_domains"])
