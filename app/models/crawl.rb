@@ -19,7 +19,7 @@ class Crawl < ActiveRecord::Base
     puts "stop crawl method for the crawl #{crawl_id} in the processor #{options["processor_name"]}"
     processor_name = options["processor_name"]
     crawl = Crawl.using("#{processor_name}").where(id: crawl_id).first
-    puts "here is the crawl to stop #{crawl.id} on the processor #{crawl.processor_name}"
+    puts "here is the crawl to stop #{crawl_id} on the processor #{processor_name}"
     if crawl && crawl.status != 'finished'
       status = options['status'].nil? ? 'finished' : options['status']
       heroku_app = crawl.heroku_app
@@ -30,7 +30,7 @@ class Crawl < ActiveRecord::Base
       
       crawl.update(status: status)
       heroku = HerokuPlatform.new
-      heroku.delete_app("revivecrawler#{crawl.id}")
+      heroku.delete_app("revivecrawler#{crawl_id}")
       
     end
   end
