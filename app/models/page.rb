@@ -6,13 +6,14 @@ class Page < ActiveRecord::Base
     redis_id = options['redis_id']
     redis_obj = JSON.parse($redis.get(redis_id))
     puts "verifying namecheap for redis obj #{redis_obj}"
-    status_code = redis_obj['status_code ']
+    status_code = redis_obj['status_code']
     internal = redis_obj['internal']
     crawl_id = redis_obj['crawl_id']
     processor_name = redis_obj['processor_name']
     site_id = redis_obj['site_id']
     
     if status_code == '0' && internal == false
+      puts "going to verify namecheap"
       VerifyNamecheap.perform_async(redis_id, crawl_id, 'processor_name' => processor_name)
     elsif status_code == '404'
       Rails.cache.increment(["crawl/#{crawl_id}/broken_domains"])
