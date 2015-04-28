@@ -45,7 +45,7 @@ class Link < ActiveRecord::Base
       
       batch.jobs do
         # links.each{|l| ProcessLinks.perform_async(l, site.id, found_on, domain, site.crawl_id, 'processor_name' => processor_name)}
-        redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site.id, redis_obj['found_on'], redis_obj['domain'], site.crawl_id, 'processor_name' => processor_name)}
+        redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site.id, redis_obj['found_on'], domain, site.crawl_id, 'processor_name' => processor_name)}
       end
 
     end
