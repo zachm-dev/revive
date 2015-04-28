@@ -182,7 +182,8 @@ class HerokuPlatform
                           if !verifydomains.empty?
                             
                             if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
-                              puts 'done creating new app'
+                              puts 'app created successfully and restarting'
+                              HerokuPlatform.restart_app(to)
                             else
                               puts 'new app did not start properly'
                             end
@@ -272,6 +273,13 @@ class HerokuPlatform
   def restart_app(app_name)
     puts 'restarting app'
     @heroku.dyno.restart_all(app_name)
+  end
+  
+  def self.restart_app(app_name)
+    puts 'restarting app'
+    heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
+    heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+    heroku.post_ps_restart("#{app_name}")
   end
   
   def add_pgbackups(to)
