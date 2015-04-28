@@ -23,7 +23,7 @@ class ProcessLinks
       elsif internal == false
         if "#{response.code}" == '404'
           Page.using("#{processor_name}").create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
-        else
+        elsif "#{response.code}" == '0'
           # Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name)
           
           redis_id = SecureRandom.hex+Time.now.to_i.to_s
