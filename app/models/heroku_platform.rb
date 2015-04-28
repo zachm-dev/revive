@@ -331,25 +331,35 @@ class HerokuPlatform
   
   def check_and_copy_slug(from, to)
     puts 'checking and copying slug'
-    latest_api_release = get_latest_api_release(from)
+    # latest_api_release = get_latest_api_release(from)
     
-    if local_release_exists? == true
-      local_release_env_version = get_local_release_env_version
-      puts "local release exists and the version is #{local_release_env_version}"
-      
-      if local_release_env_version.to_i == latest_api_release['version'].to_i || local_release_env_version.to_i > latest_api_release['version'].to_i
-        puts "release exists and up to date OK to copy slug from local env: local version is #{latest_api_release['version']}"
-        @heroku.release.create(to, slug: ENV['SLUG_ID'])
-      else
-        puts "updating local env release version and slug id and copying slug to version #{latest_api_release['version']}"
-        set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
-        @heroku.release.create(to, slug: latest_api_release['slug']['id'])
-      end
-    else
-      puts "local release does not exists: setting new local env release version and slug id: new version number is #{latest_api_release['version']}"
-      set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
-      @heroku.release.create(to, slug: latest_api_release['slug']['id'])
-    end
+    heroku = Heroku::API.new(:api_key => 'f901d1da-4e4c-432f-9c9c-81da8363bb91')
+    heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
+    
+    version_id = heroku.get_releases(from).body.last['name'].scan(/\d+/)[0].to_i
+    puts "the latest slug id is #{id}"
+    
+    latest_api_release = @heroku.release.info('reviveprocessor', version_id)
+    set_release_env_and_slug_id(version_id, latest_api_release['slug']['id'])
+    @heroku.release.create(to, slug: latest_api_release['slug']['id'])
+    
+    # if local_release_exists? == true
+    #   local_release_env_version = get_local_release_env_version
+    #   puts "local release exists and the version is #{local_release_env_version}"
+    #
+    #   if local_release_env_version.to_i == latest_api_release['version'].to_i || local_release_env_version.to_i > latest_api_release['version'].to_i
+    #     puts "release exists and up to date OK to copy slug from local env: local version is #{latest_api_release['version']}"
+    #     @heroku.release.create(to, slug: ENV['SLUG_ID'])
+    #   else
+    #     puts "updating local env release version and slug id and copying slug to version #{latest_api_release['version']}"
+    #     set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
+    #     @heroku.release.create(to, slug: latest_api_release['slug']['id'])
+    #   end
+    # else
+    #   puts "local release does not exists: setting new local env release version and slug id: new version number is #{latest_api_release['version']}"
+    #   set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
+    #   @heroku.release.create(to, slug: latest_api_release['slug']['id'])
+    # end
   end
 
   def copy_rack_and_rails_env_again(from, to)
