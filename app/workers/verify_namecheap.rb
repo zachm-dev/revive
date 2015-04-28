@@ -34,15 +34,17 @@ class VerifyNamecheap
             if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{crawl_id}/available"]).include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
               puts "saving verified domain with the following data status_code: #{page['status_code']}, url: #{page['url']}, internal: #{page['internal']}, site_id: #{page['site_id']}, found_on: #{page['found_on']}, simple_url: #{parsed_url}, verified: true, available: #{json['available']}, crawl_id: #{page['crawl_id']}"
               new_page = Page.using("#{processor_name}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'], found_on: "#{page['found_on']}", simple_url: "#{parsed_url}", verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'])
+              puts "the new saved page id is #{new_page.id}"
               
-              urls = Rails.cache.read(["crawl/#{crawl_id}/available"])
-              Rails.cache.write(["crawl/#{crawl_id}/available"], urls.push("#{parsed_url}"))
-              
-              Rails.cache.increment(["crawl/#{crawl_id}/expired_domains"])
-              Rails.cache.increment(["site/#{page['site_id']}/expired_domains"])
-              
-              MozStats.perform_async(new_page.id, parsed_url, 'processor_name' => processor_name)
-              MajesticStats.perform_async(new_page.id, parsed_url, 'processor_name' => processor_name)
+              #
+              # urls = Rails.cache.read(["crawl/#{crawl_id}/available"])
+              # Rails.cache.write(["crawl/#{crawl_id}/available"], urls.push("#{parsed_url}"))
+              #
+              # Rails.cache.increment(["crawl/#{crawl_id}/expired_domains"])
+              # Rails.cache.increment(["site/#{page['site_id']}/expired_domains"])
+              #
+              # MozStats.perform_async(new_page.id, parsed_url, 'processor_name' => processor_name)
+              # MajesticStats.perform_async(new_page.id, parsed_url, 'processor_name' => processor_name)
             end
           end
         end
