@@ -313,4 +313,18 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def self.delete_all_crawls
+    apps = HerokuPlatform.new.app_list
+    apps.each do |app|
+      if app['name'].include?('revivecrawler')
+        begin
+          puts "delete_all_crawls: deleting crawl #{app['name']}"
+          HerokuPlatform.new.delete_app(app['name'])
+        rescue
+          puts "delete_all_crawls: failed to delete crawl #{app['name']}"
+        end
+      end
+    end
+  end
+  
 end

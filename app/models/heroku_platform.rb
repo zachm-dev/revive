@@ -156,6 +156,50 @@ class HerokuPlatform
     end
   end
   
+  
+  def self.create_new_app(from, to, options={})
+      heroku = HerokuPlatform.new
+      app = heroku.create_app(to)
+      if !app.empty? && app['build_stack'].has_key?('id')
+        slug = heroku.check_and_copy_slug(from, to)
+        if !slug.empty? && slug['app'].has_value?(to)
+          config = heroku.copy_config(from, to)
+          if !config.empty?
+              redis = heroku.add_redis_cloud(to)
+              if !redis.empty? && redis['app'].has_value?(to)
+                librato = heroku.add_librato(to)
+                if !librato.empty? && librato['app'].has_value?(to)
+                  rack_envs = heroku.copy_rack_and_rails_env_again(from, to)
+                  if !rack_envs.empty?
+                    log_metrics = heroku.enable_log_runtime_metrics(to)
+                    if !log_metrics.empty? && log_metrics['enabled'] == true
+                      librato_env_vars = heroku.get_librato_env_variables_for(to)
+                      processlinks = heroku.start_dyno(to, 4, '2X', "processlinks")
+                      if !processlinks.empty?
+                        worker = heroku.start_dyno(to, 3, '2X', "worker")
+                        if !worker.empty?
+                          verifydomains = heroku.start_dyno(to, 3, '1X', "verifydomains")
+                          if !verifydomains.empty?
+                            
+                            if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
+                              puts 'done creating new app'
+                            else
+                              puts 'new app did not start properly'
+                            end
+                            
+                          end
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+          end
+        end
+      end
+  end
+  
+  
   def rate_limit
     @heroku.rate_limit.info
   end
@@ -191,7 +235,8 @@ class HerokuPlatform
     vars = config_vars(app_name)
     librato_user = vars['LIBRATO_USER']
     librato_token = vars['LIBRATO_TOKEN']
-    redis_url = vars['REDISTOGO_URL']
+    # redis_url = vars['REDISTOGO_URL']
+    redis_url = vars['REDISCLOUD_URL']
     librato_hash = {librato_user: librato_user, librato_token: librato_token, redis_url: redis_url}
   end
   
@@ -244,6 +289,11 @@ class HerokuPlatform
     @heroku.addon.create(to, plan: "redistogo:smedium")
   end
   
+  def add_redis_cloud(to)
+    puts 'adding redis cloud'
+    @heroku.addon.create(to, plan: "rediscloud:250")
+  end
+  
   def add_librato(to)
     puts 'adding librato'
     @heroku.addon.create(to, plan: "librato:nickel") 
@@ -267,7 +317,7 @@ class HerokuPlatform
   def copy_config(from, to)
     puts 'copying config'
     from_congig_vars = config_vars(from)
-    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_RED_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL')
+    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_RED_URL', 'HEROKU_POSTGRESQL_AMBER_URL', 'EROKU_POSTGRESQL_BROWN_URL', 'HEROKU_POSTGRESQL_COPPER_URL', 'HEROKU_POSTGRESQL_NAVY_URL', 'HEROKU_POSTGRESQL_WHITE_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL', 'REDISCLOUD_URL')
     @heroku.config_var.update(to, from_congig_vars)
   end
   
