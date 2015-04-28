@@ -337,7 +337,7 @@ class HerokuPlatform
     heroku = Heroku::API.new(:username => 'hello@biznobo.com', :password => '2025Ishmael')
     
     version_id = heroku.get_releases(from).body.last['name'].scan(/\d+/)[0].to_i
-    puts "the latest slug id is #{id}"
+    puts "the latest slug id is #{version_id }"
     
     latest_api_release = @heroku.release.info('reviveprocessor', version_id)
     set_release_env_and_slug_id(version_id, latest_api_release['slug']['id'])
