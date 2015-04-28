@@ -39,9 +39,9 @@ class Crawl < ActiveRecord::Base
     processor_name = options['processor_name']
     puts "start_crawl: the processor name is #{processor_name}"
     crawl = Crawl.using("#{processor_name}").find(options["crawl_id"].to_i)
-    puts "here is the crawl to start #{crawl.id} on the processor #{crawl.processor_name}"
     if crawl
-      Crawl.update(crawl.id, status: 'running')
+      puts "here is the crawl to start #{crawl.id} on the processor #{crawl.processor_name}"
+      # Crawl.update(crawl.id, status: 'running')
       puts "crawl total minutes are #{crawl.total_minutes.to_i}"
       crawl.setCrawlStartingVariables('total_minutes' => crawl.total_minutes.to_i)
       if crawl.crawl_type == 'url_crawl'
