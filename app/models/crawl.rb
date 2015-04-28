@@ -106,7 +106,7 @@ class Crawl < ActiveRecord::Base
               names_of_running_crawls = list_of_running_crawls.map{|crawl| crawl['name']}
               puts "list of names of the running crawls are #{names_of_running_crawls}" 
               
-              available_crawls = ( (list_of_all_crawls | list_of_running_crawls) - list_of_running_crawls ).to_a
+              available_crawls = ( (list_of_all_crawls | names_of_running_crawls) - names_of_running_crawls ).to_a
               puts "list of available crawls #{available_crawls}"
             
               if !available_crawls.empty?
@@ -348,6 +348,26 @@ class Crawl < ActiveRecord::Base
         end
       end
     end
+  end
+  
+  def self.shut_down(options={})
+    list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
+    updated_list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['name'].include?(options['app_name'])}
+
+    if JSON.parse($redis.get('redis_urls')).has_key?(options['app_name'])
+      new_redis_connection = Redis.new(url: JSON.parse($redis.get('redis_urls'))[options['app_name']])
+      new_redis_connection.del(new_redis_connection.keys)
+      $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
+    else
+      heroku = HerokuPlatform.new
+      redis_url = heroku.get_env_vars_for(options['app_name'], ['REDISCLOUD_URL'])['REDISCLOUD_URL']
+      redis_urls = JSON.parse($redis.get('redis_urls'))
+      redis_urls[options['app_name']] = redis_url
+      $redis.set('redis_urls', redis_urls.to_json)
+      new_redis_connection = Redis.new(url: redis_url)
+      new_redis_connection.del(new_redis_connection.keys)
+    end
+    
   end
   
 end
