@@ -222,7 +222,6 @@ class Crawl < ActiveRecord::Base
     # Api.delay.process_new_crawl(user_id: user_id, processor_name: processor_name)
     
     Api.delay.process_new_crawl('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
-    
     # Crawl.decision_maker('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
   end
   
