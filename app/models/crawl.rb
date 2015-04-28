@@ -170,7 +170,8 @@ class Crawl < ActiveRecord::Base
       running_count = Crawl.using(processor_name).where(status: 'running').count
       processors_hash[processor_name] = running_count
     end
-    processor_name = processors_hash.sort_by{|k,v|v}[0][0]
+    # processor_name = processors_hash.sort_by{|k,v|v}[0][0]
+    processor_name = 'processor_two'
     
     new_crawl = Crawl.using("#{processor_name}").create(user_id: user_id, name: name, maxpages: maxpages, crawl_type: 'url_crawl', base_urls: urls_array, total_sites: urls_array.count.to_i, status: 'pending', max_pages_allowed: plan.pages_per_crawl.to_i, moz_da: moz_da, majestic_tf: majestic_tf, notify_me_after: notify_me_after, processor_name: processor_name, total_minutes: total_crawl_minutes)
     new_heroku_app_object = HerokuApp.using("#{processor_name}").create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user.id, processor_name: processor_name)
