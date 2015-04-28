@@ -355,7 +355,8 @@ class Crawl < ActiveRecord::Base
     updated_list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['name'].include?(options['app_name'])}
 
     if JSON.parse($redis.get('redis_urls')).has_key?(options['app_name'])
-      new_redis_connection = Redis.new(url: JSON.parse($redis.get('redis_urls'))[options['app_name']])
+      redis_url = JSON.parse($redis.get('redis_urls'))[options['app_name']]
+      new_redis_connection = Redis.new(url: redis_url)
       new_redis_connection.del(new_redis_connection.keys)
       $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
     else
@@ -366,6 +367,7 @@ class Crawl < ActiveRecord::Base
       $redis.set('redis_urls', redis_urls.to_json)
       new_redis_connection = Redis.new(url: redis_url)
       new_redis_connection.del(new_redis_connection.keys)
+      $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
     end
     
   end
