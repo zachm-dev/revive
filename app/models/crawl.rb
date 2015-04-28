@@ -102,7 +102,7 @@ class Crawl < ActiveRecord::Base
             
             list_of_all_crawls = HerokuPlatform.new.app_list.map{|app| app['name']}.select{|obj| obj.include?('revivecrawler')}
 
-            if !$redis.get('list_of_running_crawls').to_a.empty?
+            if !$redis.get('list_of_running_crawls').to_s.empty?
               list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
               names_of_running_crawls = list_of_running_crawls.map{|crawl| crawl['name']}
               puts "list of names of the running crawls are #{names_of_running_crawls}" 
