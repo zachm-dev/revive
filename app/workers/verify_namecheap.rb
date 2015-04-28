@@ -5,12 +5,12 @@ class VerifyNamecheap
   include Sidekiq::Worker
   sidekiq_options :queue => :verify_domains
   
-  def perform(page_id, crawl_id, options={})
+  def perform(redis_id, crawl_id, options={})
     puts 'performing verify namecheap'
     processor_name = options['processor_name']
     # page = Page.using(:master).where(id: page_id).first
     
-    page = JSON.parse($redis.get(options['redis_id']))
+    page = JSON.parse($redis.get(redis_id))
     puts "verify namecheap: the page object is #{page}"
     
     begin
