@@ -317,7 +317,7 @@ class HerokuPlatform
   def copy_config(from, to)
     puts 'copying config'
     from_congig_vars = config_vars(from)
-    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_RED_URL', 'HEROKU_POSTGRESQL_AMBER_URL', 'EROKU_POSTGRESQL_BROWN_URL', 'HEROKU_POSTGRESQL_COPPER_URL', 'HEROKU_POSTGRESQL_NAVY_URL', 'HEROKU_POSTGRESQL_WHITE_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL', 'REDISCLOUD_URL')
+    from_congig_vars = from_congig_vars.except!('HEROKU_POSTGRESQL_RED_URL', 'HEROKU_POSTGRESQL_AMBER_URL', 'HEROKU_POSTGRESQL_BROWN_URL', 'HEROKU_POSTGRESQL_COPPER_URL', 'HEROKU_POSTGRESQL_NAVY_URL', 'HEROKU_POSTGRESQL_WHITE_URL', 'PROXIMO_URL', 'LIBRATO_USER', 'LIBRATO_PASSWORD', 'LIBRATO_TOKEN', 'REDISTOGO_URL', 'REDISCLOUD_URL')
     @heroku.config_var.update(to, from_congig_vars)
   end
   
@@ -347,6 +347,7 @@ class HerokuPlatform
   def copy_rack_and_rails_env_again(from, to)
     puts 'copying rack and rails env again'
     env_to_update = get_env_vars_for(from, ['RACK_ENV', 'RAILS_ENV'])
+    env_to_update["REDIS_PROVIDER"] = 'REDISCLOUD_URL'
     @heroku.config_var.update(to, env_to_update) unless env_to_update.empty?
   end
   
