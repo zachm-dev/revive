@@ -3,7 +3,7 @@ class Page < ActiveRecord::Base
   after_create :verify_namecheap
   
   def self.verify_namecheap(options={})
-    puts 'verifying namecheap'
+    puts "verifying namecheap for crawl #{crawl_id}"
     
     redis_id = options['redis_id']
     redis_obj = JSON.parse($redis.get(redis_id))

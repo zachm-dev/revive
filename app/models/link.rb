@@ -7,6 +7,7 @@ class Link < ActiveRecord::Base
   
   def self.start_processing(options={})
     redis_obj = JSON.parse($redis.get(options['redis_id']))
+    puts "start_processing: the redis obj is #{redis_obj}"
     if redis_obj['process'] == true
       
       processor_name = redis_obj['processor_name']

@@ -8,7 +8,7 @@ class VerifyNamecheap
   def perform(page_id, crawl_id, options={})
     puts 'performing verify namecheap'
     processor_name = options['processor_name']
-    page = Page.using(:master).where(id: page_id).first
+    # page = Page.using(:master).where(id: page_id).first
     
     page = JSON.parse($redis.get(options['redis_id']))
     
