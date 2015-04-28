@@ -100,9 +100,33 @@ class Crawl < ActiveRecord::Base
           if number_of_apps_running < 99
             puts "decision: starting new crawl with the options #{options}"
             
-            available_apps = Rails.cache.fetch(['available_apps']){['revivecrawler3495']}
+            list_of_all_crawls = HerokuPlatform.new.app_list.map{|app| app['name']}.select{|obj| obj.include?('revivecrawler')}
+
+            if !$redis.get('list_of_running_crawls').to_a.empty?
+              list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
+              names_of_running_crawls = list_of_running_crawls.map{|crawl| crawl['name']}
+              puts "list of names of the running crawls are #{names_of_running_crawls}" 
+              
+              available_crawls = ( (list_of_all_crawls | list_of_running_crawls) - list_of_running_crawls ).to_a
+              puts "list of available crawls #{available_crawls}"
             
-            Api.delay.start_crawl('app_name' => 'revivecrawler3495', 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
+              if !available_crawls.empty?
+                name = available_crawls[0]
+                available_crawl_hash = {"name"=>name, "crawls"=>{"crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}}
+                updated_list_of_running_crawls = list_of_running_crawls.push(available_crawl_hash)
+                puts "the updated list of running crawls is #{updated_list_of_running_crawls}"
+                $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
+                
+                Api.delay.start_crawl('app_name' => name, 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
+              end
+            
+            else
+              puts "there is not a list of running crawls saved on redis"
+              available_crawl_hash = {"name"=>'revivecrawler1', "crawls"=>{"crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}}
+              $redis.set('list_of_running_crawls', [available_crawl_hash].to_json)
+              Api.delay.start_crawl('app_name' => name, 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
+            end
+            
           end
         end
       else

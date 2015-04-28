@@ -1,1 +1,5 @@
-$redis = Redis.new(:url => 'redis://rediscloud:pd15YzZtfOwmmyTL@pub-redis-19855.us-east-1-2.3.ec2.garantiadata.com:19855')
+if ENV['REDISTOGO_URL'].present?
+  $redis = Redis.new(:url => ENV['REDISTOGO_URL'])
+else
+  $redis = Redis.new(:url => ENV['REDISCLOUD_URL'])
+end
