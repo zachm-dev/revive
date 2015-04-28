@@ -42,8 +42,10 @@ class VerifyNamecheap
               # Rails.cache.increment(["crawl/#{crawl_id}/expired_domains"])
               # Rails.cache.increment(["site/#{page['site_id']}/expired_domains"])
 
-              MozStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
-              MajesticStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
+              # MozStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
+              # MajesticStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
+              
+              Page.get_id(redis_id, parsed_url, 'processor_name' => processor_name)
               
             end
           end
