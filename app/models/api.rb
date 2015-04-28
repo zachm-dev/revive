@@ -69,7 +69,7 @@ class Api
                     
       begin
         puts 'db migration was sucessful '
-        app_name = 'revivecrawler3495'
+        app_name = options['app_name']
     
         if Rails.env.development?
           uri = URI.parse("http://localhost:3000/api_create")
