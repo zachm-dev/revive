@@ -35,7 +35,7 @@ class SitesController < ApplicationController
     
     if @crawl.status == 'running'
       @available = @crawl.save_available_sites
-    elsif @crawl.available_sites.count == @crawl.total_expired && @crawl.available_sites[0].count > 7
+    elsif !@crawl.available_sites.empty? && @crawl.available_sites.count == @crawl.total_expired && @crawl.available_sites[0].count > 7
       @available = @crawl.available_sites
     else
       @available = @crawl.save_available_sites
