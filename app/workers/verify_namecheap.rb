@@ -36,11 +36,11 @@ class VerifyNamecheap
 
               Page.using("#{processor_name}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
 
-              # urls = Rails.cache.read(["crawl/#{crawl_id}/available"])
-              # Rails.cache.write(["crawl/#{crawl_id}/available"], urls.push("#{parsed_url}"))
-              #
-              # Rails.cache.increment(["crawl/#{crawl_id}/expired_domains"])
-              # Rails.cache.increment(["site/#{page['site_id']}/expired_domains"])
+              urls = Rails.cache.read(["crawl/#{page['crawl_id']}/available"])
+              Rails.cache.write(["crawl/#{page['crawl_id']}/available"], urls.push("#{parsed_url}"))
+
+              Rails.cache.increment(["crawl/#{page['crawl_id']}/expired_domains"])
+              Rails.cache.increment(["site/#{page['site_id']}/expired_domains"])
 
               # MozStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
               # MajesticStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
