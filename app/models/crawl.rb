@@ -353,18 +353,20 @@ class Crawl < ActiveRecord::Base
   
   def self.shut_down(options={})
     list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
-    updated_list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['name'].include?(options['app_name'])}
-
-    if JSON.parse($redis.get('redis_urls')).has_key?(options['app_name'])
-      redis_url = JSON.parse($redis.get('redis_urls'))[options['app_name']]
+    crawl_that_is_shutting_down_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|crawl| crawl['crawls'].has_value?(options['crawl_id'].to_i)}
+    app_name = crawl_that_is_shutting_down_obj[0]['name']
+    updated_list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['name'].include?(app_name)}
+    
+    if !$redis.get('redis_urls').nil? && JSON.parse($redis.get('redis_urls')).has_key?(app_name)
+      redis_url = JSON.parse($redis.get('redis_urls'))[app_name]
       new_redis_connection = Redis.new(url: redis_url)
       new_redis_connection.del(new_redis_connection.keys)
       $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
     else
       heroku = HerokuPlatform.new
-      redis_url = heroku.get_env_vars_for(options['app_name'], ['REDISCLOUD_URL'])['REDISCLOUD_URL']
+      redis_url = heroku.get_env_vars_for(app_name, ['REDISCLOUD_URL'])['REDISCLOUD_URL']
       redis_urls = JSON.parse($redis.get('redis_urls'))
-      redis_urls[options['app_name']] = redis_url
+      redis_urls[app_name] = redis_url
       $redis.set('redis_urls', redis_urls.to_json)
       new_redis_connection = Redis.new(url: redis_url)
       new_redis_connection.del(new_redis_connection.keys)
