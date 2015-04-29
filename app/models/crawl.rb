@@ -355,6 +355,7 @@ class Crawl < ActiveRecord::Base
     list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
     crawl_that_is_shutting_down_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|crawl| crawl['crawls'].has_value?(options['crawl_id'].to_i)}
     app_name = crawl_that_is_shutting_down_obj[0]['name']
+    processor_name = crawl_that_is_shutting_down_obj[0]['crawls']["processor_name"]
     updated_list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['name'].include?(app_name)}
     
     if !$redis.get('redis_urls').nil? && JSON.parse($redis.get('redis_urls')).has_key?(app_name)
@@ -375,6 +376,19 @@ class Crawl < ActiveRecord::Base
       new_redis_connection = Redis.new(url: redis_url)
       new_redis_connection.del(new_redis_connection.keys)
       $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
+    end
+    
+    crawl = Crawl.using("#{processor_name}").where(id: options['crawl_id'].to_i).first
+    puts "here is the crawl to stop #{options['crawl_id'].to_i} on the processor #{processor_name}"
+    if crawl && crawl.status != 'finished'
+      status = options['status'].nil? ? 'finished' : options['status']
+      heroku_app = crawl.heroku_app
+      
+      if heroku_app
+        heroku_app.update(status: status)
+      end
+      
+      crawl.update(status: status)
     end
     
   end
