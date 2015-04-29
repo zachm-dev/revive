@@ -76,6 +76,7 @@ class GatherLinks
       site.update(gather_status: 'running')
       site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
       gather_links_batch.on(:complete, GatherLinks, 'bid' => gather_links_batch.bid, 'crawl_id' => options["crawl_id"], 'site_id' => site.id, 'processor_name' => processor_name)
+      Crawl.using("#{processor_name}").update(running_crawl.id, status: 'running')
       gather_links_batch.jobs do
         puts 'starting to gather links'
         GatherLinks.perform_async(site.id, site.maxpages, site.base_url, running_crawl.max_pages_allowed, options["crawl_id"], 'processor_name' => processor_name)

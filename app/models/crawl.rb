@@ -229,16 +229,14 @@ class Crawl < ActiveRecord::Base
   def self.save_new_sites(crawl_id, options={})
     processor_name = options['processor_name']
     crawl = Crawl.using("#{processor_name}").find(crawl_id)
-    app = HerokuApp.using("#{processor_name}").find(crawl.heroku_app.id)
     
     crawl.base_urls.each do |u|
       new_site = Site.using("#{processor_name}").create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
       new_site.create_gather_links_batch(status: "pending")
     end
     
-    crawl.update(status: 'running')
-    app.update(status: 'running')
     GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
+    HerokuApp.using("#{processor_name}").update(crawl.heroku_app.id, status: 'running')
 
   end
   
