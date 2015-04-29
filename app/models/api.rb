@@ -169,4 +169,25 @@ class Api
     response = http.start {|htt| htt.request(req)}
   end
   
+  def self.stop_crawl(options={})
+    if Rails.env.development?
+      uri = URI.parse("http://localhost:3000/shut_down_crawl")
+      puts 'shutting down crawl local'
+    else
+      uri = URI.parse("http://reviveprocessor.herokuapp.com/shut_down_crawl")
+      puts 'shutting down crawl production'
+    end
+    
+    post_params = {
+      :options => options
+    }
+    
+    # Convert the parameters into JSON and set the content type as application/json
+    req = Net::HTTP::Post.new(uri.path)
+    req.body = JSON.generate(post_params)
+  
+    http = Net::HTTP.new(uri.host, uri.port)
+    response = http.start {|htt| htt.request(req)}
+  end
+  
 end

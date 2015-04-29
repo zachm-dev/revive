@@ -191,8 +191,16 @@ class CrawlsController < ApplicationController
   def stop_crawl
     puts "stop the crawl with the ID #{params[:id]} in the processor #{params['processor_name']}"
     # Crawl.delay.stop_crawl(params[:id], 'processor_name' => params['processor_name'])
-    Crawl.delay.shut_down('crawl_id' => params[:id])
+    # Crawl.delay.shut_down('crawl_id' => params[:id])
+    Api.delay.stop_crawl('crawl_id' => params[:id])
     redirect_to crawls_path
+  end
+  
+  def shut_down_crawl
+    @json = JSON.parse(request.body.read)
+    crawl_id = @json["options"]['crawl_id']
+    Crawl.delay.shut_down('crawl_id' => crawl_id)
+    render :layout => false
   end
   
 end

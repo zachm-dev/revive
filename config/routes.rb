@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   get 'projects/new' => "crawls#new", as: :new_project
   get 'projects/:id' => "crawls#show", as: :crawl_path
   get 'stop_crawl/:id' => 'crawls#stop_crawl', as: :stop_crawl
+  get 'shut_down_crawl' => 'crawls#shut_down_crawl', as: :shut_down_crawl
   get 'crawls/keyword/new' => 'crawls#new_keyword_crawl', as: :new_keyword_crawl
   post 'crawls/keyword/create' => 'crawls#create_keyword_crawl', as: :create_keyword_crawl
   post 'api_create', to: 'crawls#api_create'
