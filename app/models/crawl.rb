@@ -236,8 +236,8 @@ class Crawl < ActiveRecord::Base
     end
     
     GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
-    crawl.update(status: 'running')
-    crawl.heroku_app.update(status: 'running')
+    Crawl.update(crawl.id, status: 'running')
+    HerokuApp.update(crawl.heroku_app.id, status: 'running')
   end
   
   def self.update_all_crawl_stats(user_id)
