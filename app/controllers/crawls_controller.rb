@@ -1,6 +1,6 @@
 class CrawlsController < ApplicationController
-  before_action :authorize, :except => [:api_create, :migrate_db, :process_new_crawl]
-  skip_before_action :verify_authenticity_token, :only => [:api_create, :migrate_db, :process_new_crawl]
+  before_action :authorize, :except => [:api_create, :migrate_db, :process_new_crawl, :shut_down_crawl]
+  skip_before_action :verify_authenticity_token, :only => [:api_create, :migrate_db, :process_new_crawl, :shut_down_crawl]
   
   def index
     processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
