@@ -389,8 +389,8 @@ class Crawl < ActiveRecord::Base
       end
     end
     
-    crawl = Crawl.using("#{processor_name}").where(id: options['crawl_id'].to_i).first
-    puts "here is the crawl to stop #{options['crawl_id'].to_i} on the processor #{processor_name}"
+    crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
+    puts "here is the crawl to stop #{options['crawl_id'].to_i} on the processor #{options['processor_name']}"
     if crawl && crawl.status != 'finished'
       status = options['status'].nil? ? 'finished' : options['status']
       heroku_app = crawl.heroku_app
