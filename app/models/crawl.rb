@@ -365,9 +365,13 @@ class Crawl < ActiveRecord::Base
     else
       heroku = HerokuPlatform.new
       redis_url = heroku.get_env_vars_for(app_name, ['REDISCLOUD_URL'])['REDISCLOUD_URL']
-      redis_urls = JSON.parse($redis.get('redis_urls'))
-      redis_urls[app_name] = redis_url
-      $redis.set('redis_urls', redis_urls.to_json)
+      if $redis.get('redis_urls').nil?
+        redis_urls = $redis.set('redis_urls', {"#{app_name}" => redis_url}.to_json)
+      else
+        redis_urls = JSON.parse($redis.get('redis_urls'))
+        redis_urls[app_name] = redis_url
+        $redis.set('redis_urls', redis_urls.to_json)
+      end
       new_redis_connection = Redis.new(url: redis_url)
       new_redis_connection.del(new_redis_connection.keys)
       $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
