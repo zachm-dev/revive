@@ -83,6 +83,13 @@ class Crawl < ActiveRecord::Base
     processor_name = options['processor_name']
     user = User.using(:main_shard).find(options['user_id'].to_i)
     plan = user.subscription.plan
+    emails = ['alex@test.com', 'batman34@gmail.com']
+    if emails.include?(user.email)
+      puts 'this user is allowed to run unlimted crawls'
+      crawls_at_the_same_time = 100
+    else
+      crawls_at_the_same_time = plan.crawls_at_the_same_time
+    end
     
     if user.minutes_used.to_f < 4500.to_f
       
@@ -92,7 +99,7 @@ class Crawl < ActiveRecord::Base
       puts "the number of pending crawls is #{number_of_pending_crawls}"
       puts "the number of running crawls is #{number_of_running_crawls}"
       
-      if number_of_running_crawls < plan.crawls_at_the_same_time
+      if number_of_running_crawls < crawls_at_the_same_time
         if number_of_pending_crawls > 0
           number_of_apps_running = HerokuPlatform.new.app_list.count
           puts "the number of apps running are #{number_of_apps_running}"
@@ -235,8 +242,9 @@ class Crawl < ActiveRecord::Base
       new_site.create_gather_links_batch(status: "pending")
     end
     
+    crawl.update(status: 'running')
     GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
-    HerokuApp.using("#{processor_name}").update(crawl.heroku_app.id, status: 'running')
+    # HerokuApp.using("#{processor_name}").update(crawl.heroku_app.id, status: 'running')
 
   end
   
