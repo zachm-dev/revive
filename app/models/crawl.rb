@@ -118,20 +118,44 @@ class Crawl < ActiveRecord::Base
               
               available_crawls = ( (list_of_all_crawls | names_of_running_crawls) - names_of_running_crawls ).to_a
               puts "list of available crawls #{available_crawls}"
-            
-              if !available_crawls.empty?
+              
+              if available_crawls.empty?
+                crawl_with_least = []
+                running_crawls_hash = JSON.parse($redis.get('list_of_running_crawls')).each_with_index.map{|crawl,index| {'name' => crawl['name'], 'count' => crawl['crawls'].count}}
+                running_crawls_hash.each do |crawl|
+                  if crawl_with_least.empty?
+                    crawl_with_least = crawl
+                  else
+                    crawl_with_least_count = crawl_with_least['count'].to_i
+                    if crawl['count'].to_i < crawl_with_least_count
+                      crawl_with_least = crawl
+                    end
+                  end
+                end
+                hash_to_append_new_crawl = list_of_running_crawls.select{|crawl| crawl['name'] == crawl_with_least['name']}
+                puts "hash_to_append_new_crawl #{hash_to_append_new_crawl}"
+                list_of_runnign_crawls_without_old_hash = list_of_running_crawls.reject{|crawl| crawl['name'] == crawl_with_least['name']}
+                puts "list_of_runnign_crawls_without_old_hash #{list_of_runnign_crawls_without_old_hash}"
+                new_crawl_to_run = {"crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}
+                puts "new_crawl_to_run #{new_crawl_to_run}"
+                new_hash_with_new_crawl = {"name"=>name, "crawls"=> hash_to_append_new_crawl['crawls'].push(new_crawl_to_run)}
+                puts "new_hash_with_new_crawl #{new_hash_with_new_crawl}"
+                new_running_crawl_hash = list_of_runnign_crawls_without_old_hash.push(new_hash_with_new_crawl)
+                puts "new_running_crawl_hash #{new_running_crawl_hash}"
+                $redis.set('list_of_running_crawls', new_running_crawl_hash.to_json)
+                Api.delay.start_crawl('app_name' => crawl_with_least['name'], 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
+              else
                 name = available_crawls[0]
-                available_crawl_hash = {"name"=>name, "crawls"=>{"crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}}
+                available_crawl_hash = {"name"=>name, "crawls"=>[{"crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}]}
                 updated_list_of_running_crawls = list_of_running_crawls.push(available_crawl_hash)
                 puts "the updated list of running crawls is #{updated_list_of_running_crawls}"
                 $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
-                
                 Api.delay.start_crawl('app_name' => name, 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
               end
             
             else
               puts "there is not a list of running crawls saved on redis"
-              available_crawl_hash = {"name"=>'revivecrawler1', "crawls"=>{"crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}}
+              available_crawl_hash = {"name"=>'revivecrawler1', "crawls"=>[{"crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}]}
               $redis.set('list_of_running_crawls', [available_crawl_hash].to_json)
               Api.delay.start_crawl('app_name' => name, 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
             end
