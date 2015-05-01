@@ -24,13 +24,18 @@ class GatherLinks
         process = false
       end
       
-      # Link.using(:master).create(site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name'])
-      
       redis_id = SecureRandom.hex+Time.now.to_i.to_s
       
       $redis.set(redis_id, {site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name']}.to_json)
       
-      Link.start_processing('redis_id' => redis_id)
+      # redis_keys = Rails.cache.read(["crawl/#{crawl_id}/redis_keys"]).to_a
+      # Rails.cache.write(["crawl/#{crawl_id}/redis_keys"], redis_keys.push(redis_id))
+      
+      if process == true
+        ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
+        Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
+        Link.start_processing
+      end
       
     end
   end

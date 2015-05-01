@@ -44,7 +44,9 @@ class ProcessLinks
   end
   
   def on_complete(status, options={})
-    puts "finished processing batch #{options}"
+    puts "finished processing batch #{options} and calling new batch to process"
+    
+    Link.delay.start_processing
     
     processor_name = options['processor_name']
     
@@ -59,8 +61,8 @@ class ProcessLinks
     progress = (total_crawl_finished.to_f/total_crawl_count.to_f)*100.to_f
     Rails.cache.write(["crawl/#{options['crawl_id']}/progress"], progress, raw: true)
     
-    ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
-    Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
+    # ids = Rails.cache.read(["crawl/#{options['crawl_id']}/processing_batches/ids"])
+    # Rails.cache.write(["crawl/#{options['crawl_id']}/processing_batches/ids"], ids-[options['link_id']])
     
     if total_crawl_running <= 0 && Sidekiq::Stats.new.workers_size == 0
       puts "shut down app and update crawl stats and user stats, crawl id #{options['crawl_id']}"

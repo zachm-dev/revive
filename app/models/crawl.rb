@@ -53,6 +53,9 @@ class Crawl < ActiveRecord::Base
   def setCrawlStartingVariables(options={})
     puts "setting crawl starting variables"
     
+    running_crawls = Rails.cache.read(['running_crawls']).to_a
+    Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
+    
     Rails.cache.write(["crawl/#{self.id}/start_time"], Time.now, raw: true)
     Rails.cache.write(["crawl/#{self.id}/total_minutes_to_run"], options['total_minutes'].to_i, raw: true)
     
