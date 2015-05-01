@@ -63,6 +63,11 @@ class Link < ActiveRecord::Base
           redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site.id, redis_obj['found_on'], domain, site.crawl_id, 'processor_name' => processor_name)}
         end
         
+      else
+        
+        new_crawls_rotation = running_crawls.rotate
+        Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
+        Rails.cache.write(['running_crawls'], new_crawls_rotation)
         
       end
 
