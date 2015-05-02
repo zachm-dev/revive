@@ -3,8 +3,8 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 .project_panel_heading {
-	padding: 2px 15px 0px 15px !important;
-	height: 25px !important;
+	padding: 10px 15px 0px 15px !important;
+//	height: 25px !important;
 	color: #fff !important;
 }
 
@@ -13,23 +13,23 @@
 }
 
 .project_stats_container {
-	height: 150px;
+	height: 110px;
 	color: white;
 }
 
 .project_stats_container li {
     display: inline-block;
     *display:inline;
-	border-right: 1px solid #fff;
+	border-right: 1px solid #eee;
 }
 
 .project_stats_container li:first-child {
-	border-radius: 5px 0px 0px 5px;
+	border-radius: 0px 0px 0px 5px;
 }
 
 .project_stats_container li:last-child {
 	border-right: 0;
-	border-radius: 0px 5px 5px 0px;
+	border-radius: 0px 0px 5px 0px;
 }
 
 .yellow_stat {
@@ -52,10 +52,11 @@
 	font-size: 14px;
 	font-weight: bold;
 	margin-top: 10px;
+	color: #8f8f8f;
 }
 
 .stat_value {
-	margin-top: 25px;
+	margin-top: 15px;
 	font-size: 24px;
 	font-weight: bold;
 }

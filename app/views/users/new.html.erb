@@ -1,6 +1,12 @@
+<div class='revive_top_nav_header_container'>
+	<div class='revive_top_nav_logo text-center'>
+		<a class="navbar-brand" href="/">REV⚕VE</a>
+	</div>
+</div>
+
 <div class="signup_form_container">
 
-	<h1>Sign Up</h1>
+	<h1 class='text-center'>Sign Up</h1>
 
 	<%= form_for @user do |f| %>
 		
@@ -56,8 +62,8 @@
 			<div class="or-rule-after"></div>
 		</span>
 		
-		<div class="actions pull-right">
-			<%= link_to "Sign In", login_path %>
+		<div class="btn-block free_uni_btn">
+			<%= link_to "Sign In", login_path, class: 'btn btn-lg btn-block btn-success free_uni_btn_link' %>
 		</div>
 		
 	<% end %>

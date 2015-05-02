@@ -266,7 +266,7 @@ html, body  {
 }
 
 .pink_form_submit_btn {
-	background-color: $pink;
+	background-color: #0F81D5;
 	color: #fff;
 	width: 100%;
 	padding: 15px 0px;
@@ -306,7 +306,7 @@ html, body  {
 	border-top: 1px solid #222;
 	content: "";
 	position: absolute;
-	width: 45%;
+	width: 25%;
 	left: 0;
 	top: 50%;
 }
@@ -316,7 +316,7 @@ html, body  {
 	border-top: 1px solid #222;
 	content: "";
 	position: absolute;
-	width: 45%;
+	width: 25%;
 	right: 0;
 	left: auto;
 	top: 50%;
@@ -358,7 +358,7 @@ Licensed under MIT
   color: #a6a6a6;
 }
 .tabbable-line > .nav-tabs > li.open, .tabbable-line > .nav-tabs > li:hover {
-  border-bottom: 4px solid #fbcdcf;
+  border-bottom: 4px solid #c3d8e8;
 }
 .tabbable-line > .nav-tabs > li.open > a, .tabbable-line > .nav-tabs > li:hover > a {
   border: 0;
@@ -372,7 +372,7 @@ Licensed under MIT
   margin-top: 0px;
 }
 .tabbable-line > .nav-tabs > li.active {
-  border-bottom: 4px solid #f3565d;
+  border-bottom: 4px solid #0F81D5;
   position: relative;
 }
 .tabbable-line > .nav-tabs > li.active > a {
@@ -485,12 +485,12 @@ Licensed under MIT
 //}
 
 .pagination > .active > span {
-	background-color: $pink !important;
-	border-color: $pink !important;
+	background-color: #0f81d5 !important;
+	border-color: #0f81d5 !important;
 }
 
 .pagination > li > a {
-	color: $pink !important;
+	color: #0f81d5 !important;
 }
 
 // Alert
@@ -559,16 +559,184 @@ Licensed under MIT
 	padding-bottom: 10px !important;
 }
 
+//UI UPDATE STARTS HERE
 
+.main_left_container {
+	font-size: 14px;
+}
 
+.left_nav_bg {
+	background-color: #0f81d5;
+}
 
+.left_nav_container {
+	width: 230px;
+}
 
+.left_nav_top_logo {
+	margin-top: 20px;
+	display: flex;
+}
 
+.left_nav_top_logo a {
+	width: 100%;
+	text-align: center;
+	font-size: 35px;
+	font-weight: lighter;
+	color: #fff;
+}
 
+.left_nav_dropdown {
+	margin-top: 20px;
+}
 
+.left_nav_dropdown > .navbar-collapse {
+	padding-right: 0px;
+	padding-left: 0px;
+}
 
+.left_nav_dropdown .navbar-right {
+	float: left !important;
+	margin-right: 0px;
+}
 
+.left_nav_dropdown .nav > li > a {
+	padding: 0px 0px;
+}
 
+.left_nav_dropdown .navbar-nav > li > a {
+	color: #fff;
+	width: 230px;
+	text-align: center;
+}
+
+.left_nav_container {
+	margin-top: 30px;
+}
+
+.left_nav_container li {
+	float: left;
+}
+
+.left_nav_container .glyph_text {
+	display: inline;
+}
+
+.left_nav_container li {
+	text-align: inherit;
+	padding-left: 15px;
+	border-bottom: 1px solid #118ed9;
+	border-top: 1px solid #016dbc;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.left_nav_container li:hover {
+	background-color: #016dbc;
+}
+
+.left_nav_container li:last-child {
+	border-bottom: none;
+}
+
+.left_nav_container li a {
+	color: #a9d7fa;
+	display: block;
+}
+
+.left_nav_container li a:hover {
+	color: #fff;
+}
+
+.left_nav_container li.active a {
+	color: #fff;
+}
+
+.dashboard_stats_container .title_text {
+	color: #464646;
+}
+
+.dashboard_stats_container {
+	border-right: 1px solid #ccc;
+}
+
+.dashboard_stats_container:last-child {
+	border-right: none;
+}
+
+.panel_blue_heading {
+	background-color: #0F81D5 !important;
+}
+
+.video_row_thumb {
+	float: left;
+	width: 20%;
+}
+
+.free_uni_btn {
+	margin-top: 25px;
+}
+
+.free_uni_btn a {
+	background-color: transparent;
+	border-color: #4E9ADA;
+	color: #4E9ADA;
+}
+
+.free_uni_btn a:hover {
+	background-color: #0F81D5;
+	border-color: #4E9ADA;
+	color: #fff;
+}
+
+.start_crawling_btn a {
+	padding: 20px 0px;
+}
+
+.start_crawling_btn input {
+	padding: 20px 0px;
+}
+
+.crawls_index_action_stats_container:nth-child(even) {
+	padding-right: 0px;
+}
+
+.crawls_index_action_stats_container:nth-child(odd) {
+	padding-left: 0px;
+}
+
+.crawls_index_action_stats_container .panel {
+	border-radius: 10px;
+}
+
+.crawls_index_action_stats_container .project_panel_heading {
+	border-top-right-radius:10px;
+	border-top-left-radius:10px;
+}
+
+.crawls_index_action_stats_container .panel-body {
+	padding: 0px;
+}
+
+.top_nav_title_container div {
+	padding-top: 10px;
+}
+
+.revive_top_nav_header_container {
+	width: 100%;
+	height: 90px;
+	background-color: #0f81d5;
+}
+
+.revive_top_nav_logo {
+	padding-top: 30px;
+}
+
+.revive_top_nav_logo a {
+	float: none;
+	font-size: 50px;
+	color: #fff;
+}
 
 
 

@@ -1,0 +1,134 @@
+<%= render 'tracking' %>
+<div class="main_page_container">
+	<div class='container-fluid header_title_container'>
+		<div class='row'>
+			<div class='col-xs-12'>
+				<div class="header_title_content">
+					<div class='header_glyph'>
+						<span class='glyphicon glyphicon-stats' aria-hidden="true"></span>
+					</div>
+					<div class='header_text'>
+						<p>This Weeks Daily Activity</p>
+					</div>
+				</div>
+				
+				<%= link_to 'Help & Support', 'https://www.facebook.com/groups/1557416241176094/', class: 'pull-right' %>
+				
+			</div>
+		</div>
+	</div>
+	
+	<div class='container-fluid container_section'>
+		<div class='row'>
+			<div class='col-xs-12'>
+				<%= render 'minutes/used_minutes' %>
+			</div>
+		</div>
+	</div>
+	
+	<div class='container-fluid container_section'>
+		<div class='row'>
+					
+			<div class='col-xs-12 text-center'>
+						<div class='panel'>
+							<div class='panel-body'>
+								<div class='row'>
+
+									<div class='col-xs-3 dashboard_stats_container'>
+										<div class='title_text'>
+											<p>DOMAINS CRAWLED</p>
+										</div>
+										<div class='row'>
+											<div class='stat_circle_container glyph_blue'>
+												<%= @dashboard.domains_crawled.to_i %>
+											</div>
+										</div>
+									</div>
+									
+									<div class='col-xs-3 dashboard_stats_container'>
+										<div class='title_text'>
+											<p>BROKEN DOMAINS</p>
+										</div>
+										<div class='row'>
+											<div class='stat_circle_container glyph_blue'>
+												<%= @dashboard.domains_broken.to_i %>
+											</div>
+										</div>
+									</div>
+									
+									<div class='col-xs-3 dashboard_stats_container'>
+										<div class='title_text'>
+											<p>EXPIRED DOMAINS</p>
+										</div>
+										<div class='row'>
+											<div class='stat_circle_container glyph_blue'>
+												<%= @dashboard.domains_expired.to_i %>
+											</div>
+										</div>
+									</div>
+									
+									<div class='col-xs-3 dashboard_stats_container'>
+										<div class='title_text'>
+											<p>Pending / Running / Done</p>
+										</div>
+										<div class='row'>
+											<div class='stat_circle_container glyph_blue'>
+												<%= @dashboard.pending_crawlers.to_i %> / 
+												<%= @dashboard.running_crawlers.to_i %> / 
+												<%= @dashboard.done_crawlers.to_i  %>
+											</div>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+
+		</div>
+	</div>
+	
+	<div class='container-fluid container_section'>
+		<div class='col-xs-12'>
+			
+			<% if current_user.crawls.count <= 50 %>
+				
+					<div class='panel panel-success panel-default'>
+						<div class='panel-heading panel_blue_heading panel_glyph_container'>
+							<div class='header_glyph'>
+								<span class='glyphicon glyphicon-ok' aria-hidden="true"></span>
+							</div>
+							<div class='header_text'>
+								<p>If You Are Having Trouble Finding Domains, Watch This!</p>
+							</div>
+						</div>
+						<div class='panel-body'>
+							<%= render 'getting_started_videos' %>
+							<div class='btn-block free_uni_btn'>
+								<%= link_to 'Begin Your Free Month At Source University Here', 'http://source-wave.com/university/enrollment/?rid=p8S0Cx', class:'btn btn-lg btn-block btn-success free_uni_btn_link' %>
+								<%#= link_to 'Start Crawling', new_crawl_path, class:'btn btn-lg btn-block btn-success' %>
+							</div>
+						</div>
+					</div>
+				
+			<% end %>
+		</div>
+	</div>
+	
+	
+	
+	<%= render 'top_domains' %>
+	
+	<div class='row'>
+		<div class='col-xs-12'>
+			<div class='row'>
+				<div class='col-xs-12'>
+					<div class='btn-block start_crawling_btn'>
+						<%= link_to 'Start Crawling', new_crawl_path, class:'btn btn-lg btn-block btn-success start_crawling_btn_link' %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

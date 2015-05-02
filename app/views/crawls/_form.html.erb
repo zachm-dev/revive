@@ -2,7 +2,7 @@
 	
 	<%= form_for @project do |f| %>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :name, 'Crawl Name' %>
@@ -14,7 +14,7 @@
 			
 		</div>
 
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= label_tag :urls, "URL List" %>
@@ -26,7 +26,7 @@
 			
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 
@@ -48,7 +48,7 @@
 			
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :crawl_total_time, "Crawl Total Time" %>
@@ -84,7 +84,7 @@
 			</div>
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :moz_da, "Moz DA" %>
@@ -96,7 +96,7 @@
 			
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :majestic_tf, "Majestic TF" %>
@@ -145,8 +145,8 @@
 		<% if @project.id.nil? %>
 		<div class="field_container text-center pink_form_submit_btn_container">
 			
-			<div class="field_label">
-				<%= f.submit "BEGIN REVIVING", class: 'btn teal_form_submit_btn' %>
+			<div class="btn-block start_crawling_btn">
+				<%= f.submit "BEGIN REVIVING", class: 'btn btn-lg btn-block btn-success start_crawling_btn_link' %>
 			</div>
 			
 		</div>

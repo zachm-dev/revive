@@ -2,7 +2,7 @@
 	
 	<%= form_for @project, :url => create_keyword_crawl_path, method: 'post' do |f| %>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :name, 'Crawl Name' %>
@@ -14,7 +14,7 @@
 			
 		</div>
 
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :keyword, "Niche Keyword" %>
@@ -26,7 +26,7 @@
 			
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :maxpages, "Number Of Pages To Crawl" %>
@@ -38,7 +38,7 @@
 			
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :crawl_total_time, "Crawl Total Time" %>
@@ -47,7 +47,7 @@
 		</div>
 		
 		<div class='col-xs-6' id="crawl_start_date_input">
-			<div class="field_container text-center">
+			<div class="field_container">
 			
 				<div class="field_label">
 					<%= f.label :hours, "Total Hours" %>
@@ -61,7 +61,7 @@
 		</div>
 		
 		<div class='col-xs-6' id='crawl_end_date_input'>
-			<div class="field_container text-center">
+			<div class="field_container">
 			
 				<div class="field_label">
 					<%= f.label :minutes, "Total Minutes" %>
@@ -74,7 +74,7 @@
 			</div>
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :moz_da, "Moz DA" %>
@@ -86,7 +86,7 @@
 			
 		</div>
 		
-		<div class="field_container text-center">
+		<div class="field_container">
 			
 			<div class="field_label">
 				<%= f.label :majestic_tf, "Majestic TF" %>
@@ -111,7 +111,7 @@
 		</div> -->
 		
 		<div class='col-xs-6' id="crawl_start_date_input">
-			<div class="field_container text-center">
+			<div class="field_container">
 			
 				<div class="field_label">
 					<%= f.label :crawl_start_date, "Crawl Start Date" %>
@@ -125,7 +125,7 @@
 		</div>
 		
 		<div class='col-xs-6' id='crawl_end_date_input'>
-			<div class="field_container text-center">
+			<div class="field_container ">
 			
 				<div class="field_label">
 					<%= f.label :crawl_end_date, "Crawl End Date" %>
@@ -159,7 +159,7 @@
 
 		</div> -->
 		<% if @project.id.nil? %>
-		<div class="field_container text-center pink_form_submit_btn_container">
+		<div class="field_containerpink_form_submit_btn_container">
 			
 			<div class="field_label">
 				<%= f.submit "BEGIN REVIVING", class: 'btn teal_form_submit_btn' %>

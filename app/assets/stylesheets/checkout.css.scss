@@ -167,7 +167,16 @@ body, html {
 .checkout_header {
 	height: 75px;
 	width: 100%;
-	background-color: #FF3B61;
+	background-color: #0F81D5;
+}
+
+.checkout_header_logo {
+	margin-top: 10px;
+}
+
+.checkout_header_logo a {
+	color: #fff;
+	font-size: 30px;
 }
 
 .checkout_header_logo img {
@@ -194,14 +203,14 @@ body, html {
 	font-size: 30px;
 	font-weight: lighter;
 	padding: 15px 0px;
-	background-color: #FF3B61;
-	border: 3px solid #FF3B61;
+	background-color: #0F81D5;
+	border: 3px solid #0F81D5;
 }
 
 .checkout_form_submit_btn input[type=submit]:hover {
 	background-color: #fff;
-	color: #FF3B61;
-	border: 3px solid #FF3B61;	
+	color: #0F81D5;
+	border: 3px solid #0F81D5;	
 }
 
 .order_total_container {

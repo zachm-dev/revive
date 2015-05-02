@@ -307,7 +307,7 @@ class Crawl < ActiveRecord::Base
       ]
 
       #f.legend(:align => 'right', :verticalAlign => 'top', :y => 75, :x => -50, :layout => 'vertical',)
-      f.chart({:defaultSeriesType=>"bar", backgroundColor: "#F4F4F2"})
+      f.chart({:defaultSeriesType=>"bar", backgroundColor: "#fff"})
     end
   end
 
