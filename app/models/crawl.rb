@@ -413,8 +413,8 @@ class Crawl < ActiveRecord::Base
       if !$redis.get('redis_urls').nil? && list_of_running_crawls[0].has_key?(app_name)
         redis_url = JSON.parse($redis.get('redis_urls'))[app_name]
         redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
-        updated_array_of_running_crawls_on_app = redis.read(['running_crawls']) - [options['crawl_id'].to_i]
-        redis.write(['running_crawls'], updated_array_of_running_crawls_on_app)
+        updated_array_of_running_crawls_on_app = redis_cache_connection.read(['running_crawls']) - [options['crawl_id'].to_i]
+        redis_cache_connection.write(['running_crawls'], updated_array_of_running_crawls_on_app)
         puts "removed #{options['crawl_id'].to_i} from app and updated running crawls array to #{updated_array_of_running_crawls_on_app}"
       else
         heroku = HerokuPlatform.new
@@ -427,8 +427,8 @@ class Crawl < ActiveRecord::Base
           $redis.set('redis_urls', redis_urls.to_json)
         end
         redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
-        updated_array_of_running_crawls_on_app = redis.read(['running_crawls']) - [options['crawl_id'].to_i]
-        redis.write(['running_crawls'], updated_array_of_running_crawls_on_app)
+        updated_array_of_running_crawls_on_app = redis_cache_connection.read(['running_crawls']) - [options['crawl_id'].to_i]
+        redis_cache_connection.write(['running_crawls'], updated_array_of_running_crawls_on_app)
         puts "removed #{options['crawl_id'].to_i} from app and updated running crawls array to #{updated_array_of_running_crawls_on_app}"
       end
     end
