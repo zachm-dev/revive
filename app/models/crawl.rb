@@ -410,7 +410,7 @@ class Crawl < ActiveRecord::Base
     if !crawl_to_shut_down.empty?
       app_name = crawl_to_shut_down[0]['name']
       
-      if !$redis.get('redis_urls').nil? && list_of_running_crawls.has_key?(app_name)
+      if !$redis.get('redis_urls').nil? && list_of_running_crawls[0].has_key?(app_name)
         redis_url = JSON.parse($redis.get('redis_urls'))[app_name]
         redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
         updated_array_of_running_crawls_on_app = redis.read(['running_crawls']) - [options['crawl_id'].to_i]
