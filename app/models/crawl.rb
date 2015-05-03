@@ -430,7 +430,7 @@ class Crawl < ActiveRecord::Base
     
     list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
     updated_list_of_running_crawls = list_of_running_crawls.reject{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
-    redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
+    $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
     puts "removed crawl #{options['crawl_id']} and updated the list of running crawls"
     
     crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
