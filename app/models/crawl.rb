@@ -372,35 +372,7 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.shut_down(options={})
-    # list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
-    # crawl_that_is_shutting_down_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|crawl| crawl['crawls'].has_value?(options['crawl_id'].to_i)}
-    # if !crawl_that_is_shutting_down_obj.empty?
-    #   app_name = crawl_that_is_shutting_down_obj[0]['name']
-    #   processor_name = crawl_that_is_shutting_down_obj[0]['crawls']["processor_name"]
-    #   updated_list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['name'].include?(app_name)}
-    #
-    #   if !$redis.get('redis_urls').nil? && JSON.parse($redis.get('redis_urls')).has_key?(app_name)
-    #     redis_url = JSON.parse($redis.get('redis_urls'))[app_name]
-    #     new_redis_connection = Redis.new(url: redis_url)
-    #     new_redis_connection.del(new_redis_connection.keys)
-    #     $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
-    #   else
-    #     heroku = HerokuPlatform.new
-    #     redis_url = heroku.get_env_vars_for(app_name, ['REDISCLOUD_URL'])['REDISCLOUD_URL']
-    #     if $redis.get('redis_urls').nil?
-    #       redis_urls = $redis.set('redis_urls', {"#{app_name}" => redis_url}.to_json)
-    #     else
-    #       redis_urls = JSON.parse($redis.get('redis_urls'))
-    #       redis_urls[app_name] = redis_url
-    #       $redis.set('redis_urls', redis_urls.to_json)
-    #     end
-    #     new_redis_connection = Redis.new(url: redis_url)
-    #     new_redis_connection.del(new_redis_connection.keys)
-    #     $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
-    #   end
-    # end
-    
-    
+
     list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
     crawl_to_shut_down = list_of_running_crawls.select{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
     updated_list_of_running_crawls = list_of_running_crawls.reject{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
@@ -445,6 +417,31 @@ class Crawl < ActiveRecord::Base
         heroku_app.update(status: status)
       end
     end
+    
+  end
+  
+  def self.get_available_domains(options={})
+    available_domains = Rails.cache.read(["user/#{options['user_id']}/available_domains"]).to_a
+    if available_domains.empty?
+      return Crawl.save_available_domains('user_id' => options['user_id'])
+    else
+      return available_domains.map{|crawl| crawl['expired_domains']}.flatten(1)
+    end
+  end
+  
+  def self.save_available_domains(options={})
+    processor_names_array = ["processor", "processor_one", "processor_two", "processor_three", "processor_four"]
+    crawls_array = []
+    processor_names_array.each do |processor|
+      Crawl.using("#{processor}").where(user_id: options['user_id'].to_i, status: 'finished').each do |crawl|
+        crawls_array << {'crawl_id' => crawl.id, 'expired_count' => crawl.total_expired, 'expired_domains' => crawl.available_sites}
+      end
+    end
+    Rails.cache.write(["user/#{options['user_id']}/available_domains"], crawls_array)
+    return crawls_array.map{|crawl| crawl['expired_domains']}.flatten(1)
+  end
+  
+  def self.update_available_domains(options={})
     
   end
   

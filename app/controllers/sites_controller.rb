@@ -2,8 +2,10 @@ class SitesController < ApplicationController
   before_filter :authorize
   
   def index
-    crawl = Crawl.using(:processor).find(params[:id])
-    @sites = crawl.sites.all
+    @available = Crawl.get_available_domains('user_id' => params['user_id'])
+    page = params[:page].nil? ? 1 : params[:page].to_i
+    sort = params[:sort].nil? ? 2 : params[:sort].to_i
+    @pages = @available.sort_by{|k|k[sort].to_i}.reverse.paginate(:page => page, :per_page => 25)
   end
   
   def show
@@ -40,18 +42,6 @@ class SitesController < ApplicationController
     else
       @available = @crawl.save_available_sites
     end
-    
-    # @available = Rails.cache.fetch(["crawl/#{params[:id]}/available/#{params["processor_name"]}"]){Page.using(params["processor_name"]).where(crawl_id: params[:id], available: 'true')}
-
-    # if !@crawl.moz_da.nil? && !@crawl.majestic_tf.nil?
-    #   @pages = @available.where('pages.da >= ? AND pages.trustflow >= ?', @crawl.moz_da, @crawl.majestic_tf).order("#{sort} DESC").page(params[:page]).per_page(25)
-    # elsif !@crawl.moz_da.nil?
-    #   @pages = @available.where('pages.da >= ?', @crawl.moz_da).order("#{sort} DESC").page(params[:page]).per_page(25)
-    # elsif !@crawl.majestic_tf.nil?
-    #   @pages = @available.where('pages.trustflow >= ?', @crawl.majestic_tf).order("#{sort} DESC").page(params[:page]).per_page(25)
-    # else
-    #   @pages = @available.order("#{sort} DESC").page(params[:page]).per_page(25)
-    # end
     
     page = params[:page].nil? ? 1 : params[:page].to_i
     sort = params[:sort].nil? ? 2 : params[:sort].to_i
