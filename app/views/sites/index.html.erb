@@ -24,7 +24,6 @@
 								
 								<thead>
 									<tr>
-										<th class="col-xs-1"></th>
 										<th>DOMAIN</th>
 										<th class="col-xs-1">											
 											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2') %>
@@ -52,7 +51,6 @@
 								<tbody>
 									<% @pages.each do |i| %>
 										<tr>
-											<td><%= check_box_tag "page_ids[]", i[0] %></td>
 											<td>
 												<%= link_to copy_to_clipboard_path(msg: "http://#{i[1]}"), class: 'copy_to_clipboard_button has-tooltip', data: {'toggle' => 'tooltip', 'placement' => 'top'}, title: "Copy To Clipboard", remote: true do %>
 												    <i class="glyphicon glyphicon-list-alt">
