@@ -6,30 +6,37 @@ octopus:
     main_shard:
       adapter: postgresql
       database: crawler_development
+      host: localhost
       pool: 3
     master:
       adapter: postgresql
       database: crawler_development
+      host: localhost
       pool: 25
     processor:
       adapter: postgresql
       database: crawler_development
+      host: localhost
       pool: 25
     processor_one:
       adapter: postgresql
       database: crawler_development
+      host: localhost
       pool: 25
     processor_two:
       adapter: postgresql
       database: crawler_development
+      host: localhost
       pool: 25
     processor_three:
       adapter: postgresql
       database: crawler_development
+      host: localhost
       pool: 25
     processor_four:
       adapter: postgresql
       database: crawler_development
+      host: localhost
       pool: 25
   production:
     <% if ENV["DB_NAME"].present? %>

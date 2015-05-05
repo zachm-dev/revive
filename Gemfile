@@ -41,6 +41,7 @@ gem 'bootstrap-datepicker-rails'
 gem 'redis-rails'
 gem 'chronic'
 gem 'clipboard'
+gem 'ar-octopus'
 
 # Development Things
 group :development do
@@ -53,10 +54,6 @@ group :development do
   gem 'pry-byebug'
   gem 'awesome_print'
   gem 'quiet_assets'
-end
-
-group :production do
-  gem 'ar-octopus'
 end
 
 # APIs

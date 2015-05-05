@@ -16,6 +16,7 @@ ActiveRecord::Schema.define(version: 20150428160756) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+  enable_extension "pg_stat_statements"
 
   create_table "crawls", force: :cascade do |t|
     t.string   "name"
@@ -328,6 +329,8 @@ ActiveRecord::Schema.define(version: 20150428160756) do
   end
 
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "user_dashboards", "users"
+  add_foreign_key "users", "subscriptions"
   add_foreign_key "users", "subscriptions"
 end
