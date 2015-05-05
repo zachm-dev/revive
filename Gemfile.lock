@@ -61,6 +61,9 @@ GEM
       activerecord (>= 3.0)
     addressable (2.3.7)
     aggregate (0.2.2)
+    annotate (2.6.8)
+      activerecord (>= 3.2, <= 4.3)
+      rake (~> 10.4)
     ar-octopus (0.8.5)
       activerecord (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -329,6 +332,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_list
+  annotate (~> 2.6.6)
   ar-octopus
   autoprefixer-rails
   awesome_print

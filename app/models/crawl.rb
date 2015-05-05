@@ -1,3 +1,44 @@
+# == Schema Information
+#
+# Table name: crawls
+#
+#  id                  :integer          not null, primary key
+#  name                :string
+#  created_at          :datetime
+#  updated_at          :datetime
+#  maxpages            :integer
+#  user_id             :integer
+#  app_url             :text
+#  app_name            :string
+#  total_urls_found    :integer
+#  total_pages_crawled :integer
+#  total_expired       :integer
+#  total_broken        :integer
+#  total_sites         :integer
+#  total_internal      :integer
+#  total_external      :integer
+#  moz_da              :integer
+#  majestic_tf         :integer
+#  notify_me_after     :integer
+#  keyword             :string
+#  status              :string
+#  base_urls           :text             default([]), is an Array
+#  crawl_type          :string
+#  base_keyword        :string
+#  notified            :boolean
+#  crawl_start_date    :string
+#  crawl_end_date      :string
+#  max_pages_allowed   :integer
+#  redis_url           :string
+#  progress            :float
+#  msg                 :string
+#  iteration           :integer
+#  db_url              :string
+#  processor_name      :string
+#  total_minutes       :integer
+#  available_sites     :text             default([]), is an Array
+#
+
 require 'retriever'
 require 'domainatrix'
 

@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: links
+#
+#  id             :integer          not null, primary key
+#  site_id        :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  links          :text             is an Array
+#  found_on       :text
+#  status         :string
+#  links_count    :integer
+#  started        :boolean
+#  process        :boolean
+#  crawl_id       :integer
+#  processor_name :string
+#
+
 require 'domainatrix'
 
 class Link < ActiveRecord::Base

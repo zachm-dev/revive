@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: sites
+#
+#  id                  :integer          not null, primary key
+#  crawl_id            :integer
+#  created_at          :datetime
+#  updated_at          :datetime
+#  maxpages            :integer
+#  notified            :boolean
+#  base_url            :text
+#  domain              :string
+#  da                  :float
+#  pa                  :float
+#  tf                  :float
+#  cf                  :float
+#  total_urls_found    :integer
+#  total_pages_crawled :integer
+#  total_expired       :integer
+#  total_broken        :integer
+#  total_internal      :integer
+#  total_external      :integer
+#  gather_status       :string
+#  processing_status   :string
+#
+
 require 'namecheap' 
 require 'domainatrix'
 class Site < ActiveRecord::Base

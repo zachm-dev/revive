@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: user_dashboards
+#
+#  id               :integer          not null, primary key
+#  user_id          :integer
+#  domains_crawled  :integer          default(0)
+#  domains_broken   :integer          default(0)
+#  domains_expired  :integer          default(0)
+#  pending_crawlers :integer          default(0)
+#  running_crawlers :integer          default(0)
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  done_crawlers    :integer          default(0)
+#  top_domains      :text             default([]), is an Array
+#
+# Indexes
+#
+#  index_user_dashboards_on_user_id  (user_id)
+#
+
 class UserDashboard < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :user_id
