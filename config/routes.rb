@@ -21,7 +21,6 @@ Rails.application.routes.draw do
   
   resources :pages
   resources :plans
-  resources :admins
 
   # Users
   resources :users

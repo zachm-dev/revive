@@ -26,6 +26,11 @@ class AdminsController < ApplicationController
     end
   end
 
+  def become_user
+    sign_in :user, User.find_by('email = ?', params[:email]), { bypass: true }
+    redirect_to root_url
+  end
+
   private
 
   def is_admin?
