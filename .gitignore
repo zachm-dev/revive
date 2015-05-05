@@ -28,3 +28,14 @@
 
 # Ignore dump.rdb
 dump.rdb
+
+*.rbc
+*.sassc
+*.sqo
+*.swp
+*.swo
+*~
+*.rb~
+*.rhtml~
+*.html.erb~
+*.rake~

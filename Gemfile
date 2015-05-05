@@ -54,6 +54,7 @@ group :development do
   gem 'pry-byebug'
   gem 'awesome_print'
   gem 'quiet_assets'
+  gem 'annotate', '~> 2.6.6'
 end
 
 # APIs

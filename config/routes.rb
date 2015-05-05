@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   
   resources :pages
   resources :plans
+  resources :admins
 
   # Users
   resources :users
@@ -32,7 +33,6 @@ Rails.application.routes.draw do
   get :account, to: 'users#account'
 
   # Sites
-
   resources :sites do
     collection do
       put 'sites/:id/save_bookmarked' => "sites#save_bookmarked", as: :save_bookmarked
