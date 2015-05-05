@@ -333,6 +333,8 @@ ActiveRecord::Schema.define(version: 20150508171648) do
   end
 
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "user_dashboards", "users"
+  add_foreign_key "users", "subscriptions"
   add_foreign_key "users", "subscriptions"
 end
