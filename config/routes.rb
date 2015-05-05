@@ -72,7 +72,10 @@ Rails.application.routes.draw do
 
   # Admin
   resources :admins do
-    get :become_user, on: :collection
+    collection do
+      get :become_user
+      get :edit_user
+    end
   end
 
   mount Sidekiq::Web, at: '/sidekiq'

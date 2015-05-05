@@ -755,7 +755,6 @@ form.find-user input{
 
 
 
-
 .pricing_plan_container {
 	width: 300px;
 	background-color: #2a2836;
@@ -865,3 +864,9 @@ form.find-user input{
 
 
 
+///////////////// MODAL //////////////////
+.modal .modal-header img.close{
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
