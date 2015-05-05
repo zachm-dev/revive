@@ -33,23 +33,31 @@
 #
 
 class User < ActiveRecord::Base
-  after_create :create_user_dashboard
-  before_create { generate_token(:auth_token) }
-
   has_secure_password
-
-  validates_uniqueness_of :email
-
-  validates :email, presence: true
 
   has_one :user_dashboard
   has_one :subscription
+  has_one :plan, through: :subscription
   has_many :crawls
   has_many :sites, through: :crawls
   has_many :pages, through: :sites
   has_many :gather_links_batches, through: :sites
   has_many :process_links_batches, through: :sites
   has_many :heroku_apps, through: :crawls
+
+  validates_uniqueness_of :email
+  validates :email, presence: true
+
+  after_create :create_user_dashboard
+  before_create { generate_token(:auth_token) }
+
+  def self.admin_search(query)
+    if query.present?
+      where("email ilike :q", q: "%#{query}%")
+    else
+      all
+    end
+  end
   
   def send_password_reset
     generate_token(:password_reset_token)
