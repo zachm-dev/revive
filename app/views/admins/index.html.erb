@@ -17,13 +17,15 @@
                 <thead>
                   <tr>
                     <th class='tracked'>Email</th>
+                    <th class="text-center">Login as user</th>
                     <th class="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% @users.each do |u| %>
                     <tr>
-                      <td><%= link_to u.email, '#' %></td>
+                      <td><%= u.email %></td>
+                      <td class='text-center'><%= link_to 'Login', become_user_admins_path(email: u.email), class: 'btn btn-default' %></td>
                       <td class='text-center'>
                         <%# link_to 'Edit', user_profile_admin_path(u.id), class: "new-btn new-btn-blue" %>
                       </td>

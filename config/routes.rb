@@ -18,7 +18,6 @@ Rails.application.routes.draw do
   resource :subscriptions
   resources :pages
   resources :plans
-  resources :admins
 
   # Users
   resources :users
@@ -64,6 +63,11 @@ Rails.application.routes.draw do
 
   resources :pending_crawls do
     collection {post :sort}
+  end
+
+  # Admin
+  resources :admins do
+    get :become_user, on: :collection
   end
 
   mount Sidekiq::Web, at: '/sidekiq'
