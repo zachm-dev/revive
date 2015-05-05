@@ -38,24 +38,24 @@ gem 'unirest'
 gem 'premailer-rails'
 gem 'acts_as_list'
 gem 'bootstrap-datepicker-rails'
-gem 'ar-octopus'
 gem 'redis-rails'
 gem 'chronic'
 gem 'clipboard'
 
 # Development Things
 group :development do
-
   # Server Thing
   gem 'spring',  group: :development
-
   # Debuggers
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'pry'
   gem 'pry-byebug'
   gem 'awesome_print'
+end
 
+group :production do
+  gem 'ar-octopus'
 end
 
 # APIs
