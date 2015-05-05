@@ -50,6 +50,9 @@ class AdminsController < ApplicationController
     redirect_to root_url
   end
 
+  def edit_user
+  end
+
   private
 
   def is_admin?
