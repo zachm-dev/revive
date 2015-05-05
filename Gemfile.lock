@@ -201,6 +201,8 @@ GEM
     pry-byebug (3.1.0)
       byebug (~> 4.0)
       pry (~> 0.10)
+    quiet_assets (1.1.0)
+      railties (>= 3.1, < 5.0)
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
@@ -357,6 +359,7 @@ DEPENDENCIES
   premailer-rails
   pry
   pry-byebug
+  quiet_assets
   rails
   rails_12factor
   redis-rails
