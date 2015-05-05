@@ -27,7 +27,7 @@
                       <td><%= u.email %></td>
                       <td class='text-center'><%= link_to 'Login', become_user_admins_path(email: u.email), class: 'btn btn-default' %></td>
                       <td class='text-center'>
-                        <%# link_to 'Edit', user_profile_admin_path(u.id), class: "new-btn new-btn-blue" %>
+                        <%= link_to 'Edit user', edit_user_admins_path(user_id: u.id), class: 'btn btn-primary', remote: true %>
                       </td>
                     </tr>
                   <% end %>
@@ -45,3 +45,5 @@
     </div>
   </div>
 </div>
+<%= modal({id: 'edit-user-modal'}, 'Edit User') do %>
+<% end %>

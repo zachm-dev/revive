@@ -752,11 +752,9 @@ form.find-user input{
   padding-left: 15px;
 }
 
-
-
-
-
-
-
-
-
+///////////////// MODAL //////////////////
+.modal .modal-header img.close{
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
