@@ -5,6 +5,11 @@ class AdminsController < ApplicationController
     @users = User.admin_search(params[:query]).includes(:subscription).page(params[:page]).per_page(25)
   end
 
+  def become_user
+    sign_in :user, User.find_by('email = ?', params[:email]), { bypass: true }
+    redirect_to root_url
+  end
+
   private
 
   def is_admin?
