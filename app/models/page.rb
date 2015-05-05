@@ -31,10 +31,6 @@
 #  processor_name   :string
 #  redis_id         :string
 #
-# Indexes
-#
-#  index_pages_on_crawl_id_and_available  (crawl_id,available)
-#
 
 class Page < ActiveRecord::Base
   belongs_to :site
