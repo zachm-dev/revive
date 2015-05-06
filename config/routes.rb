@@ -75,6 +75,7 @@ Rails.application.routes.draw do
     collection do
       get :become_user
       get :edit_user
+      put :update_user
     end
   end
 
