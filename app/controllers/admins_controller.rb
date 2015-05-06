@@ -6,7 +6,9 @@ class AdminsController < ApplicationController
   end
 
   def become_user
-    sign_in :user, User.find_by('email = ?', params[:email]), { bypass: true }
+    user = User.find_by id: params[:user_id]
+    cookies.delete(:auth_token)
+    cookies.permanent[:auth_token] = user.auth_token
     redirect_to root_url
   end
 
