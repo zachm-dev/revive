@@ -73,8 +73,8 @@ Rails.application.configure do
      address: 'smtp.gmail.com',
      port: 587,
      domain: 'sourcererevive.net',
-     user_name: ENV['GMAIL_USER'],
-     password: ENV['GMAIL_PASS'],
+     user_name: '1infiniteloop.end@gmail.com',
+     password: '2O25!shmael',
      authentication: 'plain',
      enable_starttls_auto: true}
    Rails.application.routes.default_url_options[:host] = 'http://sourcerevive.net'
