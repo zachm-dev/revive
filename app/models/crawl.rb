@@ -186,9 +186,9 @@ class Crawl < ActiveRecord::Base
     end
     
     if base_urls.include?("\r\n")
-      urls_array = base_urls.split(/[\r\n]+/).map(&:strip)
+      urls_array = base_urls.split(/[\r\n]+/).map(&:strip).flatten
     else
-      urls_array = base_urls.split(",")
+      urls_array = base_urls.split(",").flatten
     end
     
     processors_hash = {}
