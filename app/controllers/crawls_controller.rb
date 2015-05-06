@@ -89,6 +89,15 @@ class CrawlsController < ApplicationController
     redirect_to crawls_path
   end
   
+  def new_reverse_crawl
+    @project = current_user.crawls.new
+  end
+  
+  def create_reverse_crawl
+    Crawl.delay.save_new_reverse_crawl(current_user.id, params[:url], params[:crawl])
+    redirect_to crawls_path
+  end
+  
   def edit
     @project = Crawl.using(params["processor_name"]).find(params[:id])
     total_minutes = @project.total_minutes.to_f
@@ -108,6 +117,7 @@ class CrawlsController < ApplicationController
   end
   
   def create_keyword_crawl
+    raise
     Crawl.delay.save_new_keyword_crawl(current_user.id, params[:crawl][:keyword], params[:crawl])
     redirect_to crawls_path
   end

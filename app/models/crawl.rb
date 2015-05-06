@@ -153,6 +153,13 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def self.save_new_reverse_crawl(user_id, url, options = {})
+    m = MajesticSeo::Api::Client.new(api_key: ENV['majestic_api_key'], environment: ENV['majestic_env'])
+    res = GetRefDomains.for_url('url' => url)
+    base_urls = res.select{|r| r["cf"].to_i < 30 || r['tf'].to_i < 30}.map{|r| r["url"]}.split(",").flatten
+    Crawl.save_new_crawl(user_id, base_urls, options)
+  end
+  
   def self.save_new_crawl(user_id, base_urls, options = {})
     
     user = User.using(:main_shard).find(user_id)

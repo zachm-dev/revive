@@ -54,6 +54,8 @@ Rails.application.routes.draw do
   post 'shut_down_crawl' => 'crawls#shut_down_crawl', as: :shut_down_crawl
   get 'crawls/keyword/new' => 'crawls#new_keyword_crawl', as: :new_keyword_crawl
   post 'crawls/keyword/create' => 'crawls#create_keyword_crawl', as: :create_keyword_crawl
+  get 'crawls/reverse/new' => 'crawls#new_reverse_crawl', as: :new_reverse_crawl
+  post 'crawls/reverse/create' => 'crawls#create_reverse_crawl', as: :create_reverse_crawl
   post 'api_create', to: 'crawls#api_create'
   post 'fetch_new_crawl', to: 'crawls#fetch_new_crawl'
   post 'call_crawl', to: 'crawls#call_crawl'
