@@ -1,7 +1,11 @@
 class PlansController < ApplicationController
 
   def index
-    render :layout => 'home'
+    if current_user
+      redirect_to dashboard_path
+    else
+      render :layout => 'home'
+    end
   end
 
 end
