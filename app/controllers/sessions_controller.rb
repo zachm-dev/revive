@@ -5,7 +5,6 @@ class SessionsController < ApplicationController
   end
   
   def create
-    # raise
     user = User.using(:main_shard).find_by_email(params[:email])
     if user && user.authenticate(params[:password])
       cookies.permanent[:auth_token] = user.auth_token
