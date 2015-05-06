@@ -51,6 +51,17 @@ class AdminsController < ApplicationController
   end
 
   def edit_user
+    @user = User.find_by id: params[:user_id]
+  end
+
+  def update_user
+    user = User.find_by id: params[:user][:user_id]
+    if user.update_attributes user_params
+      flash[:notice] = "#{user.email} has been updated."
+      redirect_to admins_path
+    else
+      flash[:error] = 'There was a problem updating.'
+    end
   end
 
   private
