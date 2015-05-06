@@ -117,7 +117,6 @@ class CrawlsController < ApplicationController
   end
   
   def create_keyword_crawl
-    raise
     Crawl.delay.save_new_keyword_crawl(current_user.id, params[:crawl][:keyword], params[:crawl])
     redirect_to crawls_path
   end
