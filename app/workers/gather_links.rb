@@ -18,11 +18,12 @@ class GatherLinks
       Rails.cache.increment(["crawl/#{crawl_id}/urls_found"], links_count)
       Rails.cache.increment(["site/#{site_id}/total_site_urls"], links_count)
       
-      if total_crawl_urls < max_pages_allowed
-        process = true
-      else
-        process = false
-      end
+      # if total_crawl_urls < max_pages_allowed
+      #   process = true
+      # else
+      #   process = false
+      # end
+      process = true
       
       redis_id = SecureRandom.hex+Time.now.to_i.to_s
       
@@ -34,7 +35,7 @@ class GatherLinks
       if process == true
         ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
         Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
-        Link.start_processing
+        Link.delay.start_processing
       end
       
     end
@@ -43,26 +44,27 @@ class GatherLinks
   def on_complete(status, options)
     puts "GatherLinks Just finished Batch #{options['bid']}"
     processor_name = options['processor_name']
+    site = Site.using("#{processor_name}").where(id: options['site_id'].to_i).first
+    crawl = site.crawl
     batch = GatherLinksBatch.using("#{processor_name}").where(batch_id: "#{options['bid']}").first
     if !batch.nil?
-      
-      site = Site.using("#{processor_name}").find(options['site_id'])
-      crawl = site.crawl
-      
+
       total_crawl_urls = Rails.cache.read(["crawl/#{crawl.id}/urls_found"], raw: true).to_i
-      total_site_urls = Link.using(:master).where(site_id: site.id).sum(:links_count)
+      # total_site_urls = Link.using(:master).where(site_id: site.id).sum(:links_count)
+      
       # total_time = Time.now - batch.started_at
       # pages_per_second = Link.where(site_id: site.id).count / total_time
       # est_crawl_time = total_urls_found / pages_per_second
       # crawl_total_urls = crawl.total_urls_found.to_i + total_urls_found
       
       crawl.update(total_urls_found: total_crawl_urls)
-      site.update(total_urls_found: total_site_urls, gather_status: 'finished')
+      # site.update(total_urls_found: total_site_urls, gather_status: 'finished')
+      site.update(gather_status: 'finished')
       batch.update(finished_at: Time.now, status: "finished")
-      
-      puts "checking if there are more sites to crawl #{crawl.id}"
-      GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
+
     end
+    puts "checking if there are more sites to crawl #{crawl.id}"
+    GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
   end
   
   def self.start(options = {})
@@ -75,7 +77,7 @@ class GatherLinks
       pending = running_crawl.gather_links_batches.where(status: 'pending').first
       puts "the pending crawl is #{pending.id} on the site #{pending.site.id}"
       site = pending.site
-
+      
       puts 'there is a site and gathering the links'
       gather_links_batch = Sidekiq::Batch.new
       site.update(gather_status: 'running')
