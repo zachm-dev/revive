@@ -9,7 +9,7 @@
 	<h1 class='text-center'>Log In</h1>
 	
 	<%= form_tag sessions_path do%>
-		
+		<%= hidden_field_tag "params", params %>
 		<div class="field_container">
 			
 			<div class="field_label">

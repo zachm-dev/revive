@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   
   resource :subscriptions
   get 'create_trial_for_existing_customer' => 'subscriptions#create_trial_for_existing_customer', as: :create_trial_for_existing_customer
+  get 'reactivate' => 'subscriptions#reactivate', as: :reactivate
   
   resources :pages
   resources :plans
