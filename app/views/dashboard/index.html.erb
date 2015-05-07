@@ -29,7 +29,7 @@
 	
 	
 	<% if !current_user.subscription.nil? %>
-		<% if current_user.subscription.status == 'active' %>
+		<% if current_user.subscription.status == 'canceled' %>
 			<div class='container-fluid container_section'>
 				<div class='row'>
 					<div class='col-xs-12'>
