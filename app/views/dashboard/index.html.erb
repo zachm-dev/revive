@@ -28,16 +28,18 @@
 	
 	
 	
-	<% if current_user.subscription.status == 'canceled' %>
-		<div class='container-fluid container_section'>
-			<div class='row'>
-				<div class='col-xs-12'>
-					<div class="alert alert-success text-center" role="alert">
-						<%= link_to 'Click Here To Sign Up For A 3 Day Free Trial To Source Revive!', create_trial_for_existing_customer_path('plan_id' => 1, 'trial_end' => 3), data: {confirm: 'Yes I want to Sign Up for the 3 day Free Trial to Source Revive!'} %>
+	<% if !current_user.subscription.nil? %>
+		<% if current_user.subscription.status == 'canceled' %>
+			<div class='container-fluid container_section'>
+				<div class='row'>
+					<div class='col-xs-12'>
+						<div class="alert alert-success text-center" role="alert">
+							<%= link_to 'Click Here To Sign Up For A 3 Day Free Trial To Source Revive!', create_trial_for_existing_customer_path('plan_id' => 1, 'trial_end' => 3), data: {confirm: 'Yes I want to Sign Up for the 3 day Free Trial to Source Revive!'} %>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		<% end %>
 	<% end %>
 	
 	<div class='container-fluid container_section'>
