@@ -10,3 +10,10 @@ $(document).on 'ready page:change', ->
 		$('#bookmark-sites-form').submit()
 		
 	console.log 'page changed'
+
+$(document).on 'ready page:load', ->
+  $('form#filter-sites :text').ionRangeSlider(
+    type: 'double',
+    grid: true,
+    min: 0,
+    max: 100)

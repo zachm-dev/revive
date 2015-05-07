@@ -20,6 +20,13 @@
 							
 						</div>
 						<div class="panel-body">
+
+              <%= form_tag sites_path, id: 'filter-sites' do %>
+                <%= text_field_tag :min %>
+                <%= text_field_tag :max %>
+                <%= submit_tag 'Filter' %>
+              <% end %>
+
 							<table class="table table-hover table-striped">
 								
 								<thead>
