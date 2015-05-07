@@ -13,13 +13,23 @@ class SortDomains
 
   def go
     filter_by_da_range if da_range
-    self.domains = domains.sort_by{|domain_array| domain_array[sort_key].to_i }.reverse
+    filter_by_tf_range if tf_range
+    sort
     [domains, da_range_str, tf_range_str]
+  end
+
+  def sort
+    self.domains = domains.sort_by{|domain_array| domain_array[sort_key].to_i }.reverse
   end
 
   def filter_by_da_range
     self.domains = domains.select{|domain_array| domain_array[2].to_i >= da_range.min } unless da_range.min == 0
     self.domains = domains.select{|domain_array| domain_array[2].to_i <= da_range.max } unless da_range.max == 100
+  end
+
+  def filter_by_tf_range
+    self.domains = domains.select{|domain_array| domain_array[2].to_i >= tf_range.min } unless tf_range.min == 0
+    self.domains = domains.select{|domain_array| domain_array[2].to_i <= tf_range.max } unless tf_range.max == 100
   end
 
   class Range
