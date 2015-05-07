@@ -23,9 +23,9 @@
 
               <%= form_tag sites_path, method: :get, id: 'filter-sites' do %>
                 <p>DA range</p>
-                <%= text_field_tag :da_range %>
+                <%= text_field_tag :da_range, nil, id: 'da-range' %>
                 <p>TF range</p>
-                <%= text_field_tag :tf_range %>
+                <%= text_field_tag :tf_range, nil, id: 'tf-range' %>
                 <%= hidden_field_tag :user_id, params['user_id'] %>
                 <%= submit_tag 'Filter' %>
               <% end %>
@@ -101,3 +101,28 @@
 	</div>
 
 </div>
+<script type='text/javascript'>
+    var daMin = '<%= @da_range_obj.min %>';
+    var daMax = '<%= @da_range_obj.max %>';
+    var tfMin = '<%= @tf_range_obj.min %>';
+    var tfMax = '<%= @tf_range_obj.max %>';
+    console.log(daMin)
+    $(document).ready(function(){
+        $('form#filter-sites input#da-range').ionRangeSlider({
+          type: 'double',
+          grid: true,
+          min: 0,
+          max: 100,
+          from: daMin,
+          to: daMax
+        });
+        $('form#filter-sites input#tf-range').ionRangeSlider({
+          type: 'double',
+          grid: true,
+          min: 0,
+          max: 100,
+          from: tfMin,
+          to: tfMax
+        });
+    })
+</script>
