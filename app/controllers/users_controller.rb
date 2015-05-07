@@ -17,7 +17,7 @@ class UsersController < ApplicationController
     if @user.save
       # session[:user_id] = @user.id
       cookies[:auth_token] = @user.auth_token
-      redirect_to new_subscriptions_path(plan_id: params['plan_id']), notice: "Thank you for signing up!"
+      redirect_to new_subscriptions_path(plan_id: params['plan_id'], trial_end: params['trial_end']), notice: "Thank you for signing up!"
     else
       render 'new'
     end

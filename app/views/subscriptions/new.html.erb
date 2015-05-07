@@ -28,6 +28,7 @@
 
           <%= form_tag @subscription, id: 'new_subscription' do %>
             <%= hidden_field_tag :plan_id, params['plan_id']%>
+			<%= hidden_field_tag :trial_end, params['trial_end']%>
             <div class="form_section">
               <div class='section_title_container'>
                 <div class="step_circle">1</div>

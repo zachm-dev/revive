@@ -36,6 +36,7 @@ class SubscriptionsController < ApplicationController
     # Set stripe stuff.
     @subscription.stripe_plan_id = subscription_params[:plan_id]
     @subscription.stripe_card_token = subscription_params[:stripeToken]
+    @subscription.trial_end = subscription_params[:trial_end].to_i
 
     respond_to do |format|
 
@@ -79,6 +80,24 @@ class SubscriptionsController < ApplicationController
     end
   end
   
+  def create_trial_for_existing_customer
+    if current_user.subscription && current_user.subscription.stripe_customer_token
+      begin
+        customer = Stripe::Customer.retrieve(current_user.subscription.stripe_customer_token)
+        if customer
+          customer.subscriptions.create(:plan => params['plan_id'], trial_end: params['trial_end'].to_i.days.from_now.to_time.to_i)
+          current_user.subscription.status = 'active'
+          current_user.subscription.trial_end = "#{params['trial_end'].to_i.days.from_now.to_time.to_i}"
+          current_user.subscription.save
+        end
+        redirect_to dashboard_path, flash:{success: 'Subscription Successful. Welcome Back to Revive!' }
+      rescue
+        redirect_to dashboard_path, flash:{error: 'Subscription Unsuccessful' }
+      end
+    end
+    
+  end
+  
   # def upgrade_to_charter
   #   customer = Stripe::Customer.retrieve({CUSTOMER_ID})
   #   subscription = customer.subscriptions.retrieve({SUBSCRIPTION_ID})
@@ -96,7 +115,7 @@ class SubscriptionsController < ApplicationController
   # Never Trust Anything From The Pesky Interwebs for Users Are Cunning And [REDACTED]
 
   def subscription_params
-    params.permit(:stripeToken, :plan_id, {user:[:first_name, :last_name, :phone, :email, :address_1, :address_2, :city, :zip, :state, :country]}, {card:[:number, :cvc, :month, :year]})
+    params.permit(:stripeToken, :plan_id, :trial_end, {user:[:first_name, :last_name, :phone, :email, :address_1, :address_2, :city, :zip, :state, :country]}, {card:[:number, :cvc, :month, :year]})
   end
 
 end

@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get 'copy_to_clipboard' => 'application#copy_to_clipboard', as: :copy_to_clipboard
   
   resource :subscriptions
+  get 'create_trial_for_existing_customer' => 'subscriptions#create_trial_for_existing_customer', as: :create_trial_for_existing_customer
+  
   resources :pages
   resources :plans
 
