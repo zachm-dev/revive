@@ -22,12 +22,20 @@
 						<div class="panel-body">
 
               <%= form_tag sites_path, method: :get, id: 'filter-sites' do %>
-                <p>DA range</p>
-                <%= text_field_tag :da_range, nil, id: 'da-range' %>
-                <p>TF range</p>
-                <%= text_field_tag :tf_range, nil, id: 'tf-range' %>
                 <%= hidden_field_tag :user_id, params['user_id'] %>
-                <%= submit_tag 'Filter' %>
+                <div class='col-md-6'>
+                  <p>DA range</p>
+                  <%= text_field_tag :da_range, nil, id: 'da-range' %>
+                </div>
+                <div class='col-md-6'>
+                  <p>TF range</p>
+                  <%= text_field_tag :tf_range, nil, id: 'tf-range' %>
+                </div>
+                <div class='row text-center'>
+                  <br/>
+                  <%= submit_tag 'Filter by ranges', class: 'btn btn-primary' %>
+                  <br/><br/>
+                </div>
               <% end %>
 
 							<table class="table table-hover table-striped">
