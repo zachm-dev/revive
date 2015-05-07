@@ -2,7 +2,7 @@ class SitesController < ApplicationController
   before_filter :authorize
   
   def index
-    domains, @da_range_str, @tf_range_str = SortDomains.new(params).go
+    domains, @da_range_str, @tf_range_str, @da_range_obj, @tf_range_obj = SortDomains.new(params).go
     @domains = domains.paginate(:page => params[:page], :per_page => 25)
   end
   

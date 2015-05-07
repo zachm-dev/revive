@@ -15,7 +15,7 @@ class SortDomains
     filter_by_da_range if da_range
     filter_by_tf_range if tf_range
     sort
-    [domains, da_range_str, tf_range_str]
+    [domains, da_range_str, tf_range_str, da_range, tf_range]
   end
 
   def sort
