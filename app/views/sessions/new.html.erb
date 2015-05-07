@@ -4,9 +4,16 @@
 	</div>
 </div>
 
+
+
 <div class="login_form_container">
 	
-	<h1 class='text-center'>Log In</h1>
+	
+	<% if params['reactivate'].to_s == 'true' %>
+		<h2 class='text-center'>Enter Your Email and Password To Begin Trial Reactivation</h2>
+	<% else %>
+		<h1 class='text-center'>Log In</h1>
+	<% end %>
 	
 	<%= form_tag sessions_path do%>
 		<%= hidden_field_tag "params", params %>
