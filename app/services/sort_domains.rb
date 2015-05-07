@@ -7,13 +7,13 @@ class SortDomains
     @sort_key = params[:sort].nil? ? 2 : params[:sort].to_i
     @da_range_str = params[:da_range]
     @tf_range_str = params[:tf_range]
-    @da_range = Range.new(da_range_str) unless da_range_str.blank?
-    @tf_range = Range.new(tf_range_str) unless tf_range_str.blank?
+    @da_range = Range.new(da_range_str)
+    @tf_range = Range.new(tf_range_str)
   end
 
   def go
-    filter_by_da_range if da_range
-    filter_by_tf_range if tf_range
+    filter_by_da_range
+    filter_by_tf_range
     sort
     [domains, da_range_str, tf_range_str, da_range, tf_range]
   end
@@ -35,9 +35,15 @@ class SortDomains
   class Range
     attr_reader :min, :max
     def initialize(range_str)
-      range_array = range_str.split(';')
-      @min = range_array[0].to_i
-      @max = range_array[1].to_i
+      if range_str.blank?
+        @min = 0
+        @max = 100
+      else
+        range_array = range_str.split(';')
+        @min = range_array[0].to_i
+        @max = range_array[1].to_i
+      end
     end
   end
+
 end

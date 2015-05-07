@@ -36,23 +36,23 @@
 									<tr>
 										<th>DOMAIN</th>
 										<th class="col-xs-1">											
-											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2', da_range: @da_range) %>
+											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'PA', sites_path('user_id' => params['user_id'], sort: '3') %>
+											<%= link_to 'PA', sites_path('user_id' => params['user_id'], sort: '3', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'TF', sites_path('user_id' => params['user_id'], sort: '4') %>
+											<%= link_to 'TF', sites_path('user_id' => params['user_id'], sort: '4', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'CF', sites_path('user_id' => params['user_id'], sort: '5') %>
+											<%= link_to 'CF', sites_path('user_id' => params['user_id'], sort: '5', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">TF/CF</th>
 										<th class="col-xs-1">
-											<%= link_to 'RF', sites_path('user_id' => params['user_id'], sort: '6') %>
+											<%= link_to 'RF', sites_path('user_id' => params['user_id'], sort: '6', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'BL', sites_path('user_id' => params['user_id'], sort: '7') %>
+											<%= link_to 'BL', sites_path('user_id' => params['user_id'], sort: '7', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<!-- <th>FOUND ON</th> -->
 									</tr>
