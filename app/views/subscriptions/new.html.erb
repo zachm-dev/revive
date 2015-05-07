@@ -311,7 +311,7 @@
                     <div class="pull-left order_toatal_text">Your Order Total:</div>
 					
 						<% if params['trial_end'].to_i != 0 %>
-							<div class="pull-right order_toatal_price"><%= params['trial_end'].to_i %> day trial and then $<%= @price %></div>
+							<div class="pull-right order_toatal_price"><%= params['trial_end'].to_i %> day FREE trial, then $<%= @price %></div>
 						<% else %>
 							<div class="pull-right order_toatal_price">$<%= @price %></div>
 						<% end %>
