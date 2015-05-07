@@ -15,7 +15,7 @@ octopus:
       pool: 25
     processor:
       adapter: postgresql
-      database: crawler0_development
+      database: crawler_development
       host: localhost
       pool: 25
     processor_one:
