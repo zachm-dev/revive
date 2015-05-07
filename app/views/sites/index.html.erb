@@ -21,9 +21,12 @@
 						</div>
 						<div class="panel-body">
 
-              <%= form_tag sites_path, id: 'filter-sites' do %>
-                <%= text_field_tag :min %>
-                <%= text_field_tag :max %>
+              <%= form_tag sites_path, method: :get, id: 'filter-sites' do %>
+                <p>DA range</p>
+                <%= text_field_tag :da_range %>
+                <p>TF range</p>
+                <%= text_field_tag :tf_range %>
+                <%= hidden_field_tag :user_id, value: params['user_id'] %>
                 <%= submit_tag 'Filter' %>
               <% end %>
 
@@ -33,7 +36,7 @@
 									<tr>
 										<th>DOMAIN</th>
 										<th class="col-xs-1">											
-											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2') %>
+											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2', da_range: @da_range) %>
 										</th>
 										<th class="col-xs-1">
 											<%= link_to 'PA', sites_path('user_id' => params['user_id'], sort: '3') %>
@@ -56,7 +59,7 @@
 								</thead>
 								
 								<tbody>
-									<% @pages.each do |i| %>
+									<% @domains.each do |i| %>
 										<tr>
 											<td>
 												<%= link_to copy_to_clipboard_path(msg: "http://#{i[1]}"), class: 'copy_to_clipboard_button has-tooltip', data: {'toggle' => 'tooltip', 'placement' => 'top'}, title: "Copy To Clipboard", remote: true do %>
@@ -81,7 +84,7 @@
 							</table>
 
 							<div class="will_paginate_container text-center">
-								<%= will_paginate @pages, renderer: BootstrapPagination::Rails %>
+								<%= will_paginate @domains, renderer: BootstrapPagination::Rails %>
 							</div>
 							
 						</div>

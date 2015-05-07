@@ -41,7 +41,6 @@ class Link < ActiveRecord::Base
         Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
         Rails.cache.write(['running_crawls'], new_crawls_rotation)
       
-      
         redis_obj = JSON.parse($redis.get(next_link_id_to_process))
         puts "start_processing: the redis obj is #{redis_obj}"
       
