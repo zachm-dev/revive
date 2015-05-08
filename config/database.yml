@@ -49,4 +49,5 @@ development:
   adapter: postgresql
   database: crawler_development
   pool: 25
+  host: localhost
 
