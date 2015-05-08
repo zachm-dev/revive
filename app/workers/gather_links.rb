@@ -42,6 +42,8 @@ class GatherLinks
   end
   
   def on_complete(status, options)
+    puts "checking if there are more sites to crawl #{crawl.id}"
+    GatherLinks.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
     puts "GatherLinks Just finished Batch #{options['bid']}"
     processor_name = options['processor_name']
     site = Site.using("#{processor_name}").where(id: options['site_id'].to_i).first
@@ -63,15 +65,14 @@ class GatherLinks
       batch.update(finished_at: Time.now, status: "finished")
 
     end
-    puts "checking if there are more sites to crawl #{crawl.id}"
-    GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
+
   end
   
   def self.start(options = {})
     
     puts 'gather links start method'
     processor_name = options['processor_name']
-    running_crawl = Crawl.using("#{processor_name}").find(options["crawl_id"])
+    running_crawl = Crawl.using("#{processor_name}").find(options["crawl_id"].to_i)
     
     if running_crawl.gather_links_batches.where(status: 'pending').count > 0
       pending = running_crawl.gather_links_batches.where(status: 'pending').first

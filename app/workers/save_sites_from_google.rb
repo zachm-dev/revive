@@ -54,7 +54,7 @@ class SaveSitesFromGoogle
     #   site.update(processing_status: "pending")
     #   GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
     # end
-    GatherLinks.delay.start('crawl_id' => options['crawl_id'], 'processor_name' => options['processor_name'])
+    GatherLinks.start('crawl_id' => options['crawl_id'], 'processor_name' => options['processor_name'])
     # Crawl.delay.decision_maker(crawl.user.id)
   end
   

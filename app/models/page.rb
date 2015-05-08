@@ -43,7 +43,7 @@ class Page < ActiveRecord::Base
   
   def self.get_id(redis_id, simple_url, options={})
     puts "get id: on method"
-    page = Page.using(options['processor_name']).find_by_redis_id(redis_id)
+    page = Page.using("#{options['processor_name']}").find_by_redis_id(redis_id)
     puts "get id: the page id is #{page.id}"
     MozStats.perform_async(page.id, simple_url, 'processor_name' => options['processor_name'])
     MajesticStats.perform_async(page.id, simple_url, 'processor_name' => options['processor_name'])
