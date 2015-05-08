@@ -62,6 +62,9 @@
 										<th class="col-xs-1">
 											<%= link_to 'BL', sites_path('user_id' => params['user_id'], sort: '7', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
+										<th class="col-xs-2">
+											<%= link_to 'Created at', sites_path('user_id' => params['user_id'], sort: '8', da_range: @da_range_str, tf_range: @tf_range_str) %>
+										</th>
 										<!-- <th>FOUND ON</th> -->
 									</tr>
 								</thead>
@@ -83,7 +86,9 @@
 											<td><%= i[5] %></td>
 											<td><%= number_with_precision(i[4].to_f/i[5].to_f) %></td>
 											<td><%= i[6] %></td>
-											<td><%= i[7] %></td>
+                      <td><%= i[7] %></td>
+                      <% date_obj = i[8].class == DateTime ? i[8] : DateTime.parse(i[8]) %>
+											<td><%= date_obj.strftime('%b %e, %l:%M%P') %></td>
 											<!-- <td><%#= link_to i.found_on, i.found_on %></td> -->
 										</tr>
 									<% end %>

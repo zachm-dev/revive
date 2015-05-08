@@ -5,6 +5,7 @@ class SortDomains
   def initialize(params)
     @domains = Crawl.get_available_domains('user_id' => params[:user_id])
     @sort_key = params[:sort].nil? ? 2 : params[:sort].to_i
+    create_date_objects if sort_key == 8
     @da_range_str = params[:da_range]
     @tf_range_str = params[:tf_range]
     @da_range = Range.new(da_range_str)
@@ -19,7 +20,9 @@ class SortDomains
   end
 
   def sort
-    self.domains = domains.sort_by{|domain_array| domain_array[sort_key].to_i }.reverse
+    self.domains = domains.sort_by{|domain_array|
+      sort_key == 8 ? domain_array[sort_key] : domain_array[sort_key].to_i
+    }.reverse
   end
 
   def filter_by_da_range
@@ -30,6 +33,10 @@ class SortDomains
   def filter_by_tf_range
     self.domains = domains.select{|domain_array| domain_array[2].to_i >= tf_range.min } unless tf_range.min == 0
     self.domains = domains.select{|domain_array| domain_array[2].to_i <= tf_range.max } unless tf_range.max == 100
+  end
+
+  def create_date_objects
+    self.domains = domains.map{|domain| domain[8] = DateTime.parse(domain[8]); domain }
   end
 
   class Range
