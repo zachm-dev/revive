@@ -49,7 +49,7 @@ class GatherLinks
     crawl = site.crawl
     
     puts "checking if there are more sites to crawl #{crawl.id}"
-    GatherLinks.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
+    GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
     
     batch = GatherLinksBatch.using("#{processor_name}").where(batch_id: "#{options['bid']}").first
     if !batch.nil?
