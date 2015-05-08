@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150505220753) do
+ActiveRecord::Schema.define(version: 20150508171648) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,8 @@ ActiveRecord::Schema.define(version: 20150505220753) do
     t.string   "processor_name"
     t.string   "redis_id"
   end
+
+  add_index "pages", ["crawl_id", "available"], name: "index_pages_on_crawl_id_and_available", using: :btree
 
   create_table "plans", force: :cascade do |t|
     t.string   "name"

@@ -1,4 +1,7 @@
 namespace :db do
+  task :update_available_sites => :environment do
+  end
+
   task :add_created_at_to_domains => :environment do
     #! need to add created_at to available sites, in Crawl.save_available_sites
     processor_names_array = ["processor", "processor_one", "processor_two", "processor_three", "processor_four"]
