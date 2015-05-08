@@ -42,12 +42,15 @@ class GatherLinks
   end
   
   def on_complete(status, options)
-    puts "checking if there are more sites to crawl #{crawl.id}"
-    GatherLinks.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
+
     puts "GatherLinks Just finished Batch #{options['bid']}"
     processor_name = options['processor_name']
     site = Site.using("#{processor_name}").where(id: options['site_id'].to_i).first
     crawl = site.crawl
+    
+    puts "checking if there are more sites to crawl #{crawl.id}"
+    GatherLinks.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
+    
     batch = GatherLinksBatch.using("#{processor_name}").where(batch_id: "#{options['bid']}").first
     if !batch.nil?
 
