@@ -20,22 +20,22 @@ octopus:
       pool: 25
     processor_one:
       adapter: postgresql
-      database: crawler_development
+      database: crawler1_development
       host: localhost
       pool: 25
     processor_two:
       adapter: postgresql
-      database: crawler_development
+      database: crawler2_development
       host: localhost
       pool: 25
     processor_three:
       adapter: postgresql
-      database: crawler_development
+      database: crawler3_development
       host: localhost
       pool: 25
     processor_four:
       adapter: postgresql
-      database: crawler_development
+      database: crawler4_development
       host: localhost
       pool: 25
   production:
