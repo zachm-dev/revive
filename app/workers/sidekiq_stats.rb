@@ -41,7 +41,10 @@ class SidekiqStats
         
           puts 'updating crawl stats to finished'
           Crawl.using("#{processor_name}").update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app exceeded crawl minutes specified')
-      
+          
+          puts 'shutting down the crawl model'
+          Api.delay.stop_crawl('crawl_id' => crawl.id, 'processor_name' => processor_name)
+          
           # heroku = HerokuPlatform.new
           # heroku.delete_app(app_name)
         end
