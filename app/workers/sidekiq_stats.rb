@@ -38,12 +38,14 @@ class SidekiqStats
           puts 'updating running crawls array'
           updated_running_crawls_array = Rails.cache.read(['running_crawls']).to_a - [crawl_id]
           Rails.cache.write(['running_crawls'], updated_running_crawls_array)
-        
-          puts 'updating crawl stats to finished'
-          Crawl.using("#{processor_name}").update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app exceeded crawl minutes specified')
           
           puts 'shutting down the crawl model'
           Api.delay.stop_crawl('crawl_id' => crawl.id, 'processor_name' => processor_name)
+          
+          puts 'updating crawl stats to finished'
+          Crawl.using("#{processor_name}").update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app exceeded crawl minutes specified')
+          
+
           
           # heroku = HerokuPlatform.new
           # heroku.delete_app(app_name)
