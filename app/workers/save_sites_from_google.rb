@@ -34,9 +34,10 @@ class SaveSitesFromGoogle
           end
         end
       end
+      
+      crawl_status = crawl.status.to_s == 'finished' ? 'finished' : 'running'
     
-    
-      crawl.update(total_sites: crawl.total_sites.to_i+urls_array.count.to_i, status: 'running')
+      crawl.update(total_sites: crawl.total_sites.to_i+urls_array.count.to_i, status: crawl_status)
       urls_array.each do |u|
         puts "the gather links batch of keyword crawl #{u}"
         url = Domainatrix.parse(u.to_s)

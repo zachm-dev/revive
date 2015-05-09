@@ -422,8 +422,10 @@ class Crawl < ActiveRecord::Base
       status = options['status'].nil? ? 'finished' : options['status']
       heroku_app = crawl.heroku_app
       crawl.update(status: status)
+      puts 'shut_down: updated crawl'
       if heroku_app
         heroku_app.update(status: status)
+        puts 'shut_down: updated heroku app'
       end
     end
     
