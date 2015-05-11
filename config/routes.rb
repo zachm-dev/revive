@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       put 'sites/:id/save_bookmarked' => "sites#save_bookmarked", as: :save_bookmarked
       put 'sites/:id/unbookmark' => "sites#unbookmark", as: :unbookmark
       get ':id/bookmarked' => "sites#bookmarked", as: :bookmarked
+      get 'delete', as: :delete
     end
   end
   get 'sites/:id/urls' => "sites#all_urls", as: :all_urls
