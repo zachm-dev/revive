@@ -96,7 +96,7 @@ class VerifyNamecheap
               puts 'finished checking majestic sync'
               
               puts 'VerifyNamecheap about to save page'
-              page.save
+              page.save!
               puts 'VerifyNamecheap page saved'
               
             end
