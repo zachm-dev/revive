@@ -1,6 +1,6 @@
 class Page < ActiveRecord::Base
   belongs_to :site
-  after_create :verify_namecheap
+  # after_create :verify_namecheap
   
   def self.verify_namecheap(options={})
     redis_id = options['redis_id']
