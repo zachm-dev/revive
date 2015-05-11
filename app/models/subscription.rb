@@ -10,6 +10,7 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  plan_name             :string
+#  trial_end             :string
 #
 # Indexes
 #
