@@ -54,12 +54,9 @@ class GatherLinks
     batch = GatherLinksBatch.using("#{processor_name}").where(batch_id: "#{options['bid']}").first
     if !batch.nil?
 
-<<<<<<< HEAD
-=======
       site = Site.using("#{processor_name}").find(options['site_id'])
       crawl = site.crawl
 
->>>>>>> add service object to filter domains by da and ta range
       total_crawl_urls = Rails.cache.read(["crawl/#{crawl.id}/urls_found"], raw: true).to_i
       # total_site_urls = Link.using(:master).where(site_id: site.id).sum(:links_count)
       
@@ -73,11 +70,8 @@ class GatherLinks
       site.update(gather_status: 'finished')
       batch.update(finished_at: Time.now, status: "finished")
 
-<<<<<<< HEAD
-=======
       puts "checking if there are more sites to crawl #{crawl.id}"
       GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
->>>>>>> add service object to filter domains by da and ta range
     end
 
   end
@@ -86,13 +80,8 @@ class GatherLinks
 
     puts 'gather links start method'
     processor_name = options['processor_name']
-<<<<<<< HEAD
     running_crawl = Crawl.using("#{processor_name}").find(options["crawl_id"].to_i)
     
-=======
-    running_crawl = Crawl.using("#{processor_name}").find(options["crawl_id"])
-
->>>>>>> add service object to filter domains by da and ta range
     if running_crawl.gather_links_batches.where(status: 'pending').count > 0
       pending = running_crawl.gather_links_batches.where(status: 'pending').first
       puts "the pending crawl is #{pending.id} on the site #{pending.site.id}"
