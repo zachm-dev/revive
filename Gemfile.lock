@@ -61,6 +61,9 @@ GEM
       activerecord (>= 3.0)
     addressable (2.3.7)
     aggregate (0.2.2)
+    annotate (2.6.8)
+      activerecord (>= 3.2, <= 4.3)
+      rake (~> 10.4)
     ar-octopus (0.8.5)
       activerecord (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -83,6 +86,7 @@ GEM
     bootstrap-sass (3.3.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.2.19)
+    bootstrap_form (2.3.0)
     builder (3.2.2)
     byebug (4.0.2)
       columnize (= 0.9.0)
@@ -201,6 +205,8 @@ GEM
     pry-byebug (3.1.0)
       byebug (~> 4.0)
       pry (~> 0.10)
+    quiet_assets (1.1.0)
+      railties (>= 3.1, < 5.0)
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
@@ -327,6 +333,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_list
+  annotate (~> 2.6.6)
   ar-octopus
   autoprefixer-rails
   awesome_print
@@ -335,6 +342,7 @@ DEPENDENCIES
   binding_of_caller
   bootstrap-datepicker-rails
   bootstrap-sass (~> 3.3.1)
+  bootstrap_form
   chronic
   clipboard
   coffee-rails (~> 4.0.0)
@@ -357,6 +365,7 @@ DEPENDENCIES
   premailer-rails
   pry
   pry-byebug
+  quiet_assets
   rails
   rails_12factor
   redis-rails

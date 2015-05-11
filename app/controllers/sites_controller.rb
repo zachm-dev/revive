@@ -2,10 +2,8 @@ class SitesController < ApplicationController
   before_filter :authorize
   
   def index
-    @available = Crawl.get_available_domains('user_id' => params['user_id'])
-    page = params[:page].nil? ? 1 : params[:page].to_i
-    sort = params[:sort].nil? ? 2 : params[:sort].to_i
-    @pages = @available.sort_by{|k|k[sort].to_i}.reverse.paginate(:page => page, :per_page => 25)
+    domains, @da_range_str, @tf_range_str, @da_range_obj, @tf_range_obj = SortDomains.new(params).go
+    @domains = domains.paginate(:page => params[:page], :per_page => 25)
   end
   
   def show

@@ -15,6 +15,7 @@ gem 'jquery-ui-rails'# $jQuery UI
 gem 'turbolinks' # AJAXED Page Gets
 gem 'jbuilder', '~> 2.0' # Build JSON APIs with ease
 gem 'bootstrap-sass', '~> 3.3.1' # Pull ourselves up by our..
+gem 'bootstrap_form' #Bootstrap forms
 gem 'slim' # Shed some syntax
 
 # Libraries
@@ -38,24 +39,23 @@ gem 'unirest'
 gem 'premailer-rails'
 gem 'acts_as_list'
 gem 'bootstrap-datepicker-rails'
-gem 'ar-octopus'
 gem 'redis-rails'
 gem 'chronic'
 gem 'clipboard'
+gem 'ar-octopus'
 
 # Development Things
 group :development do
-
   # Server Thing
   gem 'spring',  group: :development
-
   # Debuggers
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'pry'
   gem 'pry-byebug'
   gem 'awesome_print'
-
+  gem 'quiet_assets'
+  gem 'annotate', '~> 2.6.6'
 end
 
 # APIs

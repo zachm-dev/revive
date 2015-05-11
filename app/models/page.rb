@@ -1,3 +1,41 @@
+# == Schema Information
+#
+# Table name: pages
+#
+#  id               :integer          not null, primary key
+#  status_code      :string
+#  mime_type        :string
+#  length           :string
+#  links            :text
+#  created_at       :datetime
+#  updated_at       :datetime
+#  headers          :text
+#  redirect_through :text
+#  url              :text
+#  site_id          :integer
+#  internal         :boolean
+#  found_on         :text
+#  verified         :boolean
+#  simple_url       :text
+#  available        :string
+#  status           :string
+#  bookmarked       :boolean
+#  citationflow     :float
+#  trustflow        :float
+#  trustmetric      :float
+#  pa               :float
+#  da               :float
+#  refdomains       :integer
+#  backlinks        :integer
+#  crawl_id         :integer
+#  processor_name   :string
+#  redis_id         :string
+#
+# Indexes
+#
+#  index_pages_on_crawl_id_and_available  (crawl_id,available)
+#
+
 class Page < ActiveRecord::Base
   belongs_to :site
   # after_create :verify_namecheap

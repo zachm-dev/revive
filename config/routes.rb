@@ -32,7 +32,6 @@ Rails.application.routes.draw do
   get :account, to: 'users#account'
 
   # Sites
-
   resources :sites do
     collection do
       put 'sites/:id/save_bookmarked' => "sites#save_bookmarked", as: :save_bookmarked
@@ -69,6 +68,15 @@ Rails.application.routes.draw do
 
   resources :pending_crawls do
     collection {post :sort}
+  end
+
+  # Admin
+  resources :admins do
+    collection do
+      get :become_user
+      get :edit_user
+      put :update_user
+    end
   end
 
   mount Sidekiq::Web, at: '/sidekiq'

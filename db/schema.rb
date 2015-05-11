@@ -11,14 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507082405) do
+ActiveRecord::Schema.define(version: 20150508171648) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+  enable_extension "pg_stat_statements"
 
   create_table "crawls", force: :cascade do |t|
-    t.string   "name",                limit: 255
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "maxpages"
@@ -37,7 +38,7 @@ ActiveRecord::Schema.define(version: 20150507082405) do
     t.integer  "notify_me_after"
     t.string   "keyword"
     t.string   "status"
-    t.text     "base_urls",                       default: [], array: true
+    t.text     "base_urls",           default: [], array: true
     t.string   "crawl_type"
     t.string   "base_keyword"
     t.boolean  "notified"
@@ -49,10 +50,9 @@ ActiveRecord::Schema.define(version: 20150507082405) do
     t.string   "msg"
     t.integer  "iteration"
     t.string   "db_url"
-    t.integer  "processor_id"
     t.string   "processor_name"
     t.integer  "total_minutes"
-    t.text     "available_sites",                 default: [], array: true
+    t.text     "available_sites",     default: [], array: true
   end
 
   create_table "expired_links", force: :cascade do |t|
@@ -129,9 +129,9 @@ ActiveRecord::Schema.define(version: 20150507082405) do
   end
 
   create_table "pages", force: :cascade do |t|
-    t.string   "status_code",      limit: 255
-    t.string   "mime_type",        limit: 255
-    t.string   "length",           limit: 255
+    t.string   "status_code"
+    t.string   "mime_type"
+    t.string   "length"
     t.text     "links"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -157,6 +157,8 @@ ActiveRecord::Schema.define(version: 20150507082405) do
     t.string   "processor_name"
     t.string   "redis_id"
   end
+
+  add_index "pages", ["crawl_id", "available"], name: "index_pages_on_crawl_id_and_available", using: :btree
 
   create_table "plans", force: :cascade do |t|
     t.string   "name"
@@ -265,6 +267,8 @@ ActiveRecord::Schema.define(version: 20150507082405) do
     t.string   "trial_end"
   end
 
+  add_index "subscriptions", ["user_id"], name: "index_subscriptions_on_user_id", unique: true, using: :btree
+
   create_table "user_dashboards", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "domains_crawled",  default: 0
@@ -283,8 +287,8 @@ ActiveRecord::Schema.define(version: 20150507082405) do
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.string   "first_name"
     t.string   "last_name"
     t.string   "phone"
@@ -294,6 +298,7 @@ ActiveRecord::Schema.define(version: 20150507082405) do
     t.string   "zip"
     t.string   "state"
     t.string   "country"
+    t.integer  "subscription_id"
     t.datetime "last_crawl"
     t.integer  "crawls_this_hour"
     t.datetime "first_crawl"
@@ -302,7 +307,10 @@ ActiveRecord::Schema.define(version: 20150507082405) do
     t.string   "auth_token"
     t.string   "password_reset_token"
     t.datetime "password_reset_sent_at"
+    t.boolean  "admin",                  default: false
   end
+
+  add_index "users", ["subscription_id"], name: "index_users_on_subscription_id", using: :btree
 
   create_table "verify_majestic_batches", force: :cascade do |t|
     t.integer  "site_id"
@@ -324,5 +332,9 @@ ActiveRecord::Schema.define(version: 20150507082405) do
     t.integer  "site_id"
   end
 
+  add_foreign_key "subscriptions", "users"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "user_dashboards", "users"
+  add_foreign_key "users", "subscriptions"
+  add_foreign_key "users", "subscriptions"
 end

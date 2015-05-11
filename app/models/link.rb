@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: links
+#
+#  id             :integer          not null, primary key
+#  site_id        :integer
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  links          :text             is an Array
+#  found_on       :text
+#  status         :string
+#  links_count    :integer
+#  started        :boolean
+#  process        :boolean
+#  crawl_id       :integer
+#  processor_name :string
+#
+
 require 'domainatrix'
 
 class Link < ActiveRecord::Base
@@ -22,7 +40,6 @@ class Link < ActiveRecord::Base
         new_crawls_rotation = running_crawls.rotate
         Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
         Rails.cache.write(['running_crawls'], new_crawls_rotation)
-      
       
         redis_obj = JSON.parse($redis.get(next_link_id_to_process))
         puts "start_processing: the redis obj is #{redis_obj}"

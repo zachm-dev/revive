@@ -20,36 +20,54 @@
 							
 						</div>
 						<div class="panel-body">
+
+              <%= form_tag sites_path, method: :get, id: 'filter-sites' do %>
+                <%= hidden_field_tag :user_id, params['user_id'] %>
+                <div class='col-md-6'>
+                  <p>DA range</p>
+                  <%= text_field_tag :da_range, nil, id: 'da-range' %>
+                </div>
+                <div class='col-md-6'>
+                  <p>TF range</p>
+                  <%= text_field_tag :tf_range, nil, id: 'tf-range' %>
+                </div>
+                <div class='row text-center'>
+                  <br/>
+                  <%= submit_tag 'Filter by ranges', class: 'btn btn-primary' %>
+                  <br/><br/>
+                </div>
+              <% end %>
+
 							<table class="table table-hover table-striped">
 								
 								<thead>
 									<tr>
 										<th>DOMAIN</th>
 										<th class="col-xs-1">											
-											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2') %>
+											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'PA', sites_path('user_id' => params['user_id'], sort: '3') %>
+											<%= link_to 'PA', sites_path('user_id' => params['user_id'], sort: '3', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'TF', sites_path('user_id' => params['user_id'], sort: '4') %>
+											<%= link_to 'TF', sites_path('user_id' => params['user_id'], sort: '4', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'CF', sites_path('user_id' => params['user_id'], sort: '5') %>
+											<%= link_to 'CF', sites_path('user_id' => params['user_id'], sort: '5', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">TF/CF</th>
 										<th class="col-xs-1">
-											<%= link_to 'RF', sites_path('user_id' => params['user_id'], sort: '6') %>
+											<%= link_to 'RF', sites_path('user_id' => params['user_id'], sort: '6', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<th class="col-xs-1">
-											<%= link_to 'BL', sites_path('user_id' => params['user_id'], sort: '7') %>
+											<%= link_to 'BL', sites_path('user_id' => params['user_id'], sort: '7', da_range: @da_range_str, tf_range: @tf_range_str) %>
 										</th>
 										<!-- <th>FOUND ON</th> -->
 									</tr>
 								</thead>
 								
 								<tbody>
-									<% @pages.each do |i| %>
+									<% @domains.each do |i| %>
 										<tr>
 											<td>
 												<%= link_to copy_to_clipboard_path(msg: "http://#{i[1]}"), class: 'copy_to_clipboard_button has-tooltip', data: {'toggle' => 'tooltip', 'placement' => 'top'}, title: "Copy To Clipboard", remote: true do %>
@@ -74,7 +92,7 @@
 							</table>
 
 							<div class="will_paginate_container text-center">
-								<%= will_paginate @pages, renderer: BootstrapPagination::Rails %>
+								<%= will_paginate @domains, renderer: BootstrapPagination::Rails %>
 							</div>
 							
 						</div>
@@ -91,3 +109,28 @@
 	</div>
 
 </div>
+<script type='text/javascript'>
+    var daMin = '<%= @da_range_obj.min %>';
+    var daMax = '<%= @da_range_obj.max %>';
+    var tfMin = '<%= @tf_range_obj.min %>';
+    var tfMax = '<%= @tf_range_obj.max %>';
+    console.log(daMin)
+    $(document).ready(function(){
+        $('form#filter-sites input#da-range').ionRangeSlider({
+          type: 'double',
+          grid: true,
+          min: 0,
+          max: 100,
+          from: daMin,
+          to: daMax
+        });
+        $('form#filter-sites input#tf-range').ionRangeSlider({
+          type: 'double',
+          grid: true,
+          min: 0,
+          max: 100,
+          from: tfMin,
+          to: tfMax
+        });
+    })
+</script>

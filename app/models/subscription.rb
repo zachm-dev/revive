@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: subscriptions
+#
+#  id                    :integer          not null, primary key
+#  user_id               :integer
+#  stripe_customer_token :string
+#  status                :string
+#  plan_id               :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  plan_name             :string
+#  trial_end             :string
+#
+# Indexes
+#
+#  index_subscriptions_on_user_id  (user_id) UNIQUE
+#
+
 class Subscription < ActiveRecord::Base
   belongs_to :user
   belongs_to :plan
