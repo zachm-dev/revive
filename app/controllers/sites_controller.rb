@@ -15,6 +15,10 @@ class SitesController < ApplicationController
     @site = Site.using(:processor).find(params[:id])
     @urls = @site.pages.limit(50).uniq
   end
+
+  def delete
+    DeleteDomains.new(params, current_user).go
+  end
   
   def broken
     @crawl = Crawl.using(params["processor_name"]).find(params[:id])

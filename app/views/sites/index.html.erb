@@ -38,63 +38,70 @@
                 </div>
               <% end %>
 
-							<table class="table table-hover table-striped">
-								
-								<thead>
-									<tr>
-										<th>DOMAIN</th>
-										<th class="col-xs-1">											
-											<%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2', da_range: @da_range_str, tf_range: @tf_range_str) %>
-										</th>
-										<th class="col-xs-1">
-											<%= link_to 'PA', sites_path('user_id' => params['user_id'], sort: '3', da_range: @da_range_str, tf_range: @tf_range_str) %>
-										</th>
-										<th class="col-xs-1">
-											<%= link_to 'TF', sites_path('user_id' => params['user_id'], sort: '4', da_range: @da_range_str, tf_range: @tf_range_str) %>
-										</th>
-										<th class="col-xs-1">
-											<%= link_to 'CF', sites_path('user_id' => params['user_id'], sort: '5', da_range: @da_range_str, tf_range: @tf_range_str) %>
-										</th>
-										<th class="col-xs-1">TF/CF</th>
-										<th class="col-xs-1">
-											<%= link_to 'RF', sites_path('user_id' => params['user_id'], sort: '6', da_range: @da_range_str, tf_range: @tf_range_str) %>
-										</th>
-										<th class="col-xs-1">
-											<%= link_to 'BL', sites_path('user_id' => params['user_id'], sort: '7', da_range: @da_range_str, tf_range: @tf_range_str) %>
-										</th>
-										<th class="col-xs-2">
-											<%= link_to 'Found time', sites_path('user_id' => params['user_id'], sort: '8', da_range: @da_range_str, tf_range: @tf_range_str) %>
-										</th>
-										<!-- <th>FOUND ON</th> -->
-									</tr>
-								</thead>
-								
-								<tbody>
-									<% @domains.each do |i| %>
-										<tr>
-											<td>
-												<%= link_to copy_to_clipboard_path(msg: "http://#{i[1]}"), class: 'copy_to_clipboard_button has-tooltip', data: {'toggle' => 'tooltip', 'placement' => 'top'}, title: "Copy To Clipboard", remote: true do %>
-												    <i class="glyphicon glyphicon-list-alt">
-														<span class="glyph_text"><%= "www.#{i[1]}" %></span>
-													</i>
-												<% end %>
-											</td>
-											<!-- <td><%#= link_to "www.#{i.simple_url}", "http://#{i.simple_url}" %></td> -->
-											<td><%= number_with_precision(i[2], precision: 0) %></td>
-											<td><%= number_with_precision(i[3], precision: 0) %></td>
-											<td><%= i[4] %></td>
-											<td><%= i[5] %></td>
-											<td><%= number_with_precision(i[4].to_f/i[5].to_f) %></td>
-											<td><%= i[6] %></td>
-                      <td><%= i[7] %></td>
-                      <% date_obj = i[8].class == DateTime ? i[8] : DateTime.parse(i[8]) %>
-											<td><%= date_obj.strftime('%b %e, %l:%M%P') %></td>
-											<!-- <td><%#= link_to i.found_on, i.found_on %></td> -->
-										</tr>
-									<% end %>
-								</tbody>
-								
-							</table>
+              <%= form_tag delete_sites_path, method: :get do %> 
+                <table class="table table-hover table-striped">
+                  
+                  <thead>
+                    <tr>
+                      <th style='width:30px;'></th>
+                      <th>DOMAIN</th>
+                      <th class="col-xs-1">											
+                        <%= link_to 'DA', sites_path('user_id' => params['user_id'], sort: '2', da_range: @da_range_str, tf_range: @tf_range_str) %>
+                      </th>
+                      <th class="col-xs-1">
+                        <%= link_to 'PA', sites_path('user_id' => params['user_id'], sort: '3', da_range: @da_range_str, tf_range: @tf_range_str) %>
+                      </th>
+                      <th class="col-xs-1">
+                        <%= link_to 'TF', sites_path('user_id' => params['user_id'], sort: '4', da_range: @da_range_str, tf_range: @tf_range_str) %>
+                      </th>
+                      <th class="col-xs-1">
+                        <%= link_to 'CF', sites_path('user_id' => params['user_id'], sort: '5', da_range: @da_range_str, tf_range: @tf_range_str) %>
+                      </th>
+                      <th class="col-xs-1">TF/CF</th>
+                      <th class="col-xs-1">
+                        <%= link_to 'RF', sites_path('user_id' => params['user_id'], sort: '6', da_range: @da_range_str, tf_range: @tf_range_str) %>
+                      </th>
+                      <th class="col-xs-1">
+                        <%= link_to 'BL', sites_path('user_id' => params['user_id'], sort: '7', da_range: @da_range_str, tf_range: @tf_range_str) %>
+                      </th>
+                      <th class="col-xs-2">
+                        <%= link_to 'Found time', sites_path('user_id' => params['user_id'], sort: '8', da_range: @da_range_str, tf_range: @tf_range_str) %>
+                      </th>
+                      <!-- <th>FOUND ON</th> -->
+                    </tr>
+                  </thead>
+                  
+                  <tbody>
+                    <% @domains.each do |i| %>
+                      <tr>
+                        <td><%= check_box_tag "page_ids[]", i[0] %></td>
+                        <td>
+                          <%= link_to copy_to_clipboard_path(msg: "http://#{i[1]}"), class: 'copy_to_clipboard_button has-tooltip', data: {'toggle' => 'tooltip', 'placement' => 'top'}, title: "Copy To Clipboard", remote: true do %>
+                              <i class="glyphicon glyphicon-list-alt">
+                              <span class="glyph_text"><%= "www.#{i[1]}" %></span>
+                            </i>
+                          <% end %>
+                        </td>
+                        <!-- <td><%#= link_to "www.#{i.simple_url}", "http://#{i.simple_url}" %></td> -->
+                        <td><%= number_with_precision(i[2], precision: 0) %></td>
+                        <td><%= number_with_precision(i[3], precision: 0) %></td>
+                        <td><%= i[4] %></td>
+                        <td><%= i[5] %></td>
+                        <td><%= number_with_precision(i[4].to_f/i[5].to_f) %></td>
+                        <td><%= i[6] %></td>
+                        <td><%= i[7] %></td>
+                        <% date_obj = i[8].class == DateTime ? i[8] : DateTime.parse(i[8]) %>
+                        <td><%= date_obj.strftime('%b %e, %l:%M%P') %></td>
+                        <!-- <td><%#= link_to i.found_on, i.found_on %></td> -->
+                      </tr>
+                    <% end %>
+                  </tbody>
+                  
+                </table>
+
+                <%= submit_tag 'Delete domains', class: 'btn btn-danger', id: 'delete-domains' %>
+
+              <% end %>
 
 							<div class="will_paginate_container text-center">
 								<%= will_paginate @domains, renderer: BootstrapPagination::Rails %>
