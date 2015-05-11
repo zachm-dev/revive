@@ -34,7 +34,7 @@ class VerifyNamecheap
             if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
               puts "saving verified domain with the following data processor_name: #{processor_name}, status_code: #{page['status_code']}, url: #{page['url']}, internal: #{page['internal']}, site_id: #{page['site_id']}, found_on: #{page['found_on']}, simple_url: #{parsed_url}, verified: true, available: #{json['available']}, crawl_id: #{page['crawl_id']}"
 
-              Page.using("#{processor_name}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
+              page = Page.using("#{processor_name}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
 
               urls = Rails.cache.read(["crawl/#{page['crawl_id']}/available"])
               Rails.cache.write(["crawl/#{page['crawl_id']}/available"], urls.push("#{parsed_url}"))
@@ -44,6 +44,10 @@ class VerifyNamecheap
 
               # MozStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
               # MajesticStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
+              
+              
+              MozStats.perform(page.id, simple_url, 'processor_name' => options['processor_name'])
+              puts "MozStats synchronous for page #{page.id}"
               
               Page.get_id(redis_id, parsed_url, 'processor_name' => processor_name)
               
