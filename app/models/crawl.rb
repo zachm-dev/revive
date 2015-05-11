@@ -392,7 +392,9 @@ class Crawl < ActiveRecord::Base
   end
 
   def save_available_sites(options={})
-    self.available_sites = Page.using("#{self.processor_name}").where(available: 'true', crawl_id: self.id).pluck(:id, :simple_url, :da, :pa, :trustflow, :citationflow, :refdomains, :backlinks, :created_at, :processor_name)
+    self.available_sites = Page.using("#{self.processor_name}").where(available: 'true', crawl_id: self.id).includes(:crawl).collect do |page|
+                            [page.id, page.simple_url, page.da, page.pa, page.trustflow, page.citationflow, page.refdomains, page.backlinks, page.created_at, page.crawl.processor_name]
+                          end
     self.save!
     return self.available_sites
   end

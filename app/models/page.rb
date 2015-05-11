@@ -38,6 +38,8 @@
 
 class Page < ActiveRecord::Base
   belongs_to :site
+  belongs_to :crawl
+
   # after_create :verify_namecheap
   
   def self.verify_namecheap(options={})
