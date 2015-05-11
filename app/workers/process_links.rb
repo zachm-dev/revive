@@ -29,7 +29,7 @@ class ProcessLinks
           redis_id = SecureRandom.hex+Time.now.to_i.to_s
           
           $redis.set(redis_id, {status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name}.to_json)
-          puts "ProcessLinks sync verify namecheap"
+          puts "ProcessLinks sync verify namecheap "
           VerifyNamecheap.verify(redis_id, crawl_id, 'processor_name' => processor_name)
           
           # Page.verify_namecheap('redis_id' => redis_id)
