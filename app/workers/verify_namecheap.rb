@@ -98,7 +98,6 @@ class VerifyNamecheap
               
               puts "VerifyNamecheap about to save page #{page_hash}"
               Page.using("#{processor_name}").update(page.id, page_hash)
-              puts 'VerifyNamecheap page saved'
               
             end
           end
