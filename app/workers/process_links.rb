@@ -125,7 +125,7 @@ class ProcessLinks
         # SHUT DOWN APP
       end
 
-    else
+    elsif total_site_running <= 0
       
       puts 'updating site stats'
       
@@ -141,8 +141,8 @@ class ProcessLinks
       
       Site.using("#{processor_name}").update(options['site_id'], processing_status: 'finished', total_urls_found: stats[site_urls_found].to_i, total_expired: stats[site_expired_domains].to_i, total_broken: stats[site_broken_domains].to_i)
       Crawl.using("#{processor_name}").update(options['crawl_id'], total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
-    # else
-    #   puts 'do something else'
+    else
+      puts 'do something else'
     end
 
     # total_time = Time.now - batch.started_at
