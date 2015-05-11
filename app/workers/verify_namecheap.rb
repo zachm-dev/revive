@@ -34,7 +34,8 @@ class VerifyNamecheap
             if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
               puts "saving verified domain with the following data processor_name: #{processor_name}, status_code: #{page['status_code']}, url: #{page['url']}, internal: #{page['internal']}, site_id: #{page['site_id']}, found_on: #{page['found_on']}, simple_url: #{parsed_url}, verified: true, available: #{json['available']}, crawl_id: #{page['crawl_id']}"
 
-              page = Page.using("#{processor_name}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
+              page = Page.using("#{processor_name}").new(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
+              # page = Page.using("#{processor_name}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
               puts "VerifyNamecheap: saved verified domain #{page.id}"
               
               urls = Rails.cache.read(["crawl/#{page['crawl_id']}/available"])
@@ -62,10 +63,16 @@ class VerifyNamecheap
                   puts "moz block perform regular"
                   url = Domainatrix.parse("#{r[:uu]}")
                   parsed_url = url.domain + "." + url.public_suffix
-                  Page.using("#{processor_name}").update(page.id, da: r[:pda].to_f, pa: r[:upa].to_f)
+                  # Page.using("#{processor_name}").update(page.id, da: r[:pda].to_f, pa: r[:upa].to_f)
+                  page.da = r[:pda].to_f
+                  page.pa = r[:upa].to_f
+                  puts "moz updated page object #{page.da} #{page.pa}"
                 rescue
                   puts "moz block perform zero"
-                  Page.using("#{processor_name}").update(page.id, da: 0, pa: 0)
+                  page.da = 0
+                  page.pa = 0
+                  puts "moz updated page object #{page.da} #{page.pa}"
+                  # Page.using("#{processor_name}").update(page.id, da: 0, pa: 0)
                 end
               end
               
@@ -77,10 +84,20 @@ class VerifyNamecheap
     
               res.items.each do |r|
                 puts "majestic block perform #{r.response['CitationFlow']}"
-                Page.using("#{processor_name}").update(page_id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
+                # Page.using("#{processor_name}").update(page_id, citationflow: r.response['CitationFlow'].to_f, trustflow: r.response['TrustFlow'].to_f, trustmetric: r.response['TrustMetric'].to_f, refdomains: r.response['RefDomains'].to_i, backlinks: r.response['ExtBackLinks'].to_i)
+                page.citationflow = r.response['CitationFlow'].to_f
+                page.trustflow = r.response['TrustFlow'].to_f
+                page.trustmetric = r.response['TrustMetric'].to_f
+                page.refdomains = r.response['RefDomains'].to_i
+                page.backlinks = r.response['ExtBackLinks'].to_i
+                
               end
               
               puts 'finished checking majestic sync'
+              
+              puts 'VerifyNamecheap about to save page'
+              page.save
+              puts 'VerifyNamecheap page saved'
               
             end
           end
