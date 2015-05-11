@@ -119,7 +119,7 @@
 												<% end %>
 											</td>
 											<!-- <td><%#= link_to "www.#{i.simple_url}", "http://#{i.simple_url}" %></td> -->
-											<td> <%= i[2].to_i == 0 ? "gathering" : number_with_precision(i[2], precision: 0) %></td>
+											<td> <%= i[2].to_s == '' ? "gathering" : number_with_precision(i[2], precision: 0) %></td>
 											<td><%= i[3].to_s == '' ? "gathering" : number_with_precision(i[3], precision: 0) %></td>
 											<td><%= i[4].to_s == '' ? "gathering" : i[4] %></td>
 											<td><%= i[5].to_s == '' ? "gathering" : i[5] %></td>

@@ -125,7 +125,7 @@ class ProcessLinks
         # SHUT DOWN APP
       end
 
-    elsif total_site_running <= 0
+    else
       
       puts 'updating site stats'
       
