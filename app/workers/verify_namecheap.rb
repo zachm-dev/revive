@@ -47,10 +47,28 @@ class VerifyNamecheap
               # MajesticStats.perform_async(redis_id, parsed_url, 'processor_name' => processor_name)
               
               
-              MozStats.perform(page.id, simple_url, 'processor_name' => options['processor_name'])
-              puts "MozStats synchronous for page #{page.id}"
+              # MozStats.perform(page.id, parsed_url, 'processor_name' => options['processor_name'])
+              # puts "MozStats synchronous for page #{page.id}"
+              #
+              # Page.get_id(redis_id, parsed_url, 'processor_name' => processor_name)
               
-              Page.get_id(redis_id, parsed_url, 'processor_name' => processor_name)
+              
+              puts 'sync moz perform on perform'
+              client = Linkscape::Client.new(:accessID => "member-8967f7dff3", :secret => "8b98d4acd435d50482ebeded953e2331")
+              response = client.urlMetrics([parsed_url], :cols => :all)
+    
+              response.data.map do |r|
+                begin
+                  puts "moz block perform regular"
+                  url = Domainatrix.parse("#{r[:uu]}")
+                  parsed_url = url.domain + "." + url.public_suffix
+                  Page.using("#{processor_name}").update(page.id, da: r[:pda].to_f, pa: r[:upa].to_f)
+                rescue
+                  puts "moz block perform zero"
+                  Page.using("#{processor_name}").update(page.id, da: 0, pa: 0)
+                end
+              end
+              
               
             end
           end
