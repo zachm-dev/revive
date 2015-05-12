@@ -130,6 +130,7 @@
         })
         $('input#select-all-checkboxes').change(function(){
             var checked = this.checked;
+            $('input#delete-domains').show();
             $('input.delete-check-box').each(function(){
                 $(this).prop('checked', checked);
             })
