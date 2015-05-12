@@ -18,6 +18,7 @@ class SitesController < ApplicationController
 
   def delete
     DeleteDomains.new(params, current_user).go
+    redirect_to sites_path('user_id' => current_user.id)
   end
   
   def broken
