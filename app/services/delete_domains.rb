@@ -12,12 +12,14 @@ class DeleteDomains
     page_infos.each do |page_info|
       page_info_obj = PageInfo.new(page_info)
       page = Page.using(page_info_obj.processor).find_by id: page_info_obj.id
-      crawl = page.crawl
-      if crawl.user_id == user.id
-        page.update_attribute :status_code, '204'
-        crawl.available_sites.delete_if{|site_array| site_array[0] == page.id.to_s }
-        crawl.save!
-        delete_from_cache(page, crawl)
+      if page
+        crawl = page.crawl
+        if crawl.user_id == user.id
+          page.update_attribute :status_code, '204'
+          crawl.available_sites.delete_if{|site_array| site_array[0] == page.id.to_s }
+          crawl.save!
+          delete_from_cache(page, crawl)
+        end
       end
     end
     write_cache
