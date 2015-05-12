@@ -471,7 +471,7 @@ class Crawl < ActiveRecord::Base
   end
 
   def self.get_available_domains(options={})
-    available_domains = Rails.cache.read(["user/#{options['user_id']}/available_domains"]).to_a
+    available_domains = Rails.cache.read(["user/#{options['user_id']}/available_domains"])
     if available_domains.empty?
       return Crawl.save_available_domains('user_id' => options['user_id'])
     else
