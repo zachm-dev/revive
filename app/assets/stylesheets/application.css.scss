@@ -1,7 +1,7 @@
 // Colors
 
 $pink: #ff4f78;
-$light-grey: #bcbcbc;
+$light-grey: #8f8f8f;
 
 // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
 
@@ -43,6 +43,7 @@ html, body  {
   overflow-x: hidden;
   font-size: 16px;
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #353535;
 }
 
 .container-fluid {
@@ -91,6 +92,8 @@ html, body  {
 .panel-round .panel-heading{
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
+  padding-top: 10px;
+  padding-bottom: 5px;
 }
 
 // TOP NAV
@@ -230,7 +233,7 @@ html, body  {
 .header_text {
 	float: left;
 	margin-right: 15px;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 //.header_button {
@@ -261,9 +264,10 @@ html, body  {
 
 .stat_circle_container {
 	font-weight: bold;
-	font-size: 30px;
+	font-size: 24px;
+  letter-spacing: 2px;
+  color: #464646;
 }	
-
 
 #stats_chart {
 	height: 300px;
@@ -625,11 +629,13 @@ Licensed under MIT
 }
 
 .dashboard_stats_container .title_text {
-	color: #464646;
+	color: $light-grey;
+  font-size: 13px;
+  margin-top: 5px;
 }
 
 .dashboard_stats_container {
-	border-right: 1px solid #ccc;
+	border-right: 1px solid #f3f3f3;
 }
 
 .dashboard_stats_container:last-child {
@@ -651,8 +657,8 @@ Licensed under MIT
 
 .free_uni_btn a {
 	background-color: transparent;
-	border-color: #4E9ADA;
-	color: #4E9ADA;
+  border: 2px solid #0f81d5;
+	color: #0f81d5;
 }
 
 .free_uni_btn a:hover {
