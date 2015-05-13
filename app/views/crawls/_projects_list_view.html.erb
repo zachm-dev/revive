@@ -44,7 +44,7 @@
 											<td class="text-center"><%= crawl.status %></td>
 											<td>
 												
-												<%= link_to "Delete", crawl_path(crawl.id, 'processor_name' => crawl.processor_name), class: 'btn btn-danger btn-sm', method: :delete, data: { confirm: "Are you sure?" } %>
+												<%= link_to "Delete", delete_crawl_path(crawl.id, 'processor_name' => crawl.processor_name), data: {confirm: "Are you sure?"}, class: 'btn btn-danger btn-sm' %>
 												
 												<%= link_to "View", crawl_path_path(crawl.id, 'processor_name' => crawl.processor_name), class: 'btn btn-primary btn-sm'%>
 												
