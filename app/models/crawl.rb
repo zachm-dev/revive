@@ -202,7 +202,8 @@ class Crawl < ActiveRecord::Base
 
     # processor_name = processors_hash.sort_by{|k,v|v}[0][0]
 
-    if JSON.parse($redis.get('list_of_running_crawls')).to_a.empty?
+    redis_conn = $redis.new(url: 'redis://redistogo:46d4f04e871ae440da550714fdbd5c77@cobia.redistogo.com:9135/')
+    if JSON.parse(redis_conn.get('list_of_running_crawls')).to_a.empty?
       processor_name = 'processor'
       puts 'save_new_crawl: there are currently no running crawls saving crawl to processor'
     else
@@ -259,7 +260,8 @@ class Crawl < ActiveRecord::Base
     # processor_name = processors_hash.sort_by{|k,v|v}[0][0]
 
 
-    if JSON.parse($redis.get('list_of_running_crawls')).to_a.empty?
+    redis_conn = $redis.new(url: 'redis://redistogo:46d4f04e871ae440da550714fdbd5c77@cobia.redistogo.com:9135/')
+    if JSON.parse(redis_conn.get('list_of_running_crawls')).to_a.empty?
       processor_name = 'processor'
       puts 'save_new_keyword_crawl: there are currently no running crawls saving crawl to processor'
     else
