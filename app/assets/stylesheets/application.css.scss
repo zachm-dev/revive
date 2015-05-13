@@ -84,6 +84,15 @@ html, body  {
 	min-width: 970px;
 }
 
+.panel-round{
+  border-radius: 10px !important;
+}
+
+.panel-round .panel-heading{
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
 // TOP NAV
 .top_nav_container {
 	height: 50px;
@@ -556,6 +565,7 @@ Licensed under MIT
 .used_minutes_title {
   font-size: 15px;
 	padding-bottom: 10px !important;
+  margin: 0px 6px !important;
 }
 
 .minutes_used_title{
