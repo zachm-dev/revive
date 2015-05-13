@@ -862,3 +862,15 @@ form.find-user input{
 .modal .modal-content form{
   margin-bottom: 20px;
 }
+
+///////////////// FORMS //////////////////
+form.revive-form input[type='text'], form.revive-form input[type='number'], form.revive-form textarea{
+  border: 2px solid #eaeaea !important;
+  box-shadow: none;
+}
+
+form.revive-form label{
+  color: #606060;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
