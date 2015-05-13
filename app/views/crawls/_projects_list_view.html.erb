@@ -1,0 +1,68 @@
+
+					<div class="panel panel-default">
+						<div class="panel-heading panel_blue_heading panel_glyph_container">
+							
+							<div class="header_glyph">
+								<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+							</div>
+							<div class="header_text">
+								<p>Crawls</p>
+							</div>
+							
+						</div>
+						<div class="panel-body">
+							
+							<table class="table table-hover table-striped">
+								
+								<thead>
+									<tr>
+										<!-- <th></th> -->
+										<th class='col-xs-3'>NAME</th>
+										<th class="text-center">SITES</th>
+										<th class="text-center">URLS</th>
+										<th class="text-center">BROKEN</th>
+										<th class="text-center">AVAILABLE</th>
+										<th class="text-center">STATUS</th>
+										<th class="text-center"></th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									
+									<% @crawls.each do |crawl| %>
+										
+										<tr>
+											<!-- <td>
+												<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+											</td> -->
+											<td><%= crawl.name %></td>
+											<td class="text-center"><%= crawl.total_sites %></td>
+											<td class="text-center"><%= crawl.total_urls_found %></td>
+											<td class="text-center"><%= crawl.total_broken %></td>
+											<td class="text-center"><%= crawl.total_expired %></td>
+											<td class="text-center"><%= crawl.status %></td>
+											<td>
+												
+												<%= link_to "Delete", crawl_path(crawl.id, 'processor_name' => crawl.processor_name), class: 'btn btn-danger btn-sm', method: :delete, data: { confirm: "Are you sure?" } %>
+												
+												<%= link_to "View", crawl_path_path(crawl.id, 'processor_name' => crawl.processor_name), class: 'btn btn-primary btn-sm'%>
+												
+											</td>
+										</tr>
+										
+									<% end %>
+									
+								</tbody>
+
+							</table>
+							
+							<div class="will_paginate_container text-center">
+								<%#= will_paginate @sites, renderer: BootstrapPagination::Rails %>
+							</div>
+							
+						</div>
+					</div>
+					
+
+
