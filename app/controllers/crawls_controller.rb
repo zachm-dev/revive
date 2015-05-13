@@ -77,10 +77,12 @@ class CrawlsController < ApplicationController
   end
 
   def new
+    @nav = 'new-crawl'
     @project = current_user.crawls.new
   end
   
   def new_keyword_crawl
+    @nav = 'new-crawl'
     @project = current_user.crawls.new
   end
   
@@ -90,6 +92,7 @@ class CrawlsController < ApplicationController
   end
   
   def new_reverse_crawl
+    @nav = 'new-crawl'
     @project = current_user.crawls.new
   end
   

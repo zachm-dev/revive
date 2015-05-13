@@ -7,7 +7,7 @@
     <% end %>
   </li>
 
-	<li class=<%= 'active' if current_page?(new_project_path) %> >
+  <li <% if @nav == 'new-crawl' %>class='active'<% end %>>
 		<%= link_to new_project_path do %>
 		    <i class="glyphicon glyphicon-plus">
 				<span class="glyph_text">New</span>
@@ -22,7 +22,7 @@
       </i>
     <% end %>
   </li>
-	
+
 	<li class=<%= 'active' if current_page?(crawls_path) %> >
 		<%= link_to sites_path('user_id' => current_user.id) do %>
 		    <i class="glyphicon glyphicon-th-list">
