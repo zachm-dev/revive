@@ -1,8 +1,9 @@
 <ul class="left_nav_container">
   <li <% if @nav == 'dashboard' %>class='active'<% end %>>
     <%= link_to dashboard_path do %>
-      <%= image_tag 'icons/white/home.png' %>
-      <span class='menu-text'>Dashboard</span>
+		  <i class="glyphicon glyphicon-home">
+        <span class='glyph_text'>Dashboard</span>
+      </i>
     <% end %>
   </li>
 
@@ -16,8 +17,9 @@
 
   <li <% if @nav == 'projects' %>class='active'<% end %>>
     <%= link_to crawls_path do %>
-      <%= image_tag 'icons/white/folder.png' %>
-      <span class='menu-text'>Projects</span>
+		  <i class="glyphicon glyphicon-folder-close">
+        <span class='glyph_text'>Projects</span>
+      </i>
     <% end %>
   </li>
 	
