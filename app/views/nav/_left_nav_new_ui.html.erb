@@ -1,11 +1,10 @@
 <ul class="left_nav_container">
-	<li class=<%= 'active' if current_page?(dashboard_path) %> >
-		<%= link_to dashboard_path do %>
-		    <i class="glyphicon glyphicon-home">
-				<span class="glyph_text">Home</span>
-			</i>
-		<% end %>
-	</li>
+  <li <% if @nav == 'dashboard' %>class='active'<% end %>>
+    <%= link_to dashboard_path do %>
+      <%= image_tag 'icons/white/home.png' %>
+      <span class='menu-text'>Dashboard</span>
+    <% end %>
+  </li>
 
 	<li class=<%= 'active' if current_page?(new_project_path) %> >
 		<%= link_to new_project_path do %>
@@ -15,13 +14,12 @@
 		<% end %>
 	</li>
 
-	<li class=<%= 'active' if current_page?(crawls_path) %> >
-		<%= link_to crawls_path do %>
-		    <i class="glyphicon glyphicon-folder-open">
-				<span class="glyph_text">Projects</span>
-			</i>
-		<% end %>
-	</li>
+  <li <% if @nav == 'projects' %>class='active'<% end %>>
+    <%= link_to crawls_path do %>
+      <%= image_tag 'icons/white/folder.png' %>
+      <span class='menu-text'>Projects</span>
+    <% end %>
+  </li>
 	
 	<li class=<%= 'active' if current_page?(crawls_path) %> >
 		<%= link_to sites_path('user_id' => current_user.id) do %>

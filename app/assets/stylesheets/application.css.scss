@@ -41,6 +41,7 @@ html, body  {
   width: 100%;
   overflow-x: hidden;
   font-size: 16px;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .container-fluid {
@@ -604,48 +605,6 @@ Licensed under MIT
 	color: #fff;
 	width: 230px;
 	text-align: center;
-}
-
-.left_nav_container {
-	margin-top: 30px;
-}
-
-.left_nav_container li {
-	float: left;
-}
-
-.left_nav_container .glyph_text {
-	display: inline;
-}
-
-.left_nav_container li {
-	text-align: inherit;
-	padding-left: 15px;
-	border-bottom: 1px solid #118ed9;
-	border-top: 1px solid #016dbc;
-	padding-top: 15px;
-	padding-bottom: 15px;
-}
-
-.left_nav_container li:hover {
-	background-color: #016dbc;
-}
-
-.left_nav_container li:last-child {
-	border-bottom: none;
-}
-
-.left_nav_container li a {
-	color: #a9d7fa;
-	display: block;
-}
-
-.left_nav_container li a:hover {
-	color: #fff;
-}
-
-.left_nav_container li.active a {
-	color: #fff;
 }
 
 .dashboard_stats_container .title_text {
