@@ -652,23 +652,33 @@ Licensed under MIT
 }
 
 .free_uni_btn {
-	margin-top: 25px;
+	margin-top: 45px;
+  margin-bottom: 30px;
 }
 
 .free_uni_btn a {
 	background-color: transparent;
   border: 2px solid #0f81d5;
 	color: #0f81d5;
+  text-transform: uppercase;
 }
 
 .free_uni_btn a:hover {
-	background-color: #0F81D5;
+	background-color: #0f81d5;
 	border-color: #4E9ADA;
 	color: #fff;
 }
 
+.start_crawling_btn{
+  margin: 60px 0px;
+}
+
 .start_crawling_btn a {
+  width: 360px;
+  margin: 0px auto;
 	padding: 20px 0px;
+  background: #6cab1a;
+  text-transform: uppercase;
 }
 
 .start_crawling_btn input {
