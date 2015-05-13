@@ -19,9 +19,13 @@ class ProcessLinks
       
       internal = l.include?("#{domain}") ? true : false
       if internal == true && "#{response.code}" == '404'
+        Rails.cache.increment(["crawl/#{crawl_id}/broken_domains"])
+        Rails.cache.increment(["site/#{site_id}/broken_domains"])
         Page.using("#{processor_name}").create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
       elsif internal == false
         if "#{response.code}" == '404'
+          Rails.cache.increment(["crawl/#{crawl_id}/broken_domains"])
+          Rails.cache.increment(["site/#{site_id}/broken_domains"])
           Page.using("#{processor_name}").create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
         elsif "#{response.code}" == '0'
           # Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name)
