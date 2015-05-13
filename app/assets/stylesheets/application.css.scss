@@ -2,6 +2,7 @@
 
 $pink: #ff4f78;
 $light-grey: #8f8f8f;
+$main-blue: #0f81d5;
 
 // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
 
@@ -497,12 +498,12 @@ Licensed under MIT
 //}
 
 .pagination > .active > span {
-	background-color: #0f81d5 !important;
-	border-color: #0f81d5 !important;
+	background-color: $main-blue !important;
+	border-color: $main-blue !important;
 }
 
 .pagination > li > a {
-	color: #0f81d5 !important;
+	color: $main-blue !important;
 }
 
 // Alert
@@ -537,6 +538,7 @@ Licensed under MIT
 }
 
 .page_footer {
+  background: white;
 	display: inline-block;
 	text-align: center;
 	width: 100%;
@@ -544,7 +546,9 @@ Licensed under MIT
 }
 
 .footer_links_container {
+  border-top: 1px solid #e8e8e8;
 	text-align: center;
+  padding: 20px;
 }
 
 .footer_links_container li {
@@ -555,15 +559,20 @@ Licensed under MIT
 }
 
 .footer_links_container li a {
-	color: #999;
+	color: $main-blue;
 	text-family: helvetica;
+  font-size: 14px;
+  margin: 0px 20px;
 }
 
 .footer_copyright_footer_text {
+  border-top: 1px solid #e8e8e8;
+  width: 95%;
+  padding: 20px;
 	text-align: center;
 	color: #999;
 	font-family: helvetica;
-	font-size: 10px;
+	font-size: 12px;
 }
 
 .used_minutes_title {
@@ -584,7 +593,7 @@ Licensed under MIT
 }
 
 .left_nav_bg {
-	background-color: #0f81d5;
+	background-color: $main-blue;
 }
 
 .left_nav_container {
@@ -658,13 +667,13 @@ Licensed under MIT
 
 .free_uni_btn a {
 	background-color: transparent;
-  border: 2px solid #0f81d5;
-	color: #0f81d5;
+  border: 2px solid $main-blue;
+	color: $main-blue;
   text-transform: uppercase;
 }
 
 .free_uni_btn a:hover {
-	background-color: #0f81d5;
+	background-color: $main-blue;
 	border-color: #4E9ADA;
 	color: #fff;
 }
@@ -674,7 +683,7 @@ Licensed under MIT
 }
 
 .start_crawling_btn a {
-  width: 360px;
+  width: 400px;
   margin: 0px auto;
 	padding: 20px 0px;
   background: #6cab1a;
@@ -713,7 +722,7 @@ Licensed under MIT
 .revive_top_nav_header_container {
 	width: 100%;
 	height: 90px;
-	background-color: #0f81d5;
+	background-color: $main-blue;
 }
 
 .revive_top_nav_logo {
