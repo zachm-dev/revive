@@ -78,6 +78,8 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{self.id}/expired_domains"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/broken_domains"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/progress"], 0.00, raw: true)
+
+    Rails.cache.write(['current_processing_batch_id'], '')
   end
   
   def self.decision_maker(options={})

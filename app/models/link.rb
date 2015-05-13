@@ -13,15 +13,16 @@ class Link < ActiveRecord::Base
     puts "start_processing: list of running crawls #{running_crawls}"
     if !running_crawls.empty?
       next_crawl_to_process = running_crawls[0]
-      processing_link_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a
+      next_link_id_to_process = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a[0]
 
-      if !processing_link_ids.empty?
+      if !next_link_id_to_process.nil?
         puts "start_processing: there are more links to be processed"
-        next_link_id_to_process = processing_link_ids[0]
         puts "the next link to be processed is #{next_link_id_to_process}"
         new_crawls_rotation = running_crawls.rotate
+        
         Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
         Rails.cache.write(['running_crawls'], new_crawls_rotation)
+        Rails.cache.write(['current_processing_batch_id'], "#{next_link_id_to_process}")
       
       
         redis_obj = JSON.parse($redis.get(next_link_id_to_process))
