@@ -68,10 +68,14 @@ class Link < ActiveRecord::Base
         
       else
         
-        new_crawls_rotation = running_crawls.rotate
+        # new_crawls_rotation = running_crawls.rotate
         Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
-        Rails.cache.write(['running_crawls'], new_crawls_rotation)
-        Link.delay.start_processing
+        new_crawls_rotation = Rails.cache.read(['running_crawls'])-[next_crawl_to_process]
+        if new_crawls_rotation.count > 0
+          Rails.cache.write(['running_crawls'], new_crawls_rotation)
+          puts 'start_processing: called start processing from Link model'
+          Link.delay.start_processing
+        end
 
       end
 
