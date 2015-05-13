@@ -18,6 +18,21 @@ ActiveRecord::Schema.define(version: 20150508171648) do
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
 
+  create_table "alerts", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "notification_id"
+    t.text     "alert_text"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "charts", force: :cascade do |t|
+    t.text     "data"
+    t.string   "bid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "crawls", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -55,6 +70,29 @@ ActiveRecord::Schema.define(version: 20150508171648) do
     t.text     "available_sites",     default: [], array: true
   end
 
+  create_table "csv_uploads", force: :cascade do |t|
+    t.string   "csv",        limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",               default: 0, null: false
+    t.integer  "attempts",               default: 0, null: false
+    t.text     "handler",                            null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by",  limit: 255
+    t.string   "queue",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
   create_table "expired_links", force: :cascade do |t|
     t.string   "url"
     t.string   "available"
@@ -87,6 +125,14 @@ ActiveRecord::Schema.define(version: 20150508171648) do
     t.string   "total_links_gathered"
   end
 
+  create_table "groups", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "group_urls",             default: [], array: true
+  end
+
   create_table "heroku_apps", force: :cascade do |t|
     t.string   "name"
     t.text     "url"
@@ -114,6 +160,28 @@ ActiveRecord::Schema.define(version: 20150508171648) do
     t.string   "processor_name"
   end
 
+  create_table "keywords", force: :cascade do |t|
+    t.integer  "url_id"
+    t.string   "keyword",               limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "country",               limit: 255
+    t.integer  "pos"
+    t.integer  "change"
+    t.string   "term_id",               limit: 255
+    t.integer  "search_engine_id"
+    t.string   "language",              limit: 255
+    t.string   "city",                  limit: 255
+    t.string   "country_code",          limit: 255
+    t.integer  "se_ids"
+    t.string   "lang",                  limit: 255
+    t.string   "globalmonthlysearches", limit: 255
+    t.string   "localmonthlysearches",  limit: 255
+    t.string   "matchedurl",            limit: 255
+    t.string   "k_type",                limit: 255
+    t.boolean  "tracked",                           default: true
+  end
+
   create_table "links", force: :cascade do |t|
     t.integer  "site_id"
     t.datetime "created_at",     null: false
@@ -126,6 +194,16 @@ ActiveRecord::Schema.define(version: 20150508171648) do
     t.boolean  "process"
     t.integer  "crawl_id"
     t.string   "processor_name"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string   "threshold",         limit: 255
+    t.string   "group_id",          limit: 255
+    t.integer  "user_id"
+    t.string   "email",             limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "notification_type", limit: 255
   end
 
   create_table "pages", force: :cascade do |t|
@@ -177,6 +255,15 @@ ActiveRecord::Schema.define(version: 20150508171648) do
     t.float    "minutes_per_month"
   end
 
+  create_table "positions", force: :cascade do |t|
+    t.integer  "keyword_id"
+    t.string   "position",   limit: 255
+    t.date     "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "positions", ["keyword_id"], name: "index_positions_on_keyword_id", using: :btree
+
   create_table "process_links_batches", force: :cascade do |t|
     t.integer  "site_id"
     t.string   "status"
@@ -189,6 +276,33 @@ ActiveRecord::Schema.define(version: 20150508171648) do
     t.datetime "updated_at",       null: false
     t.integer  "link_id"
     t.integer  "crawl_id"
+  end
+
+  create_table "report_downloads", force: :cascade do |t|
+    t.integer  "report_id"
+    t.string   "image",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "token",      limit: 255
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "report_type",     limit: 255
+    t.string   "report_group",    limit: 255
+    t.string   "name",            limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "password_digest", limit: 255
+    t.string   "logo",            limit: 255
+    t.integer  "group_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
   end
 
   create_table "shard_infos", force: :cascade do |t|
@@ -268,6 +382,16 @@ ActiveRecord::Schema.define(version: 20150508171648) do
   end
 
   add_index "subscriptions", ["user_id"], name: "index_subscriptions_on_user_id", unique: true, using: :btree
+
+  create_table "urls", force: :cascade do |t|
+    t.string   "url",           limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.string   "url_id",        limit: 255
+    t.integer  "net_change"
+    t.string   "campaign_name"
+  end
 
   create_table "user_dashboards", force: :cascade do |t|
     t.integer  "user_id"
