@@ -36,7 +36,7 @@
 												<span class="glyphicon glyphicon-trash glyph_pink" aria-hidden="true"></span>
 												<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
 											</td> -->
-											<td><%= crawl.name %></td>
+											<td><%= link_to crawl.name, crawl_path_path(crawl.id, 'processor_name' => crawl.processor_name) %></td>
 											<td class="text-center"><%= crawl.total_sites %></td>
 											<td class="text-center"><%= crawl.total_urls_found %></td>
 											<td class="text-center"><%= crawl.total_broken %></td>
