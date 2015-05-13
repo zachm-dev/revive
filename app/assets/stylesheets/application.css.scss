@@ -1,6 +1,7 @@
 // Colors
 
 $pink: #ff4f78;
+$light-grey: #bcbcbc;
 
 // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
 
@@ -207,7 +208,7 @@ html, body  {
 // MAIN PAGE
 
 .header_title_container {
-	padding: 10px 0px 0px 0px;
+  padding: 20px 20px 10px 20px;
 	background-color: #fbfbf9;
 	border-bottom: 1px solid #e7e7e1;
 }
@@ -220,6 +221,7 @@ html, body  {
 .header_text {
 	float: left;
 	margin-right: 15px;
+  font-size: 18px;
 }
 
 //.header_button {
@@ -552,8 +554,13 @@ Licensed under MIT
 }
 
 .used_minutes_title {
-	font-family: helvetica;
+  font-size: 15px;
 	padding-bottom: 10px !important;
+}
+
+.minutes_used_title{
+  font-size: 13px;
+  color: $light-grey;
 }
 
 //UI UPDATE STARTS HERE

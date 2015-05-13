@@ -5,19 +5,17 @@
 			<div class='col-xs-12'>
 				<div class="header_title_content">
 					<div class='header_glyph'>
-						<span class='glyphicon glyphicon-stats' aria-hidden="true"></span>
+						<span class='glyphicon glyphicon-home' aria-hidden="true"></span>
 					</div>
 					<div class='header_text'>
 						<p>This Weeks Daily Activity</p>
 					</div>
 				</div>
-				
 				<%= link_to 'Help & Support', 'http://source-wave.com/support', class: 'pull-right' %>
-				
 			</div>
 		</div>
 	</div>
-	
+
 	<div class='container-fluid container_section'>
 		<div class='row'>
 			<div class='col-xs-12'>
@@ -25,9 +23,7 @@
 			</div>
 		</div>
 	</div>
-	
-	
-	
+
 	<% if !current_user.subscription.nil? %>
 		<% if current_user.subscription.status == 'canceled' %>
 			<div class='container-fluid container_section'>
@@ -41,7 +37,7 @@
 			</div>
 		<% end %>
 	<% end %>
-	
+
 	<div class='container-fluid container_section'>
 		<div class='row'>
 			<div class='col-xs-12'>
@@ -49,11 +45,10 @@
 			</div>
 		</div>
 	</div>
-	
-	
+
 	<div class='container-fluid container_section'>
 		<div class='row'>
-					
+
 			<div class='col-xs-12 text-center'>
 						<div class='panel'>
 							<div class='panel-body'>
@@ -69,7 +64,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='col-xs-3 dashboard_stats_container'>
 										<div class='title_text'>
 											<p>BROKEN DOMAINS</p>
@@ -80,7 +75,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='col-xs-3 dashboard_stats_container'>
 										<div class='title_text'>
 											<p>EXPIRED DOMAINS</p>
@@ -91,20 +86,20 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='col-xs-3 dashboard_stats_container'>
 										<div class='title_text'>
 											<p>Pending / Running / Done</p>
 										</div>
 										<div class='row'>
 											<div class='stat_circle_container glyph_blue'>
-												<%= @dashboard.pending_crawlers.to_i %> / 
-												<%= @dashboard.running_crawlers.to_i %> / 
+												<%= @dashboard.pending_crawlers.to_i %> /
+												<%= @dashboard.running_crawlers.to_i %> /
 												<%= @dashboard.done_crawlers.to_i  %>
 											</div>
 										</div>
 									</div>
-									
+
 								</div>
 							</div>
 						</div>
@@ -112,12 +107,12 @@
 
 		</div>
 	</div>
-	
+
 	<div class='container-fluid container_section'>
 		<div class='col-xs-12'>
-			
+
 			<% if current_user.crawls.count <= 50 %>
-				
+
 					<div class='panel panel-success panel-default'>
 						<div class='panel-heading panel_blue_heading panel_glyph_container'>
 							<div class='header_glyph'>
@@ -135,15 +130,13 @@
 							</div>
 						</div>
 					</div>
-				
+
 			<% end %>
 		</div>
 	</div>
-	
-	
-	
+
 	<%= render 'top_domains' %>
-	
+
 	<div class='row'>
 		<div class='col-xs-12'>
 			<div class='row'>
@@ -155,5 +148,5 @@
 			</div>
 		</div>
 	</div>
-	
+
 </div>
