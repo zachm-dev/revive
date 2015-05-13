@@ -210,7 +210,7 @@ class Crawl < ActiveRecord::Base
       processors_array = ['processor_three', 'processor_four', 'processor', 'processor_one', 'processor_two']
       new_processors_array = []
       processors_array.each do |p|
-        new_processors_array.push({'processor_name' => p, 'running_count' => JSON.parse($redis.get('list_of_running_crawls')).select{|c| c['processor_name'] == p}.count})
+        new_processors_array.push({'processor_name' => p, 'running_count' => JSON.parse(redis_conn.get('list_of_running_crawls')).select{|c| c['processor_name'] == p}.count})
       end
       processor_name = new_processors_array.sort_by{|k,v| k['running_count']}[0]['processor_name']
       puts "save_new_crawl: the processor name for the new crawl is #{processor_name}"
@@ -268,7 +268,7 @@ class Crawl < ActiveRecord::Base
       processors_array = ['processor_three', 'processor_four', 'processor', 'processor_one', 'processor_two']
       new_processors_array = []
       processors_array.each do |p|
-        new_processors_array.push({'processor_name' => p, 'running_count' => JSON.parse($redis.get('list_of_running_crawls')).select{|c| c['processor_name'] == p}.count})
+        new_processors_array.push({'processor_name' => p, 'running_count' => JSON.parse(redis_conn.get('list_of_running_crawls')).select{|c| c['processor_name'] == p}.count})
       end
       processor_name = new_processors_array.sort_by{|k,v| k['running_count']}[0]['processor_name']
       puts "save_new_keyword_crawl: the processor name for the new crawl is #{processor_name}"
