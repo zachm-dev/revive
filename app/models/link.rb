@@ -54,7 +54,7 @@ class Link < ActiveRecord::Base
           Rails.cache.increment(["site/#{site.id}/processing_batches/running"])
         end
     
-        puts "process links on complete variables link id #{redis_id} site id #{site.id} and crawl id #{site.crawl_id}"
+        puts " process links on complete variables link id #{redis_id} site id #{site.id} and crawl id #{site.crawl_id}"
     
         batch = Sidekiq::Batch.new
         # batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => site.crawl_id, 'site_id' => site.id, 'link_id' => id, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
@@ -72,7 +72,7 @@ class Link < ActiveRecord::Base
         Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
         Rails.cache.write(['running_crawls'], new_crawls_rotation)
         Link.delay.start_processing
-        
+
       end
 
     end
