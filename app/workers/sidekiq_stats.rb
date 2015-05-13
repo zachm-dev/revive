@@ -7,7 +7,8 @@ class SidekiqStats
     puts 'getting sidekiq stats'
     processor_name = options['processor_name']
     SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
-
+    Link.delay.start_processing
+    puts 'SidekiqStats: called start processing from sidekiq stats'
     if !Rails.cache.read(['running_crawls']).empty? && Rails.cache.read(['running_crawls']).include?(crawl_id)
       
     
