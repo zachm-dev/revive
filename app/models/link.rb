@@ -13,10 +13,11 @@ class Link < ActiveRecord::Base
     puts "start_processing: list of running crawls #{running_crawls}"
     if !running_crawls.empty?
       next_crawl_to_process = running_crawls[0]
-      next_link_id_to_process = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a[0]
+      processing_link_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a
 
-      if !next_link_id_to_process.nil?
+      if !processing_link_ids.empty?
         puts "start_processing: there are more links to be processed"
+        next_link_id_to_process = processing_link_ids[0]
         puts "the next link to be processed is #{next_link_id_to_process}"
         new_crawls_rotation = running_crawls.rotate
         
