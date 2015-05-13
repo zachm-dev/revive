@@ -13,6 +13,7 @@ class Link < ActiveRecord::Base
     puts "start_processing: list of running crawls #{running_crawls}"
     if !running_crawls.empty?
       next_crawl_to_process = running_crawls[0]
+      puts "next crawl to process #{next_crawl_to_process}"
       processing_link_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a
 
       if !processing_link_ids.empty?

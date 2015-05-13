@@ -1,7 +1,7 @@
 class GatherLinks
   
   include Sidekiq::Worker
-  sidekiq_options retry: false
+  # sidekiq_options retry: false
   # sidekiq_options :queue => :gather_links
   
   def perform(site_id, maxpages, base_url, max_pages_allowed, crawl_id, options={})
