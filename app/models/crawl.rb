@@ -81,7 +81,7 @@ class Crawl < ActiveRecord::Base
 
     Rails.cache.write(['current_processing_batch_id'], '')
     
-    Rails.cache.write(["all_crawl_ids_#{self.id}"], [])
+    $redis.set("all_crawl_ids_#{self.id}", [].to_json)
     
   end
   

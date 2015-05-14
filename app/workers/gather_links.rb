@@ -26,8 +26,8 @@ class GatherLinks
       process = true
       
       redis_id = SecureRandom.hex+Time.now.to_i.to_s
-      Rails.cache.write(["all_crawl_ids_#{crawl_id}"], Rails.cache.read(["all_crawl_ids_#{crawl_id}"]).to_a.push("#{redis_id}"))
       puts "GatherLinks: the redis id is #{redis_id}"
+      $redis.set("all_crawl_ids_#{crawl_id}", JSON.parse($redis.get("all_crawl_ids_#{crawl_id}")).push(redis_id).to_json)
       $redis.set(redis_id, {site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name']}.to_json)
       
       if process == true
@@ -85,7 +85,8 @@ class GatherLinks
       
       puts 'there is a site and gathering the links'
       gather_links_batch = Sidekiq::Batch.new
-      Rails.cache.write(["all_crawl_ids_#{options['crawl_id']}"], Rails.cache.read(["all_crawl_ids_#{options['crawl_id']}"]).to_a.push(gather_links_batch.bid))
+
+      $redis.set("all_crawl_ids_#{options['crawl_id']}", JSON.parse($redis.get("all_crawl_ids_#{options['crawl_id']}")).push(gather_links_batch.bid).to_json)
       site.update(gather_status: 'running')
       site.gather_links_batch.update(status: "running", started_at: Time.now, batch_id: gather_links_batch.bid)
       gather_links_batch.on(:complete, GatherLinks, 'bid' => gather_links_batch.bid, 'crawl_id' => options["crawl_id"], 'site_id' => site.id, 'processor_name' => processor_name)

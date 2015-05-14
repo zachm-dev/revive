@@ -58,7 +58,8 @@ class Link < ActiveRecord::Base
     
         batch = Sidekiq::Batch.new
         # batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => site.crawl_id, 'site_id' => site.id, 'link_id' => id, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
-        Rails.cache.write(["all_crawl_ids_#{site.crawl_id}"], Rails.cache.read(["all_crawl_ids_#{site.crawl_id}"]).to_a.push(batch.bid))
+
+        $redis.set("all_crawl_ids_#{site.crawl_id}", JSON.parse($redis.get("all_crawl_ids_#{site.crawl_id}")).push(batch.bid).to_json)
         batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => site.crawl_id, 'site_id' => site.id, 'redis_id' => redis_id, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
     
         batch.jobs do
