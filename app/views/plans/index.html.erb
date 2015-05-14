@@ -1,11 +1,11 @@
 <div class="home_main_container">
-	
+
 	<div class="home_section_container home_nav_container">
 		<div class="home_middle_container">
 			<%= render 'nav/home_top_nav' %>
 		</div>
 	</div>
-	
+
 	<!-- <div class="home_section_container nopadding">
 		<div class="text-center">
 			<div class="home_video_headline text-center">
@@ -14,64 +14,65 @@
 			<iframe width="334" height="115" src="https://w2.countingdownto.com/892597" frameborder="0"></iframe>
 		</div>
 	</div> -->
-	
+
 	<div class="home_section_container what_you_get_section_blue">
 		<div class="home_middle_container">
 			<div class="row">
-								
+
 				<div class="home_video_headline text-center">
 					<h1>What You Get When You Join Revive</h1>
 				</div>
-				
+
 				<div class="col-xs-4">
 					<div class="text-center"><%= image_tag 'maths56.png' %></div>
 					<div class="text-center"><h3 class="white-text black_bold_text">Unlimited Domains</h3></div>
-					<div><p class="white-text text-center">There is no limit to the amount of domains you can find with Source Revive</p></div>
+					<div><p class="white-text text-center h3-desc">There is no limit to the amount of domains you can find with Source Revive</p></div>
 				</div>
-				
+
 				<div class="col-xs-4">
 					<div class="text-center"><%= image_tag '1430224234_steering_wheel-64.png' %></div>
 					<div class="text-center"><h3 class="white-text black_bold_text">Full Project Control</h3></div>
-					<div><p class="white-text text-center">Revive brings you back the exact domains you want in the niches you are looking for</p></div>
+					<div><p class="white-text text-center h3-desc">Revive brings you back the exact domains you want in the niches you are looking for</p></div>
 				</div>
-				
+
 				<div class="col-xs-4">
 					<div class="text-center"><%= image_tag '1430164620_519929-27_Cloud-64.png' %></div>
 					<div class="text-center"><h3 class="white-text black_bold_text">Our Cloud Based Data System</h3></div>
-					<div><p class="white-text text-center">We handle all the data processing and technical
-stuff for you. All you have to do is login and press go</p></div>
+          <div><p class="white-text text-center h3-desc">
+            We handle all the data processing and technical stuff for you. All you have to do is login and press go
+          </p></div>
 				</div>
-				
+
 			</div>
 		</div>
 	</div>
-	
-	<div class="home_section_container what_you_get_section_blue">
+
+	<div class="home_section_container what_you_get_section_blue bottom_section_blue">
 		<div class="home_middle_container">
 			<div class="row">
-				
+
 				<div class="col-xs-4">
 					<div class="text-center"><%= image_tag '1430224167_headset-64.png' %></div>
 					<div class="text-center"><h3 class="white-text black_bold_text">Laser Fast Support</h3></div>
-					<div><p class="white-text text-center">We have a 24/7 support team standing by to make sure you have success</p></div>
+					<div><p class="white-text text-center h3-desc">We have a 24/7 support team standing by to make sure you have success</p></div>
 				</div>
-				
+
 				<div class="col-xs-4">
 					<div class="text-center"><%= image_tag '1430224290_update-64.png' %></div>
 					<div class="text-center"><h3 class="white-text black_bold_text">Continous Updates</h3></div>
-					<div><p class="white-text text-center">We continue to update and improve this system and keep it pristine</p></div>
+					<div><p class="white-text text-center h3-desc">We continue to update and improve this system and keep it pristine</p></div>
 				</div>
-				
+
 				<div class="col-xs-4">
 					<div class="text-center"><%= image_tag '1430224448_07.Wallet-64.png' %></div>
 					<div class="text-center"><h3 class="white-text black_bold_text">No Extra Cost</h3></div>
-					<div><p class="white-text text-center">There are ZERO extra cost after you obtain access to Revice</p></div>
+					<div><p class="white-text text-center h3-desc">There are ZERO extra cost after you obtain access to Revice</p></div>
 				</div>
-				
+
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="home_section_container">
 		<div class="home_middle_container">
 			<!-- <div class="row">
@@ -83,13 +84,12 @@ stuff for you. All you have to do is login and press go</p></div>
 				</div>
 			</div> -->
 			<div class="row">
-				
+
 				<div class="col-xs-4">
-					<div class="pricing_plan_container text-center">
-						<div class="plan_title"><h1 class="white-text black_bold_text">EMT</h1></div>
+					<div class="pricing_plan_container text-center blue-option">
+						<div class="plan_title"><h1>EMT</h1></div>
 						<div class="pricing_text_container">
-							<div><h1 class="white-text black_bold_text">$199</h1></div>
-							<div><h4>per month</h4></div>
+							<h1>$199 / month</h1>
 						</div>
 						<div class="pricing_feature"><h4 class="light_blue_text">Unlimited Domains</h4></div>
 						<div class="pricing_feature"><h4 class="light_blue_text">1 Active Project</h4></div>
@@ -98,29 +98,26 @@ stuff for you. All you have to do is login and press go</p></div>
 						<div class="pricing_btn"><%= link_to 'BEGIN REVIVING', signup_path(plan_id: 1) %></div>
 					</div>
 				</div>
-				
+
 				<div class="col-xs-4">
-					<div class="pricing_plan_container text-center">
-						<div class="plan_title pink_title"><h1 class="white-text black_bold_text">DOCTOR</h1></div>
+					<div class="pricing_plan_container text-center orange-option">
+						<div class="plan_title"><h1>DOCTOR</h1></div>
 						<div class="pricing_text_container">
-							<div><h1 class="white-text black_bold_text">$297</h1></div>
-							<div><h4>per month</h4></div>
+							<h1>$297 / per month</h1>
 						</div>
 						<div class="pricing_feature"><h4 class="light_blue_text">Unlimited Domains</h4></div>
 						<div class="pricing_feature"><h4 class="light_blue_text">1 Active Project</h4></div>
 						<div class="pricing_feature"><h4 class="light_blue_text">For Large PBNs</h4></div>
-						<div class="pricing_feature yellow_sub"><h4 class="light_blue_text">6500 Crawl Minutes</h4></div>
+						<div class="pricing_feature"><h4 class="light_blue_text">6500 Crawl Minutes</h4></div>
 						<div class="pricing_btn"><%= link_to 'BEGIN REVIVING', signup_path(plan_id: 3) %></div>
 					</div>
 				</div>
-				
+
 				<div class="col-xs-4">
-					<div class="pricing_plan_container text-center">
-						<div class="plan_title yellow_title"><h1 class="white-text black_bold_text">IMMORTAL</h1></div>
+					<div class="pricing_plan_container text-center green-option">
+						<div class="plan_title"><h1>IMMORTAL</h1></div>
 						<div class="pricing_text_container">
-							<!-- <div class="yellow_sub"><h4>Best Value</h4></div> -->
-							<div><h1 class="white-text black_bold_text">$497</h1></div>
-							<div><h4>per month</h4></div>
+							<h1>$497 / per month</h1>
 						</div>
 						<div class="pricing_feature"><h4 class="light_blue_text">Unlimited Domains</h4></div>
 						<div class="pricing_feature"><h4 class="light_blue_text">2 Active Projects</h4></div>
@@ -129,9 +126,9 @@ stuff for you. All you have to do is login and press go</p></div>
 						<div class="pricing_btn"><%= link_to 'BEGIN REVIVING', signup_path(plan_id: 4) %></div>
 					</div>
 				</div>
-				
+
 			</div>
 		</div>
 	</div>
-	
+
 </div>

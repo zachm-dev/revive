@@ -2,23 +2,20 @@
 <html>
 <head>
   <title>Source Revive</title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
   <%= stylesheet_link_tag    "home", media: "all", "data-turbolinks-track" => true %>
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-  	<%= render 'layouts/flash_errors' %>
+  <%= render 'layouts/flash_errors' %>
 	<%= yield %>
 	<%= render 'footer/footer_links' %>
-	
-    <script type="text/javascript" src="https://static.leaddyno.com/js"></script>
-    <script>
-    LeadDyno.key = "9b0ddaf9be6a5205ac0da12e47965960ffec33d6";
-    LeadDyno.recordVisit();
-    LeadDyno.autoWatch();
-    </script>
-	
-	
+  <script type="text/javascript" src="https://static.leaddyno.com/js"></script>
+  <script>
+  LeadDyno.key = "9b0ddaf9be6a5205ac0da12e47965960ffec33d6";
+  LeadDyno.recordVisit();
+  LeadDyno.autoWatch();
+  </script>
 </body>
 </html>

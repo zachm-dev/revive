@@ -1,3 +1,7 @@
+$main-blue: #0f81d5;
+$orange: #f77d23;
+$green: #6cab1a;
+
 // Place all the styles related to the home controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
@@ -62,6 +66,7 @@ table {
 body, html {
 	width: 100%;
 	background: #f2f2f0;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .home_main_container {
@@ -102,13 +107,18 @@ body, html {
 
 .home_nav_container {
 	background-color: #fff;
-	padding: 0px 0px 0px 0px !important;
-	height: 50px !important;
+	padding: 10px 0px 0px 0px !important;
+	height: 80px !important;
 //	margin-top: -10px;
 }
 
 .home_nav_container img {
 	height: 50px !important;
+}
+
+a.top_nav_link{
+  color: $main-blue;
+  letter-spacing: 1px;
 }
 
 .home_links_container {
@@ -141,8 +151,10 @@ body, html {
 }
 
 .home_video_headline h1 {
-	font-size: 45px;
+	font-size: 33px;
 	font-weight: bold;
+  margin-top: 50px;
+  margin-bottom: 100px;
 }
 
 .home_video_container {
@@ -333,7 +345,6 @@ body, html {
 
 .home_section_container {
 	padding: 30px 0px;
-	font-family: helvetica;
 	color: #4a4a4a;
 }
 
@@ -451,8 +462,8 @@ body, html {
 	font-size: 24px;
 }
 
-.black_bold_text {
-	font-weight: bold;
+.h3-desc{
+  font-weight: lighter;
 }
 
 .white-text {
@@ -460,13 +471,11 @@ body, html {
 }
 
 .home_top_nav_container {
-	height: 50px;
 	border: none;
 	background-color: #fff;
 }
 
 .logged_out_nav_text a {
-	color: #999;
 }
 
 .what_you_get_section {
@@ -481,32 +490,32 @@ body, html {
 	background-color: #0f81d5;
 }
 
-.pricing_plan_container {
-	width: 300px;
-	background-color: #2a2836;
-	-webkit-border-top-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-topright: 5px;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	-webkit-border-bottom-right-radius: 5px;
-	-webkit-border-bottom-left-radius: 5px;
-	-moz-border-radius-bottomright: 5px;
-	-moz-border-radius-bottomleft: 5px;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
+.bottom_section_blue{
+  padding-bottom: 80px;
 }
 
-.plan_title {
-	-webkit-border-top-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-topright: 5px;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	padding: 1px 0px;
-	background-color: #393939;
+.pricing_plan_container {
+	width: 300px;
+	background-color: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.blue-option .plan_title{
+  color: $main-blue;
+}
+
+.orange-option .plan_title{
+  color: $orange;
+}
+
+.green-option .plan_title{
+  color: $green;
+}
+
+.plan_title h1{
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 
 .pink_title {
@@ -521,14 +530,27 @@ body, html {
 	background-color: #e5c145;
 }
 
-
-
-.pricing_text_container h1 {
-	font-size: 70px;
+.blue-option .pricing_text_container{
+  background: $main-blue;
 }
 
-.pricing_text_container h4 {
-	color: #666;
+.orange-option .pricing_text_container{
+  background: $orange;
+}
+
+.green-option .pricing_text_container{
+  background: $green;
+}
+
+.pricing_text_container{
+  padding: 10px 0px;
+}
+
+.pricing_text_container h1 {
+	font-size: 32px;
+  color: white;
+  font-weight: lighter;
+  margin-top: 10px;
 }
 
 .yellow_sub h4 {
@@ -536,22 +558,19 @@ body, html {
 }
 
 .pricing_feature {
-	border-top: 1px solid #8c91a6;
-	padding: 0px 0px 2px 0px;
+	border-bottom: 1px solid #f0f0f0;
+	padding: 5px 0px 5px 0px;
 }
 
 .light_blue_text {
-	color: #8c91a6;
+	color: #464646;
 	font-weight: lighter;
 }
 
-
 .pricing_btn a {
 	display: block;
-	border-top: 1px solid #8c91a6;
 	padding: 25px 0px;
-	font-weight: bold;
-	color: #fff;
+	color: $main-blue;
 	font-size: 20px;
 	text-decoration: none;
 }
@@ -594,9 +613,9 @@ body, html {
 	font-size: 10px;
 }
 
-
 .logo_blue_link {
 	color: #0F81D5 !important;
+  font-size: 25px;
 }
 
 
