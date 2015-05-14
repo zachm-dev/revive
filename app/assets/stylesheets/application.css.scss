@@ -61,7 +61,7 @@ html, body  {
   margin: 0 !important;
 }
 
-.fill { 
+.fill {
     min-height: 100%;
     height: 100%;
 }
@@ -278,7 +278,7 @@ html, body  {
 	font-size: 24px;
   letter-spacing: 2px;
   color: #464646;
-}	
+}
 
 #stats_chart {
 	height: 300px;
@@ -470,8 +470,20 @@ Licensed under MIT
   display: inline-block;
 }
 
+.blue-nav .arrow-down {
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid $main-blue;
+  position: absolute;
+  bottom: -10px;
+  left: 40%;
+}
+
 .blue-nav li{
   float: left;
+  position: relative;
   border-radius: none;
 }
 
@@ -508,7 +520,7 @@ Licensed under MIT
 	border-bottom-right-radius: 5px;
 }
 
-///////// SIDE TABAS ///////// 
+///////// SIDE TABAS /////////
 
 .side_vertical_tabs {
 	border-bottom: none;
