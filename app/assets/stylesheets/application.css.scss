@@ -3,6 +3,7 @@
 $pink: #ff4f78;
 $light-grey: #8f8f8f;
 $main-blue: #0f81d5;
+$main-green: #6cab1a;
 
 // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
 
@@ -117,6 +118,11 @@ html, body  {
 
 .white_text {
 	color: #fff !important;
+}
+
+.btn-green{
+  background: $main-green;
+  color: white;
 }
 
 // Nav
