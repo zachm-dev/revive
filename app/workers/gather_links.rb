@@ -26,7 +26,7 @@ class GatherLinks
       process = true
       
       redis_id = SecureRandom.hex+Time.now.to_i.to_s
-      Rails.cache.write(["all_crawl_ids_#{crawl_id}"], Rails.cache.read(["all_crawl_ids_#{crawl_id}"]).to_a.push(redis_id))
+      Rails.cache.write(["all_crawl_ids_#{crawl_id}"], Rails.cache.read(["all_crawl_ids_#{crawl_id}"]).to_a.push("#{redis_id}"))
       puts "GatherLinks: the redis id is #{redis_id}"
       $redis.set(redis_id, {site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name']}.to_json)
       
