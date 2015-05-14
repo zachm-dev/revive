@@ -780,8 +780,13 @@ Licensed under MIT
 	padding: 0px;
 }
 
-.top_nav_title_container div {
-	padding-top: 10px;
+.top_nav_title_container .header_glyph {
+	padding-top: 4px;
+}
+
+.top_nav_title_container .header_text {
+  font-size: 18px;
+	padding-top: 2px;
 }
 
 .revive_top_nav_header_container {
