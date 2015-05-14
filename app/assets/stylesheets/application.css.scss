@@ -949,3 +949,16 @@ form.revive-form label{
   margin-bottom: 15px;
   font-size: 14px;
 }
+
+///////////////// BOOTSTRAP OVERRIDES //////////////////
+.progress{
+  border-radius: 12px;
+  background: #efefef;
+}
+
+.progress-bar-success{
+  background: -webkit-linear-gradient(#7fba1f, #589b15); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#7fba1f, #589b15); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#7fba1f, #589b15); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#7fba1f, #589b15);
+}
