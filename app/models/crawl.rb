@@ -53,6 +53,10 @@ class Crawl < ActiveRecord::Base
   def setCrawlStartingVariables(options={})
     puts "setting crawl starting variables"
     
+    redis_array_obj_name = "all_crawl_ids_#{self.id}"
+    $redis.set("all_crawl_ids_#{redis_array_obj_name}", [].to_json)
+    puts "redis set starting crawls array #{$redis.get(redis_array_obj_name)}"
+    
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
     
@@ -80,9 +84,7 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{self.id}/progress"], 0.00, raw: true)
 
     Rails.cache.write(['current_processing_batch_id'], '')
-    
-    $redis.set("all_crawl_ids_#{self.id}", [].to_json)
-    
+
   end
   
   def self.decision_maker(options={})
