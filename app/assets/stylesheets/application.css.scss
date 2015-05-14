@@ -125,6 +125,10 @@ html, body  {
   color: white;
 }
 
+.btn-green:hover{
+  color: white;
+}
+
 // Nav
 
 .navbar-revive {
@@ -460,6 +464,49 @@ Licensed under MIT
 	font-size: 250px;
 }
 
+.blue-nav{
+  border: 2px solid $main-blue;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.blue-nav li{
+  float: left;
+  border-radius: none;
+}
+
+.blue-nav li a{
+  padding: 5px 15px;
+  font-size: 13px;
+  border-right: 2px solid $main-blue;
+}
+
+.blue-nav li:last-child a{
+  border-right: none;
+}
+
+.blue-nav li:hover a, .blue-nav li.active a{
+  background: $main-blue;
+  color: white;
+}
+
+.blue-nav li:first-child:hover a{
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.blue-nav li:last-child:hover a{
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-bottomright: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
 
 ///////// SIDE TABAS ///////// 
 
