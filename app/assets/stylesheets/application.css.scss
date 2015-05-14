@@ -125,8 +125,18 @@ html, body  {
 }
 
 .btn-green{
+  border: 2px solid $main-green;
   background: $main-green;
   color: white;
+  padding: 4px 20px;
+  border-radius: 6px;
+}
+
+.btn-red-hollow{
+  border: 2px solid #e16f5c;
+  color: #e16f5c;
+  padding: 4px 20px;
+  border-radius: 6px;
 }
 
 .btn-green:hover{
