@@ -33,7 +33,6 @@ class GatherLinks
       if process == true
         ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
         Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
-        Rails.cache.write(["all_crawl_ids_#{crawl_id}"], Rails.cache.read(["all_crawl_ids_#{crawl_id}"]).to_a.push(redis_id))
         if Rails.cache.read(['current_processing_batch_id']).empty?
           Link.delay.start_processing
         end
