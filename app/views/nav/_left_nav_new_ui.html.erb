@@ -23,7 +23,7 @@
     <% end %>
   </li>
 
-	<li class=<%= 'active' if current_page?(crawls_path) %> >
+  <li <% if @nav == 'domains' %>class='active'<% end %>>
 		<%= link_to sites_path('user_id' => current_user.id) do %>
 		    <i class="glyphicon glyphicon-th-list">
 				<span class="glyph_text">Domains</span>
@@ -32,7 +32,7 @@
 	</li>
 
   <% if current_user.admin %>
-    <li class=<%= 'active' if current_page?(admins_path) %> >
+    <li <% if @nav == 'admin' %>class='active'<% end %>>
       <%= link_to admins_path do %>
           <i class="glyphicon glyphicon-cog">
           <span class="glyph_text">Admin</span>

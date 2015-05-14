@@ -3,6 +3,7 @@ class CrawlsController < ApplicationController
   skip_before_action :verify_authenticity_token, :only => [:api_create, :migrate_db, :process_new_crawl, :shut_down_crawl]
   
   def index
+    @nav = 'projects'
     processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
@@ -11,11 +12,10 @@ class CrawlsController < ApplicationController
     end
     page = params[:page].nil? ? 1 : params[:page] 
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
-    
   end
   
   def running
-    
+    @nav = 'projects'
     processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
@@ -24,12 +24,11 @@ class CrawlsController < ApplicationController
     end
     page = params[:page].nil? ? 1 : params[:page] 
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
-    
     # @crawls = Crawl.using(:processor).where(status: 'running', user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
   end
   
   def finished
-    
+    @nav = 'projects'
     processor_names = ['processor', 'processor_one', 'processor_two', 'processor_three', 'processor_four']
     crawls_array = []
     processor_names.each do |processor|
@@ -38,15 +37,12 @@ class CrawlsController < ApplicationController
     end
     page = params[:page].nil? ? 1 : params[:page] 
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
-    
     # @crawls = Crawl.using(:processor).where(status: 'finished', user_id: current_user.id).order('created_at').page(params[:page]).per_page(10)
   end
   
   def show
     processor_name = params['processor_name']
     @project = Crawl.using("#{processor_name}").where(user_id: current_user.id, id: params[:id]).first
-    
-    
     if @project.status == 'running' && !@project.redis_url.nil?
       begin
         redis = ActiveSupport::Cache.lookup_store(:redis_store, @project.redis_url)

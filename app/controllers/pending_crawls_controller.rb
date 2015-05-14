@@ -2,7 +2,7 @@ class PendingCrawlsController < ApplicationController
   before_action :authorize, :except => [:sort]
   
   def index
-    
+    @nav = 'projects'
     processor_names = ['processor', 'processor_one', 'processor_two']
     crawls_array = []
     processor_names.each do |processor|
@@ -10,7 +10,6 @@ class PendingCrawlsController < ApplicationController
     end
     page = params[:page].nil? ? 1 : params[:page]
     @crawls = crawls_array.flatten.paginate(:page => page, :per_page => 10)
-    
     # @crawls = HerokuApp.using(:processor).where(status: "pending", user_id: current_user.id).order(:position).includes(:crawl)
   end
   
