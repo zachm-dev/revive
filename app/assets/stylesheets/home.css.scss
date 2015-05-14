@@ -498,7 +498,7 @@ a.top_nav_link{
 	width: 300px;
 	background-color: white;
   border-radius: 8px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #e1e1e1;
 }
 
 .blue-option .plan_title{
@@ -573,6 +573,7 @@ a.top_nav_link{
 	color: $main-blue;
 	font-size: 20px;
 	text-decoration: none;
+  background: linear-gradient(white, #e9e9e9);
 }
 
 .pricing_btn a:hover {
