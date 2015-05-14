@@ -54,7 +54,7 @@ class Crawl < ActiveRecord::Base
     puts "setting crawl starting variables"
     
     redis_array_obj_name = "all_crawl_ids_#{self.id}"
-    $redis.set("all_crawl_ids_#{redis_array_obj_name}", [].to_json)
+    $redis.set("#{redis_array_obj_name}", [].to_json)
     puts "redis set starting crawls array #{$redis.get(redis_array_obj_name)}"
     
     running_crawls = Rails.cache.read(['running_crawls']).to_a
