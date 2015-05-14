@@ -583,7 +583,12 @@ a.top_nav_link{
 	padding: 0px;
 }
 
+h3.black_bold_text{
+  font-size: 18px;
+}
+
 .page_footer {
+  background: white;
 	display: inline-block;
 	text-align: center;
 	width: 100%;
@@ -591,7 +596,9 @@ a.top_nav_link{
 }
 
 .footer_links_container {
+  border-top: 1px solid #e8e8e8;
 	text-align: center;
+  padding: 20px;
 }
 
 .footer_links_container li {
@@ -602,15 +609,20 @@ a.top_nav_link{
 }
 
 .footer_links_container li a {
-	color: #999;
+	color: $main-blue;
 	text-family: helvetica;
+  font-size: 14px;
+  margin: 0px 20px;
 }
 
 .footer_copyright_footer_text {
+  border-top: 1px solid #e8e8e8;
+  width: 95%;
+  padding: 20px;
 	text-align: center;
 	color: #999;
 	font-family: helvetica;
-	font-size: 10px;
+	font-size: 12px;
 }
 
 .logo_blue_link {
