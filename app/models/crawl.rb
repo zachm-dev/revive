@@ -80,6 +80,9 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{self.id}/progress"], 0.00, raw: true)
 
     Rails.cache.write(['current_processing_batch_id'], '')
+    
+    Rails.cache.write(["all_crawl_ids_#{self.id}"], [])
+    
   end
   
   def self.decision_maker(options={})
