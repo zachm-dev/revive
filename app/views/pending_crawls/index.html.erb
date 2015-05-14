@@ -1,72 +1,55 @@
 <div class="main_page_container">
-	
+
 	<div class="container-fluid header_title_container">
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="header_title_content">
-					<!-- TABS -->
-				
-					<div class="tabbable-panel">
-						<div class="tabbable-line">
-							<ul class="nav nav-tabs ">
-								<li>
-									<%= link_to crawls_path do %>
-									    <i class="glyphicon glyphicon-folder-open">
-											<span class="glyph_text">Projects</span>
-										</i>
-									<% end %>
-								</li>
-		
-								<li class="active">
-									<%= link_to pending_crawls_path do %>
-									    <i class="glyphicon glyphicon-exclamation-sign">
-											<span class="glyph_text">Pending</span>
-										</i>
-									<% end %>
-								</li>
-							
-								<li >
-									<%= link_to running_crawls_path do %>
-									    <i class="glyphicon glyphicon-refresh">
-											<span class="glyph_text">Running</span>
-										</i>
-									<% end %>
-								</li>
-								
-								<li >
-									<%= link_to '#' do %>
-									    <i class="glyphicon glyphicon-ban-circle">
-											<span class="glyph_text">Stopped</span>
-										</i>
-									<% end %>
-								</li>
-
-								<li >
-									<%= link_to finished_crawls_path do %>
-									    <i class="glyphicon glyphicon-flag">
-											<span class="glyph_text">Finished</span>
-										</i>
-									<% end %>
-								</li>
-								
-								<div class="header_button pull-right">
-									<p><%= link_to "CREATE NEW", new_project_path, class: 'btn btn-success btn-sm' %></p>
-								</div>
-							</ul>
+					<div class='top_nav_title_container'>
+						<div class="header_glyph">
+							<span class="glyphicon glyphicon-folder-close" aria-hidden="true"></span>
+						</div>
+						<div class="header_text">
+							<p>Projects</p>
 						</div>
 					</div>
-				
-					<!-- TABS -->
+					<div class="blue-nav">
+            <ul class="nav">
+              <li>
+                <%= link_to 'Projects', crawls_path %>
+              </li>
+
+              <li class="active">
+                <%= link_to 'Pending', pending_crawls_path %>
+                <div class="arrow-down"></div>
+              </li>
+
+              <li>
+                <%= link_to 'Running', running_crawls_path %>
+              </li>
+
+              <li>
+                <%= link_to 'Stopped', '#' %>
+              </li>
+
+              <li>
+                <%= link_to 'Finished', finished_crawls_path %>
+              </li>
+            </ul>
+					</div>
+				  <%= link_to 'Help & Support', 'http://source-wave.com/support', class: 'pull-right help-support' %>
+          <div class="header_button pull-right">
+            <p><%= link_to "Create New", new_project_path, class: 'btn btn-green btn-sm', 'data-no-turbolink': true %></p>
+          </div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="container-fluid container_section pending-crawls-list-container">
-		
+
 		<div class="row">
 			<div class='col-xs-12'>
-<%= render 'minutes/used_minutes' %>
+        <%= render 'minutes/used_minutes' %>
         <div class="page-header">
           <h3>Click and drag to sort the order</h3>
         </div>
@@ -100,10 +83,10 @@
 								</div>
 							<% end %>
 						<% end %>
-						
+
 					<% end %>
 				</ul>
-				
+
 			</div>
 		</div>
 	</div>
