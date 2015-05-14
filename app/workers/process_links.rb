@@ -4,7 +4,7 @@ class ProcessLinks
   
   include Sidekiq::Worker
   sidekiq_options :queue => :process_links
-  # sidekiq_options :retry => false
+  sidekiq_options :retry => 3
   
   def perform(l, site_id, found_on, domain, crawl_id, options={})
     processor_name = options['processor_name']
