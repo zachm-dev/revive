@@ -10,17 +10,15 @@
 						<p>My Account</p>
 					</div>
 				</div>
-				
 				<%= link_to 'Help & Support', 'http://source-wave.com/support', class: 'pull-right' %>
-				
 			</div>
 		</div>
 	</div>
-	
+
 	<div class='account-container'>
 		<div class='row'>
 			<div class='col-lg-6'>
-				
+
 				<div class='row'>
 					<div class='panel-container'>
 						<div class='panel panel-default panel-success'>
@@ -29,9 +27,8 @@
 							</div>
 							<div class='panel-body'>
 								<%= form_for @user, :html => {class: 'form'} do |f| %>
-									
+
 									<% if @user.errors.any? %>
-										
 										<div id='error_explanation'>
 											<h2><%= "#{pluralize(@user.errors.count, "error")} prohibited this event from being saved:" %></h2>
 											<ul>
@@ -40,9 +37,8 @@
 												<% end %>
 											</ul>
 										</div>
-										
 									<% end %>
-									
+
 									<div class='row'>
 										<div class='col-lg-12'>
 											<div class='form-group'>
@@ -51,7 +47,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='col-lg-6'>
 											<div class='form-group'>
@@ -59,7 +55,7 @@
 												<%= f.password_field :password, placeholder: 'J4M35B0ND007', class: 'form-control' %>
 											</div>
 										</div>
-										
+
 										<div class='col-lg-6'>
 											<div class='form-group'>
 												<%= f.label :password_confirmation %>
@@ -67,7 +63,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='form-group'>
 											<div class='col-lg-12'>
@@ -75,15 +71,15 @@
 											</div>
 										</div>
 									</div>
-									
+
 								<% end %>
 							</div>
 						</div>
 					</div>
 				</div>
-				
+
 				<div class='row'>
-					
+
 					<div class='panel-container'>
 						<div class="panel panel-default panel-success">
 							<div class='panel-heading panel_blue_heading white_text'>
@@ -136,11 +132,11 @@
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
-				
+
 			</div>
-			
+
 			<div class='col-lg-6'>
 				<div class='row'>
 					<div id='subscription' class='panel-container'>
@@ -150,9 +146,9 @@
 							</div>
 							<div class='panel-body'>
 								<%= form_for @user, :html => {class: 'form'} do |f| %>
-									
+
 									<% if @user.errors.any? %>
-										
+
 										<div id='error_explanation'>
 											<h2><%= "#{pluralize(@user.errors.count, "error")} prohibited this event from being saved:" %></h2>
 											<ul>
@@ -161,9 +157,9 @@
 												<% end %>
 											</ul>
 										</div>
-										
+
 									<% end %>
-									
+
 									<div class='row'>
 										<div class='col-lg-6'>
 											<div class='form-group'>
@@ -178,7 +174,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='col-lg-12'>
 											<div class='form-group'>
@@ -187,7 +183,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='col-lg-12'>
 											<div class='form-group'>
@@ -196,7 +192,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='col-lg-12'>
 											<div class='form-group'>
@@ -205,7 +201,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='col-lg-4'>
 											<div class='form-group'>
@@ -213,14 +209,14 @@
 												<%= f.text_field :city, placeholder: 'Sydney', class: 'form-control' %>
 											</div>
 										</div>
-										
+
 										<div class='col-lg-4'>
 											<div class='form-group'>
 												<%= f.label :state %>
 												<%= f.text_field :state, placeholder: 'New South Wales', class: 'form-control' %>
 											</div>
 										</div>
-										
+
 										<div class='col-lg-4'>
 											<div class='form-group'>
 												<%= f.label :zip %>
@@ -228,7 +224,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='col-lg-12'>
 											<div class='form-group'>
@@ -237,7 +233,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									<div class='row'>
 										<div class='form-group'>
 											<div class='col-lg-12'>
@@ -245,17 +241,15 @@
 											</div>
 										</div>
 									</div>
-									
+
 								<% end %>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			
+
 		</div>
 	</div>
-	
-	
-	
+
 </div>
