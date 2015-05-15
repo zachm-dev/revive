@@ -2,6 +2,7 @@ class AdminsController < ApplicationController
   before_filter :is_admin?
 
   def index
+    @nav = 'admin'
     @users = User.admin_search(params[:query]).order('created_at DESC').page(params[:page]).per_page(25)
   end
 
