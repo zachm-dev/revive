@@ -133,10 +133,14 @@ html, body  {
 }
 
 .btn-red-hollow{
-  border: 2px solid #e16f5c;
-  color: #e16f5c;
+  border: 2px solid #e84429;
+  color: #e84429;
   padding: 4px 20px;
   border-radius: 6px;
+}
+
+.btn-red-hollow:hover{
+  color: #e84429;
 }
 
 .btn-green:hover{
@@ -963,7 +967,7 @@ form.find-user input{
 
 ///////////////// FORMS //////////////////
 form.revive-form input[type='text'], form.revive-form input[type='number'],
-  form.revive-form textarea, form.revive-form input[type='password']{
+  form.revive-form textarea, form.revive-form input[type='password'], form.revive-form input[type='email'] {
   border: 2px solid #eaeaea !important;
   box-shadow: none;
 }
@@ -972,6 +976,10 @@ form.revive-form label{
   color: #606060;
   margin-bottom: 15px;
   font-size: 14px;
+}
+
+form.revive-form .btn-green{
+  text-transform: uppercase;
 }
 
 form.thin-form{

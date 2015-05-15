@@ -21,12 +21,12 @@
 
 				<div class='row'>
 					<div class='panel-container'>
-						<div class='panel panel-default panel-success'>
-							<div class='panel-heading panel_blue_heading white_text'>
-								<h3 class='panel-title'>User Info</h3>
+						<div class='panel panel-default panel-round'>
+							<div class='panel-heading panel_blue_heading white_text panel_glyph_container'>
+                <p>User Info</p>
 							</div>
 							<div class='panel-body'>
-								<%= form_for @user, :html => {class: 'form'} do |f| %>
+								<%= form_for @user, :html => {class: 'revive-form'} do |f| %>
 
 									<% if @user.errors.any? %>
 										<div id='error_explanation'>
@@ -67,7 +67,7 @@
 									<div class='row'>
 										<div class='form-group'>
 											<div class='col-lg-12'>
-												<%= f.submit class:'btn btn-success btn-block' %>
+												<%= f.submit class:'btn btn-green btn-block' %>
 											</div>
 										</div>
 									</div>
@@ -80,55 +80,49 @@
 
 				<div class='row'>
 
-					<div class='panel-container'>
-						<div class="panel panel-default panel-success">
+					<div class='panel-container subscription-plan'>
+						<div class="panel panel-default panel-round">
 							<div class='panel-heading panel_blue_heading white_text'>
-								<div class='row'>
-									<div class='col-xs-6 col-sm-6'>
-										<h3 class='panel-title'>Subscription Plan</h3>
-									</div>
-									<div class='col-xs-6 col-sm-6'>
-										<h3 class='pull-right panel-title'><%= @current_user.subscription.status.capitalize %></h3>
-									</div>
-								</div>
+                <p>
+                  <div class='row'>
+                    <div class='col-xs-6 col-sm-6'>
+                      <h3 class='panel-title'>Subscription Plan</h3>
+                    </div>
+                    <div class='col-xs-6 col-sm-6'>
+                      <h3 class='pull-right panel-title'><%= @current_user.subscription.status.capitalize %></h3>
+                    </div>
+                  </div>
+                </p>
 							</div>
 							<div class='panel-body'>
-								<div class='row'>
-									<div class='col-xs-6 col-sm-6'>
-										<h3><%= @current_user.subscription.plan_name.to_s %></h3>
-									</div>
-									<div class='col-xs-6 col-sm-6'>
-										<h3 class='pull-right'>
-											<%= @current_user.subscription.plan.price %>
-										</h3>
-									</div>
-								</div>
 								<div class='limit-container'>
 									<div class='limit'>
-										<p>Minutes Available</p>
-										<p><%= (@plan.minutes_per_month.to_f-@user.minutes_used.to_f).to_i %></p>
+                    <div class='amount'>
+                      <%= (@plan.minutes_per_month.to_f-@user.minutes_used.to_f).to_i %>
+                    </div>
+                    <div class='title'>Minutes Available</div>
 									</div>
 									<div class='limit'>
-										<p>Crawls At Once</p>
-										<p><%= @plan.crawls_at_the_same_time %></p>
+                    <div class='amount'>
+                      <%= @plan.crawls_at_the_same_time %>
+                    </div>
+                    <div class='title'>Crawls At Once</div>
 									</div>
 									<div class='limit'>
-										<p>Pages Per Crawl</p>
-										<p><%= @plan.pages_per_crawl %></p>
+                    <div class='amount'>
+                      <%= @plan.pages_per_crawl %>
+                    </div>
+                    <div class='title'>Pages Per Crawl</div>
 									</div>
 								</div>
-								<div class='row'>
-									<div class='col-lg-6'>
-										<% if @current_user.subscription.active? %>
-											<%= link_to 'Unsubscribe', subscriptions_path, method: :delete, class:'btn btn-danger btn-lg btn-block', data:{disable_with:'Working Magic..' } %>
-										<% else %>
-											<%= link_to 'Subscribe', subscriptions_path, method: :put, class:'btn btn-success btn-lg btn-block', data:{disable_with:'Working Magic..' } %>
-										<% end %>
-									</div>
-									<div class='col-lg-6'>
-										<%= link_to 'Upgrade Plan', dashboard_path, class:'btn btn-default btn-lg btn-block', disabled: true %>
-									</div>
-								</div>
+                <div class='bottom'>
+                  <%= link_to 'Upgrade Plan', dashboard_path, class:'btn btn-green pull-left', disabled: true %>
+                  <% if @current_user.subscription.active? %>
+                    <%= link_to 'Unsubscribe', subscriptions_path, method: :delete, class:'btn btn-red-hollow pull-right', data:{disable_with:'Working Magic..' } %>
+                  <% else %>
+                    <%= link_to 'Subscribe', subscriptions_path, method: :put, class:'btn btn-success pull-right', data:{disable_with:'Working Magic..' } %>
+                  <% end %>
+                </div>
 							</div>
 						</div>
 					</div>
@@ -140,12 +134,12 @@
 			<div class='col-lg-6'>
 				<div class='row'>
 					<div id='subscription' class='panel-container'>
-						<div class='panel panel-default panel-success'>
+						<div class='panel panel-default panel-round'>
 							<div class='panel-heading panel_blue_heading white_text'>
-								<h3 class='panel-title'>Billing Details</h3>
+                <p>Billing Details</p>
 							</div>
 							<div class='panel-body'>
-								<%= form_for @user, :html => {class: 'form'} do |f| %>
+								<%= form_for @user, :html => {class: 'revive-form'} do |f| %>
 
 									<% if @user.errors.any? %>
 
@@ -237,7 +231,7 @@
 									<div class='row'>
 										<div class='form-group'>
 											<div class='col-lg-12'>
-												<%= f.submit 'Update Billing Details', class:'btn btn-block btn-success' %>
+												<%= f.submit 'Update Billing Details', class:'btn btn-block btn-green' %>
 											</div>
 										</div>
 									</div>
