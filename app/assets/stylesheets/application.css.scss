@@ -342,7 +342,7 @@ html, body  {
 	display: block;
 	position: relative;
 	text-align: center;
-	margin: 15px 0;
+	margin: 30px 0;
 	color: #222;
 	opacity: .3;
 	border-color: #222;
@@ -353,7 +353,7 @@ html, body  {
 	border-top: 1px solid #222;
 	content: "";
 	position: absolute;
-	width: 25%;
+	width: 40%;
 	left: 0;
 	top: 50%;
 }
@@ -363,7 +363,7 @@ html, body  {
 	border-top: 1px solid #222;
 	content: "";
 	position: absolute;
-	width: 25%;
+	width: 40%;
 	right: 0;
 	left: auto;
 	top: 50%;
@@ -751,7 +751,6 @@ Licensed under MIT
 }
 
 .free_uni_btn {
-	margin-top: 45px;
   margin-bottom: 30px;
 }
 
@@ -826,8 +825,9 @@ Licensed under MIT
 
 .revive_top_nav_logo a {
 	float: none;
-	font-size: 50px;
+	font-size: 30px;
 	color: #fff;
+  font-weight: none;
 }
 
 form.find-user{
@@ -959,7 +959,8 @@ form.find-user input{
 }
 
 ///////////////// FORMS //////////////////
-form.revive-form input[type='text'], form.revive-form input[type='number'], form.revive-form textarea{
+form.revive-form input[type='text'], form.revive-form input[type='number'],
+  form.revive-form textarea, form.revive-form input[type='password']{
   border: 2px solid #eaeaea !important;
   box-shadow: none;
 }
@@ -968,6 +969,23 @@ form.revive-form label{
   color: #606060;
   margin-bottom: 15px;
   font-size: 14px;
+}
+
+form.thin-form{
+  width: 350px;
+  margin: 40px auto;
+}
+
+form.thin-form input[type='text'], form.thin-form input[type='password']{
+  padding: 25px;
+}
+
+form.thin-form input[type='submit']{
+  background: $main-green;
+	color: #fff;
+	width: 100%;
+	padding: 15px 0px;
+  text-transform: uppercase;
 }
 
 ///////////////// BOOTSTRAP OVERRIDES //////////////////
