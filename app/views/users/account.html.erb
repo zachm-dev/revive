@@ -116,11 +116,11 @@
 									</div>
 								</div>
                 <div class='bottom'>
-                  <%= link_to 'Upgrade Plan', dashboard_path, class:'btn btn-green pull-left', disabled: true %>
+                  <%= link_to 'UPGRADE PLAN', dashboard_path, class:'btn btn-green pull-left', disabled: true %>
                   <% if @current_user.subscription.active? %>
-                    <%= link_to 'Unsubscribe', subscriptions_path, method: :delete, class:'btn btn-red-hollow pull-right', data:{disable_with:'Working Magic..' } %>
+                    <%= link_to 'UNSUBSCRIBE', subscriptions_path, method: :delete, class:'btn btn-red-hollow pull-right', data:{disable_with:'Working Magic..' } %>
                   <% else %>
-                    <%= link_to 'Subscribe', subscriptions_path, method: :put, class:'btn btn-success pull-right', data:{disable_with:'Working Magic..' } %>
+                    <%= link_to 'SUBSCRIBE', subscriptions_path, method: :put, class:'btn btn-success pull-right', data:{disable_with:'Working Magic..' } %>
                   <% end %>
                 </div>
 							</div>
