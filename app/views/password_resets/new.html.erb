@@ -5,31 +5,31 @@
 </div>
 
 <div class="login_form_container">
-	
+
 	<h1 class='text-center'>Reset Password</h1>
-	
-	<%= form_tag password_resets_path, method: :post do%>
-		
+
+	<%= form_tag password_resets_path, method: :post, class: 'revive-form thin-form' do %>
 		<div class="field_container">
-			
-			<div class="field_label">
-				<%= label_tag :email %>
-			</div>
-			
 			<div class="field">
-				<%= text_field_tag :email, '', class: "form-control" %>
+				<%= text_field_tag :email, '', placeholder: 'Your email', class: "form-control" %>
 			</div>
-			
 		</div>
-		
+
 		<div class="field_container text-center pink_form_submit_btn_container">
-			
 			<div class="field_label">
 				<%= submit_tag "Reset Password", class: 'btn pink_form_submit_btn' %>
 			</div>
-			
 		</div>
-		
+
+		<span class="or-rule">
+			<div class="or-rule-before"></div>
+			OR
+			<div class="or-rule-after"></div>
+		</span>
+
+		<div class="btn-block free_uni_btn">
+			<%= link_to "Log In", login_path, class: 'btn btn-lg btn-block btn-success free_uni_btn_link' %>
+		</div>
 	<% end %>
-	
+
 </div>
