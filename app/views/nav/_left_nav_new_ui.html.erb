@@ -31,6 +31,14 @@
 		<% end %>
 	</li>
 
+  <li <% if @nav == 'accounts' %>class='active'<% end %>>
+		<%= link_to account_path do %>
+		    <i class="glyphicon glyphicon-user">
+				<span class="glyph_text">Account</span>
+			</i>
+		<% end %>
+	</li>
+
   <% if current_user.admin %>
     <li <% if @nav == 'admin' %>class='active'<% end %>>
       <%= link_to admins_path do %>

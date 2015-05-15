@@ -6,6 +6,7 @@ class UsersController < ApplicationController
   end
   
   def account
+    @nav = 'account'
     @user = current_user
     @plan = current_user.subscription.plan
   end
