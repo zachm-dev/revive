@@ -10,7 +10,7 @@
 
 body, html {
 	width: 100%;
-	background: #fff;
+	background: #f7f7f7;
 }
 
 .home_main_container {
@@ -39,10 +39,9 @@ body, html {
 	height: 30px;
 	border-radius: 50%;
 	text-align: center;
-	color: #3A4752;
+	color: #0F81D5;
 	background-color: #fff;
-	border: 2px solid #3A4752;
-	line-height: 30px;
+	border: 2px solid #0F81D5;
 	font-family: helvetica;
 	font-size: 18px;
 	float: left;
@@ -56,6 +55,13 @@ body, html {
 	line-height: 36px;
 	font-weight: bold;
 	color: #3A4752;
+}
+
+form.revive-form input[type='text'], form.revive-form input[type='number'],
+  form.revive-form textarea, form.revive-form input[type='password'], form.revive-form input[type='email'] {
+  border: 2px solid #eaeaea !important;
+  box-shadow: none;
+  padding: 5px;
 }
 
 .form_field_section {
@@ -234,8 +240,7 @@ body, html {
 }
 
 .trust_logo_headline_img .glyphicon {
-	top: 15px;
-	color: #337AB7;
+	top: 10px;
 }
 
 .trust_logo_headline a {
@@ -274,6 +279,20 @@ body, html {
 
 #accept_terms {
 	margin-top: 15px;
+}
+
+a.agree-terms{
+  text-decoration: none;
+	color: #0F81D5;
+}
+
+.glyphicon-lock{
+  font-size: 20px;
+  color: #d4d4d4;
+}
+
+.trust_logo_headline{
+  color: #d4d4d4;
 }
 
 .trust_logos {
