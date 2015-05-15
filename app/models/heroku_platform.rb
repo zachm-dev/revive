@@ -299,12 +299,12 @@ class HerokuPlatform
   
   def add_redis_cloud(to)
     puts 'adding redis cloud'
-    @heroku.addon.create(to, plan: "rediscloud:250")
+    @heroku.addon.create(to, plan: "rediscloud:500")
   end
   
   def add_librato(to)
     puts 'adding librato'
-    @heroku.addon.create(to, plan: "librato:nickel") 
+    @heroku.addon.create(to, plan: "librato") 
   end
   
   def enable_log_runtime_metrics(app_name)
