@@ -4,6 +4,7 @@ require 'unirest'
 class VerifyNamecheap
   include Sidekiq::Worker
   sidekiq_options :queue => :verify_domains
+  sidekiq_options :retry => false
   
   def perform(redis_id)
 
