@@ -22,7 +22,7 @@ class VerifyNamecheap
         if !url.domain.empty? && !url.public_suffix.empty?
           puts "here is the parsed url #{page['url']}"
           parsed_url = url.domain + "." + url.public_suffix
-          unless Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?(parsed_url)
+          if !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?(parsed_url)
             puts "checking url #{parsed_url} on namecheap"
             uri = URI.parse("https://nametoolkit-name-toolkit.p.mashape.com/beta/whois/#{parsed_url}")
             http = Net::HTTP.new(uri.host, uri.port)
@@ -32,6 +32,7 @@ class VerifyNamecheap
             request["Accept"] = "application/json"
             response = http.request(request)
             json = JSON.parse(response.read_body)
+            puts "the domain verification response is #{json}"
             tlds = [".gov", ".edu"]
             if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
               puts "saving verified domain with the following data processor_name: #{page['processor_name']}, status_code: #{page['status_code']}, url: #{page['url']}, internal: #{page['internal']}, site_id: #{page['site_id']}, found_on: #{page['found_on']}, simple_url: #{parsed_url}, verified: true, available: #{json['available']}, crawl_id: #{page['crawl_id']}"
