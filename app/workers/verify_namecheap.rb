@@ -112,37 +112,43 @@ class VerifyNamecheap
     puts "deleted the expired id from array #{expired_ids.include?(options['redis_id'])}"
     Rails.cache.write(["crawl/#{options['crawl_id']}/expired_ids"], expired_ids)
     puts "VerifyNamecheap: on_complete calling start"
+    Rails.cache.write(['domain_being_verified'], [])
     VerifyNamecheap.start
   end
   
   def self.start
-    expired_rotation = Rails.cache.read(['expired_rotation']).to_a
-    if !expired_rotation.empty?
-      next_crawl_to_process = expired_rotation[0]
-      all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
-      next_expired_id_to_verify = all_expired_ids[0]
-      
-      if !next_expired_id_to_verify.nil?
+    if Rails.cache.read(['domain_being_verified']).to_a.empty?
+      puts "no domains currently being verified"
+      expired_rotation = Rails.cache.read(['expired_rotation']).to_a
+      if !expired_rotation.empty?
+        puts "the current expired crawl rotation is #{expired_rotation}"
+        next_crawl_to_process = expired_rotation[0]
+        all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
+        next_expired_id_to_verify = all_expired_ids[0]
+        Rails.cache.write(['domain_being_verified'], [next_expired_id_to_verify])
+        if !next_expired_id_to_verify.nil?
+          puts "going to verify page #{next_expired_id_to_verify} for the crawl #{next_crawl_to_process}"
+          
+          new_expired_rotation = expired_rotation.rotate
+          Rails.cache.write(['expired_rotation'], new_expired_rotation)
         
-        new_expired_rotation = expired_rotation.rotate
-        Rails.cache.write(['expired_rotation'], new_expired_rotation)
+          new_expired_ids_rotation = all_expired_ids.rotate
+          Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], new_expired_ids_rotation)
         
-        new_expired_ids_rotation = all_expired_ids.rotate
-        Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], new_expired_ids_rotation)
+          batch = Sidekiq::Batch.new
+          batch.on(:complete, VerifyNamecheap, 'bid' => batch.bid, 'redis_id' => next_expired_id_to_verify, 'crawl_id' => next_crawl_to_process)
+          batch.jobs do
+            puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
+            VerifyNamecheap.perform_async(next_expired_id_to_verify)
+          end
         
-        batch = Sidekiq::Batch.new
-        batch.on(:complete, VerifyNamecheap, 'bid' => batch.bid, 'redis_id' => next_expired_id_to_verify, 'crawl_id' => next_crawl_to_process)
-        batch.jobs do
-          puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
-          VerifyNamecheap.perform_async(next_expired_id_to_verify)
+        else
+        
+          new_expired_rotation = expired_rotation.rotate
+          Rails.cache.write(['expired_rotation'], new_expired_rotation)
+          VerifyNamecheap.start
+        
         end
-        
-      else
-        
-        new_expired_rotation = expired_rotation.rotate
-        Rails.cache.write(['expired_rotation'], new_expired_rotation)
-        VerifyNamecheap.start
-        
       end
     end
   end
