@@ -22,7 +22,7 @@ class VerifyNamecheap
         if !url.domain.empty? && !url.public_suffix.empty?
           puts "here is the parsed url #{page['url']}"
           parsed_url = url.domain + "." + url.public_suffix
-          unless Page.using("#{page['processor_name']}").where("simple_url IS NOT NULL AND site_id = ?", page['site_id'].to_i).map(&:simple_url).include?(parsed_url)
+          unless Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?(parsed_url)
             puts "checking url #{parsed_url} on namecheap"
             uri = URI.parse("https://nametoolkit-name-toolkit.p.mashape.com/beta/whois/#{parsed_url}")
             http = Net::HTTP.new(uri.host, uri.port)
@@ -94,7 +94,7 @@ class VerifyNamecheap
           end
         end
       rescue
-        nil
+        puts "VerifyNamecheap failed"
       end
       
     end
