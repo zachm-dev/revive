@@ -5,7 +5,7 @@ class VerifyNamecheap
   include Sidekiq::Worker
   sidekiq_options :queue => :verify_domains
   
-  def self.perform(redis_id)
+  def perform(redis_id)
 
     # START OF VERIFY DOMAIN STATUS
   
@@ -130,7 +130,6 @@ class VerifyNamecheap
   end
   
   def self.start
-    puts "the test gloabl variable is #{$test_global}"
     puts "VerifyNamecheap: start method"
     if Rails.cache.read(['domain_being_verified']).to_a.empty?
       puts "no domains currently being verified"
@@ -155,8 +154,8 @@ class VerifyNamecheap
           batch.on(:complete, VerifyNamecheap, 'bid' => batch.bid, 'redis_id' => next_expired_id_to_verify, 'crawl_id' => next_crawl_to_process)
           batch.jobs do
             puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
-            # VerifyNamecheap.perform_async(next_expired_id_to_verify)
-            VerifyNamecheap.perform(next_expired_id_to_verify)
+            VerifyNamecheap.perform_async(next_expired_id_to_verify)
+            # VerifyNamecheap.perform(next_expired_id_to_verify)
           end
           
         
@@ -165,7 +164,7 @@ class VerifyNamecheap
           new_expired_rotation = expired_rotation.rotate
           Rails.cache.write(['expired_rotation'], new_expired_rotation)
           puts "VerifyNamecheap: calling start method "
-          # VerifyNamecheap.delay.start
+          VerifyNamecheap.delay.start
         
         end
       end
