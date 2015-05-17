@@ -130,6 +130,7 @@ class VerifyNamecheap
   end
   
   def self.start
+    puts "the test gloabl variable is #{$test_global}"
     puts "VerifyNamecheap: start method"
     if Rails.cache.read(['domain_being_verified']).to_a.empty?
       puts "no domains currently being verified"
