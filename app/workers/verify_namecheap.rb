@@ -5,7 +5,7 @@ class VerifyNamecheap
   include Sidekiq::Worker
   sidekiq_options :queue => :verify_domains
   
-  def perform(redis_id)
+  def self.perform(redis_id)
 
     # START OF VERIFY DOMAIN STATUS
   
@@ -101,12 +101,14 @@ class VerifyNamecheap
       rescue
         puts "VerifyNamecheap failed"
         Rails.cache.write(['domain_being_verified'], [])
+        puts "VerifyNamecheap: calling start perform method "
         VerifyNamecheap.delay.start
       end
       
     else
       puts "VerifyNamecheap no page found on redis"
       Rails.cache.write(['domain_being_verified'], [])
+      puts "VerifyNamecheap: calling start perform method else call"
       VerifyNamecheap.delay.start
     end
     
@@ -121,7 +123,7 @@ class VerifyNamecheap
     # expired_ids.delete(options['redis_id'])
     # puts "deleted the expired id from array #{!expired_ids.include?(options['redis_id'])}"
     # Rails.cache.write(["crawl/#{options['crawl_id']}/expired_ids"], expired_ids)
-    puts "VerifyNamecheap: on_complete calling start"
+    puts "VerifyNamecheap: calling start on_complete "
     Rails.cache.write(['domain_being_verified'], [])
     VerifyNamecheap.delay.start
   end
@@ -147,18 +149,20 @@ class VerifyNamecheap
           new_expired_ids_rotation = all_expired_ids.rotate
           Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], new_expired_ids_rotation)
         
-          batch = Sidekiq::Batch.new
-          batch.on(:complete, VerifyNamecheap, 'bid' => batch.bid, 'redis_id' => next_expired_id_to_verify, 'crawl_id' => next_crawl_to_process)
-          batch.jobs do
-            puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
-            VerifyNamecheap.perform_async(next_expired_id_to_verify)
-          end
+          # batch = Sidekiq::Batch.new
+          # batch.on(:complete, VerifyNamecheap, 'bid' => batch.bid, 'redis_id' => next_expired_id_to_verify, 'crawl_id' => next_crawl_to_process)
+          # batch.jobs do
+          #   puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
+          #   VerifyNamecheap.perform_async(next_expired_id_to_verify)
+          # end
+          VerifyNamecheap.perform(next_expired_id_to_verify)
         
         else
           puts "there is a domain being verified #{Rails.cache.read(['domain_being_verified'])}"
           new_expired_rotation = expired_rotation.rotate
           Rails.cache.write(['expired_rotation'], new_expired_rotation)
-          VerifyNamecheap.delay.start
+          puts "VerifyNamecheap: calling start start method "
+          # VerifyNamecheap.delay.start
         
         end
       end

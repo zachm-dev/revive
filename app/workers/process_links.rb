@@ -39,7 +39,7 @@ class ProcessLinks
           expired_ids_array = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a
           Rails.cache.write(["crawl/#{crawl_id}/expired_ids"], expired_ids_array.push(redis_id))
           
-          puts "ProcessLinks sync verify namecheap"
+          puts "ProcessLinks: calling start start method "
           VerifyNamecheap.start
           
         end
