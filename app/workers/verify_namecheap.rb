@@ -90,12 +90,18 @@ class VerifyNamecheap
       
               puts "VerifyNamecheap about to save page #{page_hash}"
               Page.using("#{page['processor_name']}").update(new_page.id, page_hash)
-      
+              
+              puts "verified and saved new domain calling to see if there are more to verify"
+              Rails.cache.write(['domain_being_verified'], [])
+              VerifyNamecheap.delay.start
+              
             end
           end
         end
       rescue
         puts "VerifyNamecheap failed"
+        Rails.cache.write(['domain_being_verified'], [])
+        VerifyNamecheap.delay.start
       end
       
     end
@@ -109,14 +115,15 @@ class VerifyNamecheap
     expired_ids = Rails.cache.read(["crawl/#{options['crawl_id']}/expired_ids"]).to_a
     puts "just finished verifying the domain and deleting from expired ids array #{expired_ids.include?(options['redis_id'])}"
     expired_ids.delete(options['redis_id'])
-    puts "deleted the expired id from array #{expired_ids.include?(options['redis_id'])}"
+    puts "deleted the expired id from array #{!expired_ids.include?(options['redis_id'])}"
     Rails.cache.write(["crawl/#{options['crawl_id']}/expired_ids"], expired_ids)
     puts "VerifyNamecheap: on_complete calling start"
     Rails.cache.write(['domain_being_verified'], [])
-    VerifyNamecheap.start
+    VerifyNamecheap.delay.start
   end
   
   def self.start
+    puts "VerifyNamecheap: start method"
     if Rails.cache.read(['domain_being_verified']).to_a.empty?
       puts "no domains currently being verified"
       expired_rotation = Rails.cache.read(['expired_rotation']).to_a
