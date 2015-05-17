@@ -53,6 +53,7 @@ class Crawl < ActiveRecord::Base
   def setCrawlStartingVariables(options={})
     puts "setting crawl starting variables"
     
+    $test_global = ['testing']
     redis_array_obj_name = "all_crawl_ids_#{self.id}"
     $redis.set("#{redis_array_obj_name}", [].to_json)
     puts "redis set starting crawls array #{$redis.get(redis_array_obj_name)}"
