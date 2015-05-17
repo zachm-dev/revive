@@ -5,7 +5,7 @@ class VerifyNamecheap
   include Sidekiq::Worker
   sidekiq_options :queue => :verify_domains
   
-  def self.verify(redis_id, crawl_id, options={})
+  def self.verify(redis_id)
 
     # START OF VERIFY DOMAIN STATUS
   
