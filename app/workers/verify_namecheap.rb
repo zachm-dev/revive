@@ -136,10 +136,11 @@ class VerifyNamecheap
         next_crawl_to_process = expired_rotation[0]
         all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
         next_expired_id_to_verify = all_expired_ids[0]
-        Rails.cache.write(['domain_being_verified'], [next_expired_id_to_verify])
+        
         if !next_expired_id_to_verify.nil?
           puts "going to verify page #{next_expired_id_to_verify} for the crawl #{next_crawl_to_process}"
-          
+          Rails.cache.write(['domain_being_verified'], [next_expired_id_to_verify])
+          puts "the domain to be verified is #{next_expired_id_to_verify}"
           new_expired_rotation = expired_rotation.rotate
           Rails.cache.write(['expired_rotation'], new_expired_rotation)
         
