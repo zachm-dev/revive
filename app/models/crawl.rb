@@ -60,6 +60,9 @@ class Crawl < ActiveRecord::Base
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
     
+    expired_rotation = Rails.cache.read(['expired_rotation']).to_a
+    Rails.cache.write(['expired_rotation'], expired_rotation.push(self.id))
+    
     Rails.cache.write(["crawl/#{self.id}/start_time"], Time.now, raw: true)
     Rails.cache.write(["crawl/#{self.id}/total_minutes_to_run"], options['total_minutes'].to_i, raw: true)
     
@@ -84,6 +87,8 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{self.id}/progress"], 0.00, raw: true)
 
     Rails.cache.write(['current_processing_batch_id'], '')
+    
+    Rails.cache.write(["crawl/#{self.id}/expired_ids"], [])
 
   end
   

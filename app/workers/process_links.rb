@@ -36,10 +36,11 @@ class ProcessLinks
           puts "ProcessLinks: the redis id is #{redis_id}"
           $redis.set(redis_id, {status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name}.to_json)
           
-          puts "ProcessLinks sync verify namecheap "
-          VerifyNamecheap.verify(redis_id, crawl_id, 'processor_name' => processor_name)
+          expired_ids_array = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a
+          Rails.cache.write(["crawl/#{crawl_id}/expired_ids"], expired_ids_array.push(redis_id))
           
-          # Page.verify_namecheap('redis_id' => redis_id)
+          puts "ProcessLinks sync verify namecheap"
+          VerifyNamecheap.start
           
         end
       end
