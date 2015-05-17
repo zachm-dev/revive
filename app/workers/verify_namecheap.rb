@@ -11,7 +11,7 @@ class VerifyNamecheap
   
     
     page_from_redis = $redis.get(redis_id)
-    
+    puts "the page from redis is #{page_from_redis}"
     if !page_from_redis.nil?
       page = JSON.parse(page_from_redis)
       puts "verify namecheap: the page object is #{page}"
@@ -93,7 +93,7 @@ class VerifyNamecheap
               
               puts "verified and saved new domain calling to see if there are more to verify"
               Rails.cache.write(['domain_being_verified'], [])
-              VerifyNamecheap.delay.start
+              VerifyNamecheap.start
               
             end
           end
@@ -101,9 +101,13 @@ class VerifyNamecheap
       rescue
         puts "VerifyNamecheap failed"
         Rails.cache.write(['domain_being_verified'], [])
-        VerifyNamecheap.delay.start
+        VerifyNamecheap.start
       end
       
+    else
+      puts "VerifyNamecheap no page found on redis"
+      Rails.cache.write(['domain_being_verified'], [])
+      VerifyNamecheap.start
     end
     
     # END OF VERIFY DOMAIN STATUS
@@ -119,7 +123,7 @@ class VerifyNamecheap
     Rails.cache.write(["crawl/#{options['crawl_id']}/expired_ids"], expired_ids)
     puts "VerifyNamecheap: on_complete calling start"
     Rails.cache.write(['domain_being_verified'], [])
-    VerifyNamecheap.delay.start
+    VerifyNamecheap.start
   end
   
   def self.start
@@ -150,7 +154,7 @@ class VerifyNamecheap
           end
         
         else
-        
+          puts "there is a domain being verified #{Rails.cache.read(['domain_being_verified'])}"
           new_expired_rotation = expired_rotation.rotate
           Rails.cache.write(['expired_rotation'], new_expired_rotation)
           VerifyNamecheap.start
