@@ -9,11 +9,22 @@ class SidekiqStats
     processor_name = options['processor_name']
     SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
     Link.delay.start_processing
-    VerifyNamecheap.delay.start
+    VerifyNamecheap.delay(:queue => 'verify_domains').start
     puts 'SidekiqStats: called start processing from sidekiq stats'
     if !Rails.cache.read(['running_crawls']).empty? && Rails.cache.read(['running_crawls']).include?(crawl_id)
       
-    
+      crawl_urls_found = "crawl/#{crawl_id}/urls_found"
+      crawl_expired_domains = "crawl/#{crawl_id}/expired_domains"
+      crawl_broken_domains = "crawl/#{crawl_id}/broken_domains"
+      stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
+      puts "SidekiqStats: updating crawl stats for crawl #{crawl_id}"
+      Crawl.using("#{processor_name}").update(crawl_id, total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
+      
+      processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/running"], raw: true).to_i
+      expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).count
+      
+      puts "the number of processing batches left are #{processing_count} and the number of expired domains left to be processed are #{expired_count} for the crawl #{crawl_id}"
+      
       #
       # CHECK IF THE CRAWL HAS EXCEEDED THE AMOUNT OF MINUTES SPECIFIED
       #
@@ -47,83 +58,11 @@ class SidekiqStats
           
           puts 'updating crawl stats to finished'
           Crawl.using("#{processor_name}").update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app exceeded crawl minutes specified')
-          
 
-          
-          # heroku = HerokuPlatform.new
-          # heroku.delete_app(app_name)
         end
       end
       
     end
-
-    # #
-    # # CHECK IF CRAWL HAS STALLED
-    # #
-    #
-    # if Sidekiq::Stats.new.enqueued < 100
-    #
-    #   current_stats = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/running"], raw: true).to_i
-    #
-    #   if current_stats != 0
-    #     last_checked_time = Rails.cache.read(["stats/#{crawl_id}/last_checked_stats/time"])
-    #
-    #     if !last_checked_time.nil?
-    #
-    #       last_checked_stats = Rails.cache.read(["stats/#{crawl_id}/last_checked_stats/running"], raw: true).to_i
-    #       time_diff = (Time.now - Rails.cache.read(["stats/#{crawl_id}/last_checked_stats/time"]).to_time)
-    #
-    #       if time_diff > 60
-    #         if last_checked_stats == current_stats
-    #           stats_verify_count = Rails.cache.read(["stats/#{crawl_id}/verify_count"], raw: true).to_i
-    #           if stats_verify_count == 0
-    #             puts 'stats have been the same for the past minute: increasing verify count'
-    #             Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
-    #           elsif stats_verify_count == 1
-    #             puts 'stats have been the same for the past two minutes: restarting app: increasing verify count'
-    #             Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
-    #
-    #             app = HerokuApp.using("#{processor_name}").where(crawl_id: crawl_id).first
-    #             app_name = app.name
-    #
-    #             # heroku = HerokuPlatform.new
-    #             # heroku.restart_app(app_name)
-    #           elsif stats_verify_count == 2
-    #             puts 'stats have been the same for the past three minutes: increasing verify count'
-    #             Rails.cache.increment(["stats/#{crawl_id}/verify_count"])
-    #           elsif stats_verify_count >= 3
-    #             puts 'app has stalled shutting it down'
-    #             app = HerokuApp.using("#{processor_name}").where(crawl_id: crawl_id).first
-    #             app_name = app.name
-    #             crawl = app.crawl
-    #
-    #             puts 'updating crawl stats before shutting down'
-    #             urls_found = "crawl/#{crawl.id}/urls_found"
-    #             expired_domains = "crawl/#{crawl.id}/expired_domains"
-    #             broken_domains = "crawl/#{crawl.id}/broken_domains"
-    #             stats = Rails.cache.read_multi(urls_found, expired_domains, broken_domains, raw: true)
-    #
-    #             crawl_total_time_in_minutes = (Time.now - Chronic.parse(Rails.cache.read(["crawl/#{crawl.id}/start_time"], raw: true))).to_f/60.to_f
-    #             user = User.using(:main_shard).find(app.user_id)
-    #             user.update(minutes_used: user.minutes_used.to_f+crawl_total_time_in_minutes)
-    #
-    #             Crawl.using("#{processor_name}").update(crawl.id, status: 'finished', total_urls_found: stats[urls_found].to_i, total_broken: stats[broken_domains].to_i, total_expired: stats[expired_domains].to_i, msg: 'app stalled')
-    #
-    #             heroku = HerokuPlatform.new
-    #             heroku.delete_app(app_name)
-    #           end
-    #         else
-    #           puts 'resetting verify count back to 0'
-    #           Rails.cache.write(["stats/#{crawl_id}/verify_count"], 0, raw: true)
-    #         end
-    #         Rails.cache.write(["stats/#{crawl_id}/last_checked_stats/running"], current_stats, raw: true).to_i
-    #       end
-    #
-    #     end
-    #     Rails.cache.write(["stats/#{crawl_id}/last_checked_stats/time"], "#{Time.now}")
-    #   end
-    #
-    # end
 
   end
   
