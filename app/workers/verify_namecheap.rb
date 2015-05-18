@@ -6,7 +6,7 @@ class VerifyNamecheap
   sidekiq_options :queue => :verify_domains
   sidekiq_options :retry => false
   
-  def self.perform(redis_id)
+  def perform(redis_id)
 
     # START OF VERIFY DOMAIN STATUS
   
