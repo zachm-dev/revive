@@ -67,6 +67,7 @@ gem 'linkscape'
 gem 'platform-api'
 gem 'heroku-api'
 gem 'librato-metrics'
+gem 'unirest'
 
 # Server Things
 ##############
