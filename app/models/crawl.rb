@@ -492,8 +492,11 @@ class Crawl < ActiveRecord::Base
     return crawls_array.map{|crawl| crawl['expired_domains']}.flatten(1)
   end
   
-  def self.update_available_domains(options={})
-    
+  def self.delete_and_update_vars
+    Crawl.delete_all_crawls
+    $redis.set('list_of_running_crawls', [].to_json)
+    $redis.set('redis_urls', {}.to_json)
+    puts "done deleting crawls and updating vars"
   end
   
 end
