@@ -499,4 +499,8 @@ class Crawl < ActiveRecord::Base
     puts "done deleting crawls and updating vars"
   end
   
+  def self.new_app(app_number)
+    HerokuPlatform.create_new_app('reviveprocessor', "revivecrawler#{app_number}")
+  end
+  
 end
