@@ -95,7 +95,7 @@ class VerifyNamecheap
     else
       puts "VerifyNamecheap no page found on redis"
       puts "VerifyNamecheap: calling start perform method 3"
-      VerifyNamecheap.delay.start
+      VerifyNamecheap.delay(:queue => 'verify_domains').start
     end
     
     # END OF VERIFY DOMAIN STATUS
@@ -104,7 +104,7 @@ class VerifyNamecheap
   
   def on_complete(status, options)
     puts "VerifyNamecheap: calling start on_complete"
-    VerifyNamecheap.delay.start
+    VerifyNamecheap.delay(:queue => 'verify_domains').start
   end
   
   def self.start
@@ -139,7 +139,7 @@ class VerifyNamecheap
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
       puts "VerifyNamecheap: calling start method "
-      VerifyNamecheap.delay.start
+      VerifyNamecheap.delay(:queue => 'verify_domains').start
     end
   end
   

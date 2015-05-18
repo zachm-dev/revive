@@ -42,7 +42,7 @@ class ProcessLinks
           
           if expired_ids_array.count <= 1
             puts "ProcessLinks: calling start start method"
-            VerifyNamecheap.delay.start
+            VerifyNamecheap.delay(:queue => 'verify_domains').start
           end
           
         end
