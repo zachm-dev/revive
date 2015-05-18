@@ -9,8 +9,6 @@ class VerifyNamecheap
   def perform(redis_id)
 
     # START OF VERIFY DOMAIN STATUS
-  
-    
     page_from_redis = $redis.get(redis_id)
     puts "the page from redis is #{page_from_redis}"
     if !page_from_redis.nil?
@@ -23,7 +21,8 @@ class VerifyNamecheap
         if !url.domain.empty? && !url.public_suffix.empty?
           puts "here is the parsed url #{page['url']}"
           parsed_url = url.scheme + '://' + 'www.' + url.domain + "." + url.public_suffix
-          if !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?(parsed_url)
+          verified_urls = Rails.cache.read(["crawl/#{page['crawl_id']}/available"])
+          if !verified_urls.include?(parsed_url)
             puts "checking url #{parsed_url} on namecheap"
             uri = URI.parse("https://nametoolkit-name-toolkit.p.mashape.com/beta/whois/#{parsed_url}")
             http = Net::HTTP.new(uri.host, uri.port)
@@ -35,11 +34,10 @@ class VerifyNamecheap
             json = JSON.parse(response.read_body)
             puts "the domain verification response is #{json}"
             tlds = [".gov", ".edu"]
-            if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
+            if json['available'].to_s == 'true' && !verified_urls.include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
               puts "saving verified domain with the following data processor_name: #{page['processor_name']}, status_code: #{page['status_code']}, url: #{page['url']}, internal: #{page['internal']}, site_id: #{page['site_id']}, found_on: #{page['found_on']}, simple_url: #{parsed_url}, verified: true, available: #{json['available']}, crawl_id: #{page['crawl_id']}"
-              
-              urls = Rails.cache.read(["crawl/#{page['crawl_id']}/available"])
-              Rails.cache.write(["crawl/#{page['crawl_id']}/available"], urls.push("#{parsed_url}"))
+
+              Rails.cache.write(["crawl/#{page['crawl_id']}/available"], verified_urls.push("#{parsed_url}"))
               
               new_page = Page.using("#{page['processor_name']}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
               puts "VerifyNamecheap: saved verified domain #{new_page.id}"
@@ -81,24 +79,17 @@ class VerifyNamecheap
               puts "VerifyNamecheap about to save page #{page_hash}"
               Page.using("#{page['processor_name']}").update(new_page.id, page_hash)
               
-              puts "verified and saved new domain calling to see if there are more to verify"
-              Rails.cache.write(['domain_being_verified'], [])
-              puts "VerifyNamecheap: calling start perform method 1"
-              VerifyNamecheap.delay.start
-              
             end
           end
         end
       rescue
         puts "VerifyNamecheap failed"
-        Rails.cache.write(['domain_being_verified'], [])
         puts "VerifyNamecheap: calling start perform method 2"
         VerifyNamecheap.delay.start
       end
       
     else
       puts "VerifyNamecheap no page found on redis"
-      Rails.cache.write(['domain_being_verified'], [])
       puts "VerifyNamecheap: calling start perform method 3"
       VerifyNamecheap.delay.start
     end
@@ -108,57 +99,41 @@ class VerifyNamecheap
   end
   
   def on_complete(status, options)
-    puts "VerifyNamecheap: on_complete method"
-    # expired_ids = Rails.cache.read(["crawl/#{options['crawl_id']}/expired_ids"]).to_a
-    # puts "just finished verifying the domain and deleting from expired ids array #{expired_ids.include?(options['redis_id'])}"
-    # expired_ids.delete(options['redis_id'])
-    # puts "deleted the expired id from array #{!expired_ids.include?(options['redis_id'])}"
-    # Rails.cache.write(["crawl/#{options['crawl_id']}/expired_ids"], expired_ids)
     puts "VerifyNamecheap: calling start on_complete"
-    Rails.cache.write(['domain_being_verified'], [])
     VerifyNamecheap.delay.start
   end
   
   def self.start
     puts "VerifyNamecheap: start method"
-    if Rails.cache.read(['domain_being_verified']).to_a.empty?
-      puts "no domains currently being verified"
-      expired_rotation = Rails.cache.read(['expired_rotation']).to_a
-      if !expired_rotation.empty?
-        puts "the current expired crawl rotation is #{expired_rotation}"
-        next_crawl_to_process = expired_rotation[0]
-        all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
-        next_expired_id_to_verify = all_expired_ids[0]
-        
-        if !next_expired_id_to_verify.nil?
-          puts "going to verify page #{next_expired_id_to_verify} for the crawl #{next_crawl_to_process}"
-          Rails.cache.write(['domain_being_verified'], [next_expired_id_to_verify])
-          puts "the domain to be verified is #{next_expired_id_to_verify}"
-          new_expired_rotation = expired_rotation.rotate
-          Rails.cache.write(['expired_rotation'], new_expired_rotation)
-        
-          new_expired_ids_rotation = all_expired_ids.rotate
-          Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], new_expired_ids_rotation)
-        
-          batch = Sidekiq::Batch.new
-          batch.on(:complete, VerifyNamecheap)
-          batch.jobs do
-            puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
-            # VerifyNamecheap.delay.perform(next_expired_id_to_verify)
-            VerifyNamecheap.perform_async(next_expired_id_to_verify)
-          end
-
-        else
-          puts "there is a domain being verified #{Rails.cache.read(['domain_being_verified'])}"
-          new_expired_rotation = expired_rotation.rotate
-          Rails.cache.write(['expired_rotation'], new_expired_rotation)
-          puts "VerifyNamecheap: calling start method "
-          VerifyNamecheap.delay.start
-        
-        end
+    expired_rotation = Rails.cache.read(['expired_rotation']).to_a
+    puts "the current expired crawl rotation is #{expired_rotation}"
+    next_crawl_to_process = expired_rotation[0]
+    all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
+    next_expired_id_to_verify = all_expired_ids[0]
+    
+    if !next_expired_id_to_verify.nil?
+      puts "going to verify page #{next_expired_id_to_verify} for the crawl #{next_crawl_to_process}"
+      Rails.cache.write(['domain_being_verified'], [next_expired_id_to_verify])
+      puts "the domain to be verified is #{next_expired_id_to_verify}"
+      new_expired_rotation = expired_rotation.rotate
+      Rails.cache.write(['expired_rotation'], new_expired_rotation)
+    
+      # new_expired_ids_rotation = all_expired_ids.rotate
+      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids.rotate)
+    
+      batch = Sidekiq::Batch.new
+      batch.on(:complete, VerifyNamecheap)
+      batch.jobs do
+        puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
+        # VerifyNamecheap.delay.perform(next_expired_id_to_verify)
+        VerifyNamecheap.perform_async(next_expired_id_to_verify)
       end
+
     else
-      puts "there is a domain being verified #{Rails.cache.read(['domain_being_verified'])}"
+      new_expired_rotation = expired_rotation.rotate
+      Rails.cache.write(['expired_rotation'], new_expired_rotation)
+      puts "VerifyNamecheap: calling start method "
+      VerifyNamecheap.delay.start
     end
   end
   
