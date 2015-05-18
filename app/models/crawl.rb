@@ -503,4 +503,8 @@ class Crawl < ActiveRecord::Base
     HerokuPlatform.create_new_app('reviveprocessor', "revivecrawler#{app_number}")
   end
   
+  def self.delete_app(app_number)
+    HerokuPlatform.new.delete_app("revivecrawler#{app_number}")
+  end
+  
 end

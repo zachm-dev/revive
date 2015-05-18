@@ -20,7 +20,7 @@ class SidekiqStats
       puts "SidekiqStats: updating crawl stats for crawl #{crawl_id}"
       Crawl.using("#{processor_name}").update(crawl_id, total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
       
-      processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/running"], raw: true).to_i
+      processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).count
       expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).count
       
       puts "the number of processing batches left are #{processing_count} and the number of expired domains left to be processed are #{expired_count} for the crawl #{crawl_id}"
