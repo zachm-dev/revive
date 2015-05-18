@@ -20,7 +20,7 @@ class VerifyNamecheap
         url = Domainatrix.parse("#{page['url']}")
         if !url.domain.empty? && !url.public_suffix.empty?
           puts "here is the parsed url #{page['url']}"
-          parsed_url = url.scheme + '://' + 'www.' + url.domain + "." + url.public_suffix
+          parsed_url = url.domain + "." + url.public_suffix
           
           if !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?(parsed_url)
             puts "checking url #{parsed_url} on namecheap"

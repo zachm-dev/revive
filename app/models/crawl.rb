@@ -53,10 +53,6 @@ class Crawl < ActiveRecord::Base
   def setCrawlStartingVariables(options={})
     puts "setting crawl starting variables"
     
-    redis_array_obj_name = "all_crawl_ids_#{self.id}"
-    $redis.set("#{redis_array_obj_name}", [].to_json)
-    puts "redis set starting crawls array #{$redis.get(redis_array_obj_name)}"
-    
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     new_running_crawls = Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
     Rails.cache.write(['expired_rotation'], Rails.cache.read(['running_crawls']).to_a)
@@ -527,13 +523,12 @@ class Crawl < ActiveRecord::Base
     JSON.parse($redis.get('list_of_running_crawls'))
   end
   
-  def self.schedule_for_reset
+  def self.flush_redis
     
   end
   
-  def self.schedule_for_upgrade
+  def self.restart_dynos
     
   end
-
   
 end

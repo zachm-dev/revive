@@ -24,7 +24,13 @@ class SidekiqStats
       expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).count
       
       puts "the number of processing batches left are #{processing_count} and the number of expired domains left to be processed are #{expired_count} for the crawl #{crawl_id}"
-      
+      if processing_count < 10 && expired_count < 10
+        puts "this crawl has finished all its jobs"
+        puts "checking if other crawls are running to flush db"
+        Rails.cache.read(['running_crawls']).to_a.count <= 1
+        puts 'flushing redis'
+        puts "updating crawl stats before finishing"
+      end
       #
       # CHECK IF THE CRAWL HAS EXCEEDED THE AMOUNT OF MINUTES SPECIFIED
       #
