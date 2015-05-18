@@ -21,8 +21,8 @@ class VerifyNamecheap
         if !url.domain.empty? && !url.public_suffix.empty?
           puts "here is the parsed url #{page['url']}"
           parsed_url = url.scheme + '://' + 'www.' + url.domain + "." + url.public_suffix
-          verified_urls = Rails.cache.read(["crawl/#{page['crawl_id']}/available"])
-          if !verified_urls.include?(parsed_url)
+          
+          if !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?(parsed_url)
             puts "checking url #{parsed_url} on namecheap"
             uri = URI.parse("https://nametoolkit-name-toolkit.p.mashape.com/beta/whois/#{parsed_url}")
             http = Net::HTTP.new(uri.host, uri.port)
@@ -34,10 +34,11 @@ class VerifyNamecheap
             json = JSON.parse(response.read_body)
             puts "the domain verification response is #{json}"
             tlds = [".gov", ".edu"]
-            if json['available'].to_s == 'true' && !verified_urls.include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
+            if json['available'].to_s == 'true' && !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?("#{parsed_url}") && !tlds.any?{|tld| parsed_url.include?(tld)}         
               puts "saving verified domain with the following data processor_name: #{page['processor_name']}, status_code: #{page['status_code']}, url: #{page['url']}, internal: #{page['internal']}, site_id: #{page['site_id']}, found_on: #{page['found_on']}, simple_url: #{parsed_url}, verified: true, available: #{json['available']}, crawl_id: #{page['crawl_id']}"
-
-              Rails.cache.write(["crawl/#{page['crawl_id']}/available"], verified_urls.push("#{parsed_url}"))
+              
+              set = Set.new(Rails.cache.read(["crawl/#{page['crawl_id']}/available"]))
+              Rails.cache.write(["crawl/#{page['crawl_id']}/available"], set.add("#{parsed_url}").to_a)
               
               new_page = Page.using("#{page['processor_name']}").create(status_code: page['status_code'], url: page['url'], internal: page['internal'], site_id: page['site_id'].to_i, found_on: page['found_on'], simple_url: parsed_url, verified: true, available: "#{json['available']}", crawl_id: page['crawl_id'].to_i, redis_id: redis_id)
               puts "VerifyNamecheap: saved verified domain #{new_page.id}"
@@ -78,14 +79,17 @@ class VerifyNamecheap
       
               puts "VerifyNamecheap about to save page #{page_hash}"
               Page.using("#{page['processor_name']}").update(new_page.id, page_hash)
-              
+            else
+              puts 'url already included'
             end
           end
+        else
+          puts 'url already included'
         end
       rescue
         puts "VerifyNamecheap failed"
-        puts "VerifyNamecheap: calling start perform method 2"
-        VerifyNamecheap.delay.start
+        # puts "VerifyNamecheap: calling start perform method 2"
+        # VerifyNamecheap.delay.start
       end
       
     else
@@ -117,6 +121,8 @@ class VerifyNamecheap
       puts "the domain to be verified is #{next_expired_id_to_verify}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
+      puts 'updating expired ids array'
+      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids-[next_expired_id_to_verify]) 
     
       # new_expired_ids_rotation = all_expired_ids.rotate
       Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids.rotate)
