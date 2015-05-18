@@ -492,11 +492,27 @@ class Crawl < ActiveRecord::Base
     return crawls_array.map{|crawl| crawl['expired_domains']}.flatten(1)
   end
   
-  def self.delete_and_update_vars
+  def self.delete_and_stop_all_apps
+    JSON.parse($redis.get('list_of_running_crawls')).each do |crawl|
+      puts "shutting down crawl #{crawl['crawl_id']}"
+      Crawl.shut_down('crawl_id' => crawl['crawl_id'], 'processor_name' => crawl['processor_name'])
+    end
     Crawl.delete_all_crawls
     $redis.set('list_of_running_crawls', [].to_json)
     $redis.set('redis_urls', {}.to_json)
-    puts "done deleting crawls and updating vars"
+    puts "done deleting crawls and stoping them"
+  end
+  
+  def self.delete_and_stop_app(app_number)
+    puts "shutting down app revivecrawler#{app_number}"
+    crawls = JSON.parse($redis.get('list_of_running_crawls')).select{|crawl| crawl['name']=="revivecrawler#{app_number}"}
+    crawls.each do |crawl|
+      puts "shutting down crawl #{crawl['crawl_id']}"
+      Crawl.shut_down('crawl_id' => crawl['crawl_id'], 'processor_name' => crawl['processor_name'])
+    end
+    Crawl.delete_app(app_number)
+    $redis.set('list_of_running_crawls', JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['name']=="revivecrawler#{app_number}"}.to_json)
+    puts "done deleting app revivecrawler#{app_number} and stopping all the corresponding crawls"
   end
   
   def self.new_app(app_number)
@@ -514,5 +530,6 @@ class Crawl < ActiveRecord::Base
   def self.schedule_for_upgrade
     
   end
+
   
 end
