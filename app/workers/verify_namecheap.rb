@@ -22,8 +22,10 @@ class VerifyNamecheap
           puts "here is the parsed url #{page['url']}"
           parsed_url = url.domain + "." + url.public_suffix
           
-          if !Rails.cache.read(["crawl/#{page['crawl_id']}/available"]).include?(parsed_url)
+          if !Rails.cache.read(["crawl/#{page['crawl_id']}/checked"]).include?(parsed_url)
             puts "checking url #{parsed_url} on namecheap"
+            avl = Set.new(Rails.cache.read(["crawl/#{page['crawl_id']}/checked"]))
+            Rails.cache.write(["crawl/#{page['crawl_id']}/checked"], avl.add("#{parsed_url}").to_a)
             uri = URI.parse("https://nametoolkit-name-toolkit.p.mashape.com/beta/whois/#{parsed_url}")
             http = Net::HTTP.new(uri.host, uri.port)
             http.use_ssl = true
@@ -49,7 +51,7 @@ class VerifyNamecheap
               page_hash = {}
       
               puts 'sync moz perform on perform'
-              client = Linkscape::Client.new(:accessID => "member-8967f7dff3", :secret => "8b98d4acd435d50482ebeded953e2331")
+              # client = Linkscape::Client.new(:accessID => "member-8967f7dff3", :secret => "8b98d4acd435d50482ebeded953e2331")
               # response = client.urlMetrics([parsed_url], :cols => :all)
               response = VerifyNamecheap.moz(parsed_url)
               
@@ -122,10 +124,11 @@ class VerifyNamecheap
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
       puts "updating expired ids array and removing #{next_expired_id_to_verify}"
-      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids-[next_expired_id_to_verify]) 
+      all_expired_ids.delete(next_expired_id_to_verify)
+      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids) 
     
-      # new_expired_ids_rotation = all_expired_ids.rotate
-      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids.rotate)
+      new_expired_ids_rotation = all_expired_ids.rotate
+      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], new_expired_ids_rotation)
     
       batch = Sidekiq::Batch.new
       batch.on(:complete, VerifyNamecheap)
