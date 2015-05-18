@@ -6,7 +6,7 @@ class VerifyNamecheap
   sidekiq_options :queue => :verify_domains
   sidekiq_options :retry => false
   
-  def perform(redis_id)
+  def self.perform(redis_id)
 
     # START OF VERIFY DOMAIN STATUS
   
@@ -147,7 +147,7 @@ class VerifyNamecheap
           #   VerifyNamecheap.delay.perform(next_expired_id_to_verify)
           #   # VerifyNamecheap.perform(next_expired_id_to_verify)
           # end
-          
+          puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
           VerifyNamecheap.delay.perform(next_expired_id_to_verify)
           
         
