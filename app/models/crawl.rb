@@ -507,4 +507,12 @@ class Crawl < ActiveRecord::Base
     HerokuPlatform.new.delete_app("revivecrawler#{app_number}")
   end
   
+  def self.schedule_for_reset
+    
+  end
+  
+  def self.schedule_for_upgrade
+    
+  end
+  
 end

@@ -136,10 +136,13 @@ class VerifyNamecheap
       end
 
     else
+      puts "there are no expired domains to be verified for this crawl #{next_crawl_to_process}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
-      puts "VerifyNamecheap: calling start method "
-      VerifyNamecheap.delay(:queue => 'verify_domains').start
+      if expired_rotation.count > 1
+        puts "VerifyNamecheap: calling start method there are other calls in the rotation"
+        VerifyNamecheap.delay(:queue => 'verify_domains').start
+      end
     end
   end
   
