@@ -523,6 +523,10 @@ class Crawl < ActiveRecord::Base
     HerokuPlatform.new.delete_app("revivecrawler#{app_number}")
   end
   
+  def self.running
+    JSON.parse($redis.get('list_of_running_crawls'))
+  end
+  
   def self.schedule_for_reset
     
   end
