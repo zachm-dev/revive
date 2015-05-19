@@ -610,7 +610,7 @@ class Crawl < ActiveRecord::Base
     user.update(minutes_used: user.minutes_used.to_f+crawl_total_time_in_minutes)
   end
   
-  def self.remove_crawl_from_list_of_running(crawl_id)
+  def self.remove_from_list_of_running(crawl_id)
     redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
     crawler_running_crawls = redis_cache_connection.cache.read(['running_crawls']).to_a
     crawler_running_crawls.delete(crawl_id)
