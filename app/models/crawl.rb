@@ -616,9 +616,9 @@ class Crawl < ActiveRecord::Base
   
   def self.remove_from_list_of_running(crawl_id)
     redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
-    crawler_running_crawls = redis_cache_connection.cache.read(['running_crawls']).to_a
+    crawler_running_crawls = redis_cache_connection.read(['running_crawls']).to_a
     crawler_running_crawls.delete(crawl_id)
-    redis_cache_connection.cache.write(['running_crawls'], crawler_running_crawls)
+    redis_cache_connection.write(['running_crawls'], crawler_running_crawls)
     
     if !$redis.get('redis_urls').nil?
       $redis.set('list_of_running_crawls', JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['crawl_id']==crawl_id.to_i}.to_json)
