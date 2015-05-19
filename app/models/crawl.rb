@@ -573,7 +573,8 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.connect_to_crawler_redis_cache(crawl_id)
-    crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id}
+    crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}
+    puts "the crawl obj is #{crawl_obj}"
     if !crawl_obj.empty?
       app_name = crawl_obj[0]['name']
       redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
@@ -584,7 +585,8 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.connect_to_crawler_redis_db(crawl_id)
-    crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id}
+    crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}
+    puts "the crawl obj is #{crawl_obj}"
     if !crawl_obj.empty?
       app_name = crawl_obj[0]['name']
       redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
