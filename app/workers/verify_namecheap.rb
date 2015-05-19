@@ -150,8 +150,8 @@ class VerifyNamecheap
   end
   
   def self.moz(url)
-    access_id = "member-8967f7dff3"
-    secret_key = "8b98d4acd435d50482ebeded953e2331"
+    access_id = "mozscape-74780478ca"
+    secret_key = "90b5ab577f4c0aa18efe17063ca00950"
     expires = Time.now.to_i + 300
     string_to_sign = "#{access_id}\n#{expires}"
     binary_signature = OpenSSL::HMAC.digest('sha1', secret_key, string_to_sign)
