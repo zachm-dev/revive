@@ -562,13 +562,17 @@ class Crawl < ActiveRecord::Base
     
     if sender == 'crawler'
       stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
+      crawl_stats = {'total_urls_found' => stats[crawl_urls_found].to_i, 'total_broken' => stats[crawl_broken_domains].to_i, 'total_expired' => stats[crawl_expired_domains].to_i}
     else
       redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
       if !redis_cache_connection.nil?
         stats = redis_cache_connection.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
+        crawl_stats = {'total_urls_found' => stats[crawl_urls_found].to_i, 'total_broken' => stats[crawl_broken_domains].to_i, 'total_expired' => stats[crawl_expired_domains].to_i}
+      else
+        crawl_stats = {'total_urls_found' => 0, 'total_broken' => 0, 'total_expired' => 0}
       end
     end
-    crawl_stats = {'total_urls_found' => stats[crawl_urls_found].to_i, 'total_broken' => stats[crawl_broken_domains].to_i, 'total_expired' => stats[crawl_expired_domains].to_i}
+    
     puts "the crawl stats are #{crawl_stats}"
     return crawl_stats
   end
@@ -581,7 +585,6 @@ class Crawl < ActiveRecord::Base
       stats.reject{|k,v|v==0}
       crawl.update_attributes(stats.reject{|k,v|v==0})
     end
-    
   end
   
   def self.connect_to_crawler_redis_cache(crawl_id)
