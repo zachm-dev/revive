@@ -615,16 +615,17 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.remove_from_list_of_running(crawl_id)
-    if !$redis.get('redis_urls').nil?
+    if !$redis.get('list_of_running_crawls').nil?
       $redis.set('list_of_running_crawls', JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['crawl_id']==crawl_id.to_i}.to_json)
     else
-      crawl_to_shut_down = list_of_running_crawls.select{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
-      if !crawl_to_shut_down.empty?
-        app_name = crawl_to_shut_down[0]['name']
-        heroku = HerokuPlatform.new
-        redis_url = heroku.get_env_vars_for(app_name, ['REDISCLOUD_URL'])['REDISCLOUD_URL']
-        $redis.set('redis_urls', {"#{app_name}" => redis_url}.to_json)
-      end
+      # list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
+      # crawl_to_shut_down = list_of_running_crawls.select{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
+      # if !crawl_to_shut_down.empty?
+      #   app_name = crawl_to_shut_down[0]['name']
+      #   heroku = HerokuPlatform.new
+      #   redis_url = heroku.get_env_vars_for(app_name, ['REDISCLOUD_URL'])['REDISCLOUD_URL']
+      #   $redis.set('redis_urls', {"#{app_name}" => redis_url}.to_json)
+      # end
     end
     
     puts "removed crawl #{crawl_id} from list of running"
