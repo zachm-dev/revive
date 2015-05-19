@@ -77,7 +77,7 @@ class Crawl < ActiveRecord::Base
     
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     new_running_crawls = Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
-    Rails.cache.write(['expired_rotation'], Rails.cache.read(['running_crawls']).to_a)
+    Rails.cache.write(['expired_rotation'], running_crawls.push(self.id))
     
     Rails.cache.write(["crawl/#{self.id}/start_time"], Time.now, raw: true)
     Rails.cache.write(["crawl/#{self.id}/total_minutes_to_run"], options['total_minutes'].to_i, raw: true)
@@ -615,11 +615,6 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.remove_from_list_of_running(crawl_id)
-    redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
-    crawler_running_crawls = redis_cache_connection.read(['running_crawls']).to_a
-    crawler_running_crawls.delete(crawl_id)
-    redis_cache_connection.write(['running_crawls'], crawler_running_crawls)
-    
     if !$redis.get('redis_urls').nil?
       $redis.set('list_of_running_crawls', JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['crawl_id']==crawl_id.to_i}.to_json)
     else
@@ -632,6 +627,14 @@ class Crawl < ActiveRecord::Base
       end
     end
     
+    puts "removed crawl #{crawl_id} from list of running"
+  end
+  
+  def self.remove_from_crawler_list_of_running(crawl_id)
+    redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
+    crawler_running_crawls = redis_cache_connection.read(['running_crawls']).to_a
+    crawler_running_crawls.delete(crawl_id)
+    redis_cache_connection.write(['running_crawls'], crawler_running_crawls)
     puts "removed crawl #{crawl_id} from list of running"
   end
   
@@ -661,15 +664,16 @@ class Crawl < ActiveRecord::Base
   
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
-    puts "updating crawl stats"
-    Crawl.update_stats(options['crawl_id'].to_i, options['processor_name'], 'processor')
+    puts "deleting from crawler list of running crawls"
+    Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
+    puts "updating status to finish"
+    Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
     puts "deleting redis keys"
     Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
     puts "deleting from list of running crawls"
     Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
-    puts "updating status to finish"
-    Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
     puts "shut down crawl successfully #{options['crawl_id']}"
+
     # list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
     # crawl_to_shut_down = list_of_running_crawls.select{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
     # updated_list_of_running_crawls = list_of_running_crawls.reject{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
