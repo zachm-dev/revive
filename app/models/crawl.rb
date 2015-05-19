@@ -572,10 +572,14 @@ class Crawl < ActiveRecord::Base
     end
   end
   
-  def self.redis_keys_for(crawl_id)
+  def self.get_redis_keys_for(crawl_id)
     $redis.smembers("all_ids/#{crawl_id}")
   end
   
-
+  def self.delete_redis_keys_for(crawl_id)
+    $redis.del($redis.smembers("all_ids/#{crawl_id}"))
+    $redis.del("all_ids/#{crawl_id}")
+    puts "deleted all redis keys for #{crawl_id}"
+  end
   
 end
