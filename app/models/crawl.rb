@@ -675,38 +675,39 @@ class Crawl < ActiveRecord::Base
     return redis_url
   end
   
+  # def self.shut_down(options={})
+  #   puts "starting to shut down crawl #{options['crawl_id']}"
+  #
+  #   crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
+  #   if crawl && crawl.status != 'finished'
+  #     puts "getting the crawl stats"
+  #     stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor')
+  #     puts "the crawl stats are #{stats}"
+  #     puts "deleting from crawler list of running crawls"
+  #     Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
+  #     puts "updating status to finish"
+  #     Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
+  #     puts "deleting from list of running crawls"
+  #     Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
+  #     puts "updating crawl stats"
+  #     Crawl.using("#{options['processor_name']}").update(options['crawl_id'].to_i, total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
+  #     puts "deleting redis keys"
+  #     Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
+  #     puts "shut down crawl successfully #{options['crawl_id']}"
+  #   end
+  # end
+
   def self.shut_down(options={})
-    puts "starting to shut down crawl #{options['crawl_id']}"
-    
-    # crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
-    # if crawl && crawl.status != 'finished'
-    #   puts "getting the crawl stats"
-    #   stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor')
-    #   puts "the crawl stats are #{stats}"
-    #   puts "deleting from crawler list of running crawls"
-    #   Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
-    #   puts "updating status to finish"
-    #   Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
-    #   puts "deleting from list of running crawls"
-    #   Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
-    #   puts "updating crawl stats"
-    #   Crawl.using("#{options['processor_name']}").update(options['crawl_id'].to_i, total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
-    #   puts "deleting redis keys"
-    #   Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
-    #   puts "shut down crawl successfully #{options['crawl_id']}"
-    # end
-
-
 
     list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
     crawl_to_shut_down = list_of_running_crawls.select{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
     updated_list_of_running_crawls = list_of_running_crawls.reject{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
     $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
     puts "removed crawl #{options['crawl_id']} and updated the list of running crawls"
-
+    
     if !crawl_to_shut_down.empty?
       app_name = crawl_to_shut_down[0]['name']
-
+      
       if !$redis.get('redis_urls').nil? && list_of_running_crawls[0].has_key?(app_name)
         redis_url = JSON.parse($redis.get('redis_urls'))[app_name]
         redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
@@ -730,7 +731,21 @@ class Crawl < ActiveRecord::Base
       end
     end
     
-  end
 
+    
+    crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
+    puts "here is the crawl to stop #{options['crawl_id'].to_i} on the processor #{options['processor_name']}"
+    if crawl
+      status = options['status'].nil? ? 'finished' : options['status']
+      heroku_app = crawl.heroku_app
+      crawl.update(status: 'finished')
+      puts "shut_down: updated crawl #{crawl.id} new status #{crawl.status}"
+      if heroku_app
+        heroku_app.update(status: 'finished')
+        puts "shut_down: updated heroku app #{heroku_app.id} new status #{heroku_app.status}"
+      end
+    end
+    
+  end
   
 end
