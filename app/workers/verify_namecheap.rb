@@ -62,11 +62,11 @@ class VerifyNamecheap
               puts "the moz response is #{moz_hash}"
               # response = VerifyNamecheap.moz(parsed_url)
               
-              if !response['error_message'].nil?
+              if !moz_hash.empty?
                 page_hash[:da] = moz_hash['pda'].to_f
                 page_hash[:pa] = moz_hash['upa'].to_f
               else
-                puts "moz response error: #{response['error_message']}"
+                puts "the moz response is empty"
               end
       
               puts 'finished checking moz sync'
