@@ -560,7 +560,7 @@ class Crawl < ActiveRecord::Base
       stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
     else
       redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
-      stats = redis_cache_connection.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
+      stats = redis_cache_connection.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
     end
     puts "the crawl stats are #{stats}"
     return stats
