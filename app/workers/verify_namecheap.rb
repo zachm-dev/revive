@@ -57,7 +57,7 @@ class VerifyNamecheap
               string_to_sign = "#{access_id}\n#{expires}"
               binary_signature = OpenSSL::HMAC.digest('sha1', secret_key, string_to_sign)
               url_safe_signature = CGI::escape(Base64.encode64(binary_signature).chomp)
-              response = Unirest.get "http://lsapi.seomoz.com/linkscape/url-metrics/#{url}/?AccessID=#{access_id}&Expires=#{expires}&Signature=#{url_safe_signature}&Cols=103079215104"
+              response = Unirest.get "http://lsapi.seomoz.com/linkscape/url-metrics/#{parsed_url}/?AccessID=#{access_id}&Expires=#{expires}&Signature=#{url_safe_signature}&Cols=103079215104"
               moz_hash = JSON.parse response.raw_body
               puts "the moz response is #{moz_hash}"
               # response = VerifyNamecheap.moz(parsed_url)
