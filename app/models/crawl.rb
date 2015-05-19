@@ -562,14 +562,15 @@ class Crawl < ActiveRecord::Base
       redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
       stats = redis_cache_connection.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
     end
-    puts "the crawl stats are #{stats}"
-    return stats
+    crawl_stats = {'total_urls_found' => stats[crawl_urls_found].to_i, 'total_broken' => stats[crawl_broken_domains].to_i, 'total_expired' => stats[crawl_expired_domains].to_i}
+    puts "the crawl stats are #{crawl_stats}"
+    return crawl_stats
   end
   
   def self.update_stats(crawl_id, processor_name, sender='crawler')
     stats = Crawl.get_stats(crawl_id, sender)
     puts "SidekiqStats: updating crawl stats for crawl #{crawl_id}"
-    Crawl.using("#{processor_name}").update(crawl_id, total_urls_found: stats[crawl_urls_found].to_i, total_broken: stats[crawl_broken_domains].to_i, total_expired: stats[crawl_expired_domains].to_i)
+    Crawl.using("#{processor_name}").update(crawl_id, total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
   end
   
   def self.connect_to_crawler_redis_cache(crawl_id)
