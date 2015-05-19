@@ -24,7 +24,7 @@ class SidekiqStats
       expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).count
       
       puts "the number of processing batches left are #{processing_count} and the number of expired domains left to be processed are #{expired_count} for the crawl #{crawl_id}"
-      if processing_count < 10 && expired_count < 10
+      if processing_count <= 2 && expired_count <= 2
         puts "this crawl has finished all its jobs"
         puts "checking if other crawls are running to flush db"
         Rails.cache.read(['running_crawls']).to_a.count <= 1
@@ -44,7 +44,7 @@ class SidekiqStats
           app = HerokuApp.using("#{processor_name}").where(crawl_id: crawl_id).first
           app_name = app.name
           crawl = app.crawl
-      
+          
           puts 'updating crawl stats before shutting down'
           urls_found = "crawl/#{crawl.id}/urls_found"
           expired_domains = "crawl/#{crawl.id}/expired_domains"
@@ -71,6 +71,8 @@ class SidekiqStats
     end
 
   end
+  
+  
   
   def self.start(options={})
     puts 'start sidekiq and dyno stats'
