@@ -86,7 +86,7 @@ class VerifyNamecheap
             end
           end
         else
-          puts 'url already included'
+          puts 'url already checked'
         end
       rescue
         puts "VerifyNamecheap failed"

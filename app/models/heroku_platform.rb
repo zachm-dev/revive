@@ -167,13 +167,13 @@ class HerokuPlatform
           if !config.empty?
               redis = heroku.add_redis_cloud(to)
               if !redis.empty? && redis['app'].has_value?(to)
-                librato = heroku.add_librato(to)
-                if !librato.empty? && librato['app'].has_value?(to)
+                # librato = heroku.add_librato(to)
+                # if !librato.empty? && librato['app'].has_value?(to)
                   rack_envs = heroku.copy_rack_and_rails_env_again(from, to)
                   if !rack_envs.empty?
                     log_metrics = heroku.enable_log_runtime_metrics(to)
                     if !log_metrics.empty? && log_metrics['enabled'] == true
-                      librato_env_vars = heroku.get_librato_env_variables_for(to)
+                      # librato_env_vars = heroku.get_librato_env_variables_for(to)
                       processlinks = heroku.start_dyno(to, 4, '2X', "processlinks")
                       if !processlinks.empty?
                         worker = heroku.start_dyno(to, 3, '2X', "worker")
@@ -181,19 +181,23 @@ class HerokuPlatform
                           verifydomains = heroku.start_dyno(to, 3, '1X', "verifydomains")
                           if !verifydomains.empty?
                             
-                            if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
-                              puts 'app created successfully and restarting'
-                              HerokuPlatform.restart_app(to)
-                            else
-                              puts 'new app did not start properly'
-                            end
+                            
+                            puts 'app created successfully and restarting'
+                            HerokuPlatform.restart_app(to)
+                            
+                            # if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
+                            #   puts 'app created successfully and restarting'
+                            #   HerokuPlatform.restart_app(to)
+                            # else
+                            #   puts 'new app did not start properly'
+                            # end
                             
                           end
                         end
                       end
                     end
                   end
-                end
+                # end
               end
           end
         end
