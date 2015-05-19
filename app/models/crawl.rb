@@ -671,12 +671,12 @@ class Crawl < ActiveRecord::Base
     Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
     puts "updating status to finish"
     Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
-    puts "deleting redis keys"
-    Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
     puts "deleting from list of running crawls"
     Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
     puts "updating crawl stats"
     Crawl.using("#{options['processor_name']}").update(options['crawl_id'].to_i, total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
+    puts "deleting redis keys"
+    Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
     puts "shut down crawl successfully #{options['crawl_id']}"
 
     # list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
