@@ -174,7 +174,7 @@ class HerokuPlatform
                     log_metrics = heroku.enable_log_runtime_metrics(to)
                     if !log_metrics.empty? && log_metrics['enabled'] == true
                       # librato_env_vars = heroku.get_librato_env_variables_for(to)
-                      redis_hash = get_redis_variables_for(to)
+                      redis_hash = heroku.get_redis_variables_for(to)
                       processlinks = heroku.start_dyno(to, 4, '2X', "processlinks")
                       if !processlinks.empty?
                         worker = heroku.start_dyno(to, 3, '2X', "worker")
