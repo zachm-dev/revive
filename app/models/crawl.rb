@@ -574,19 +574,26 @@ class Crawl < ActiveRecord::Base
   
   def self.connect_to_crawler_redis_cache(crawl_id)
     crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}
-    puts "the crawl obj is #{crawl_obj}"
+    puts "the crawl obj is #{crawl_obj} redis cache"
     if !crawl_obj.empty?
       app_name = crawl_obj[0]['name']
+      puts "the crawl app name is #{app_name}"
       redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
-      puts "the redis url is #{redis_url}"
-      redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
+      if !redis_url.to_s.empty?
+        puts "the redis url is #{redis_url}"
+        redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
+      else
+        new_redis_url = Crawl.add_redis_url_for(app_name)
+        puts "the new redis url is #{new_redis_url}"
+        redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, new_redis_url)
+      end
       return redis_cache_connection
     end
   end
   
   def self.connect_to_crawler_redis_db(crawl_id)
     crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}
-    puts "the crawl obj is #{crawl_obj}"
+    puts "the crawl obj is #{crawl_obj} redis db"
     if !crawl_obj.empty?
       app_name = crawl_obj[0]['name']
       redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
@@ -609,7 +616,7 @@ class Crawl < ActiveRecord::Base
     redis_cache_connection.cache.write(['running_crawls'], crawler_running_crawls)
     
     if !$redis.get('redis_urls').nil?
-      $redis.set('list_of_running_crawls', JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['crawl_id']==crawl_id}.to_json)
+      $redis.set('list_of_running_crawls', JSON.parse($redis.get('list_of_running_crawls')).reject{|crawl| crawl['crawl_id']==crawl_id.to_i}.to_json)
     else
       crawl_to_shut_down = list_of_running_crawls.select{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
       if !crawl_to_shut_down.empty?
@@ -635,6 +642,16 @@ class Crawl < ActiveRecord::Base
         puts "shut_down: updated heroku app #{heroku_app.id} new status #{heroku_app.status}"
       end
     end
+  end
+  
+  def self.add_redis_url_for(app_name)
+    heroku = HerokuPlatform.new
+    redis_url = heroku.get_env_vars_for(app_name, ['REDISCLOUD_URL'])['REDISCLOUD_URL']
+    redis_urls = JSON.parse($redis.get('redis_urls'))
+    redis_urls[app_name] = redis_url
+    $redis.set('redis_urls', redis_urls.to_json)
+    puts "the redis url is #{redis_url}"
+    return redis_url
   end
   
   def self.shut_down(options={})
@@ -669,9 +686,9 @@ class Crawl < ActiveRecord::Base
     #     if $redis.get('redis_urls').nil?
     #       redis_urls = $redis.set('redis_urls', {"#{app_name}" => redis_url}.to_json)
     #     else
-    #       redis_urls = JSON.parse($redis.get('redis_urls'))
-    #       redis_urls[app_name] = redis_url
-    #       $redis.set('redis_urls', redis_urls.to_json)
+          # redis_urls = JSON.parse($redis.get('redis_urls'))
+          # redis_urls[app_name] = redis_url
+          # $redis.set('redis_urls', redis_urls.to_json)
     #     end
     #     redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
     #     updated_array_of_running_crawls_on_app = redis_cache_connection.read(['running_crawls']) - [options['crawl_id'].to_i]
