@@ -174,6 +174,7 @@ class HerokuPlatform
                     log_metrics = heroku.enable_log_runtime_metrics(to)
                     if !log_metrics.empty? && log_metrics['enabled'] == true
                       # librato_env_vars = heroku.get_librato_env_variables_for(to)
+                      redis_hash = get_redis_variables_for(to)
                       processlinks = heroku.start_dyno(to, 4, '2X', "processlinks")
                       if !processlinks.empty?
                         worker = heroku.start_dyno(to, 3, '2X', "worker")
@@ -243,6 +244,13 @@ class HerokuPlatform
     # redis_url = vars['REDISTOGO_URL']
     redis_url = vars['REDISCLOUD_URL']
     librato_hash = {librato_user: librato_user, librato_token: librato_token, redis_url: redis_url}
+  end
+  
+  def get_redis_variables_for(app_name)
+    puts "getting librato env variables for the app #{app_name}"
+    vars = config_vars(app_name)
+    redis_url = vars['REDISCLOUD_URL']
+    redis_hash = {redis_url: redis_url}
   end
   
   def get_latest_api_release(app_name)
