@@ -564,7 +564,9 @@ class Crawl < ActiveRecord::Base
       stats = Rails.cache.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
     else
       redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
-      stats = redis_cache_connection.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
+      if !redis_cache_connection.nil?
+        stats = redis_cache_connection.read_multi(crawl_urls_found, crawl_expired_domains, crawl_broken_domains, raw: true)
+      end
     end
     crawl_stats = {'total_urls_found' => stats[crawl_urls_found].to_i, 'total_broken' => stats[crawl_broken_domains].to_i, 'total_expired' => stats[crawl_expired_domains].to_i}
     puts "the crawl stats are #{crawl_stats}"
@@ -574,7 +576,12 @@ class Crawl < ActiveRecord::Base
   def self.update_stats(crawl_id, processor_name, sender='crawler')
     stats = Crawl.get_stats(crawl_id, sender)
     puts "SidekiqStats: updating crawl stats for crawl #{crawl_id}"
-    Crawl.using("#{processor_name}").update(crawl_id, total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
+    crawl = Crawl.using("#{processor_name}").where(id: crawl_id.to_i).first
+    if crawl
+      stats.reject{|k,v|v==0}
+      crawl.update_attributes(stats.reject{|k,v|v==0})
+    end
+    
   end
   
   def self.connect_to_crawler_redis_cache(crawl_id)
