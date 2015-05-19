@@ -44,6 +44,8 @@ class SaveSitesFromGoogle
         parsed_url = 'www.' + url.domain + "." + url.public_suffix
         site = Site.using("#{processor_name}").create(domain: parsed_url, base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
         GatherLinksBatch.using("#{processor_name}").create(site_id: site.id, status: "pending")
+        site_id = site.id
+        $redis.sadd "all_ids/#{crawl_id}", ["site/#{new_site.id}/processing_batches/total", "site/#{site_id}/broken_domains", "site/#{site_id}/processing_batches/finished", "site/#{site_id}/expired_domains", "site/#{site_id}/processing_batches/running", "site/#{site_id}/total_site_urls"]
       end
     else
       puts 'SaveSitesFromGoogle: crawl has stopped running and not updating or iterating over'

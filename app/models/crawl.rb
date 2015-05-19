@@ -53,6 +53,28 @@ class Crawl < ActiveRecord::Base
   def setCrawlStartingVariables(options={})
     puts "setting crawl starting variables"
     
+    crawl_keys = [
+      "crawl/#{self.id}/urls_found",
+      "crawl/#{self.id}/processing_batches/ids",
+      "crawl/#{self.id}/expired_ids",
+      "crawl/#{self.id}/urls_crawled",
+      "crawl/#{self.id}/progress",
+      "crawl/#{self.id}/expired_domains",
+      "crawl/#{self.id}/gathering_batches/total",
+      "crawl/#{self.id}/available",
+      "crawl/#{self.id}/processing_batches/total",
+      "crawl/#{self.id}/start_time",
+      "crawl/#{self.id}/processing_batches/running",
+      "crawl/#{self.id}/processing_batches/finished",
+      "crawl/#{self.id}/checked",
+      "crawl/#{self.id}/gathering_batches/running",
+      "crawl/#{self.id}/gathering_batches/finished",
+      "crawl/#{self.id}/total_minutes_to_run",
+      "crawl/#{self.id}/broken_domains"
+  ]
+    
+    $redis.sadd "all_ids/#{self.id}", crawl_keys
+    
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     new_running_crawls = Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
     Rails.cache.write(['expired_rotation'], Rails.cache.read(['running_crawls']).to_a)
@@ -297,6 +319,8 @@ class Crawl < ActiveRecord::Base
     crawl.base_urls.each do |u|
       new_site = Site.using("#{processor_name}").create(base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
       new_site.create_gather_links_batch(status: "pending")
+      site_id = new_site.id
+      $redis.sadd "all_ids/#{crawl_id}", ["site/#{new_site.id}/processing_batches/total", "site/#{site_id}/broken_domains", "site/#{site_id}/processing_batches/finished", "site/#{site_id}/expired_domains", "site/#{site_id}/processing_batches/running", "site/#{site_id}/total_site_urls"]
     end
     
     crawl.update(status: 'running')
@@ -547,5 +571,11 @@ class Crawl < ActiveRecord::Base
       puts "revivecrawler#{app_number} current redis memory is #{redis_mem}"
     end
   end
+  
+  def self.redis_keys_for(crawl_id)
+    $redis.smembers("all_ids/#{crawl_id}")
+  end
+  
+
   
 end

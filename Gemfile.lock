@@ -21,7 +21,6 @@ GIT
 GEM
   remote: https://code.stripe.com/
   remote: https://rubygems.org/
-  remote: https://bb35beec:b71e1e88@gems.contribsys.com/
   specs:
     actionmailer (4.2.0)
       actionpack (= 4.2.0)
