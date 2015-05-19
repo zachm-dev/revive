@@ -51,13 +51,20 @@ class VerifyNamecheap
               page_hash = {}
       
               puts 'sync moz perform on perform'
-              # client = Linkscape::Client.new(:accessID => "member-8967f7dff3", :secret => "8b98d4acd435d50482ebeded953e2331")
-              # response = client.urlMetrics([parsed_url], :cols => :all)
-              response = VerifyNamecheap.moz(parsed_url)
+              access_id = "mozscape-74780478ca"
+              secret_key = "90b5ab577f4c0aa18efe17063ca00950"
+              expires = Time.now.to_i + 300
+              string_to_sign = "#{access_id}\n#{expires}"
+              binary_signature = OpenSSL::HMAC.digest('sha1', secret_key, string_to_sign)
+              url_safe_signature = CGI::escape(Base64.encode64(binary_signature).chomp)
+              response = Unirest.get "http://lsapi.seomoz.com/linkscape/url-metrics/#{url}/?AccessID=#{access_id}&Expires=#{expires}&Signature=#{url_safe_signature}&Cols=103079215104"
+              moz_hash = JSON.parse response.raw_body
+              puts "the moz response is #{moz_hash}"
+              # response = VerifyNamecheap.moz(parsed_url)
               
               if !response['error_message'].nil?
-                page_hash[:da] = response['pda'].to_f
-                page_hash[:pa] = response['upa'].to_f
+                page_hash[:da] = moz_hash['pda'].to_f
+                page_hash[:pa] = moz_hash['upa'].to_f
               else
                 puts "moz response error: #{response['error_message']}"
               end
