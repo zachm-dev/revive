@@ -582,4 +582,10 @@ class Crawl < ActiveRecord::Base
     puts "deleted all redis keys for #{crawl_id}"
   end
   
+  def self.pending_info_for(crawl_id)
+    processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).count
+    expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).count
+    puts "the number of processing batches left are #{processing_count} and the number of expired domains left to be processed are #{expired_count} for the crawl #{crawl_id}"
+  end
+  
 end
