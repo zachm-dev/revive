@@ -666,7 +666,7 @@ class Crawl < ActiveRecord::Base
     puts "starting to shut down crawl #{options['crawl_id']}"
     puts "getting the crawl stats"
     stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor')
-    puts "the crawl stats are #{crawl_stats}"
+    puts "the crawl stats are #{stats}"
     puts "deleting from crawler list of running crawls"
     Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
     puts "updating status to finish"
