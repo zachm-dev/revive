@@ -532,4 +532,13 @@ class Crawl < ActiveRecord::Base
     
   end
   
+  def self.all_redis_memory
+    redis_urls = JSON.parse($redis.get('redis_urls'))
+    redis_urls.each do |k,v|
+      redis = Redis.new(url: v)
+      redis_mem = redis.info['used_memory_human'].chomp('M')
+      puts "#{k} current redis memory is #{redis_mem}"
+    end
+  end
+  
 end
