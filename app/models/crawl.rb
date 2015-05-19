@@ -532,16 +532,20 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.delete_redis_keys_for(crawl_id, sender='crawler')
-    keys = Crawl.get_redis_keys_for(crawl_id, sender)
-    if sender == 'crawler'
-      $redis.del(keys)
-      $redis.del("all_ids/#{crawl_id}")
+    keys = Crawl.get_redis_keys_for(crawl_id, sender).to_a
+    puts "the keys count is #{keys.count}"
+    if !keys.empty?
+      if sender == 'crawler'
+        $redis.del(keys)
+        $redis.del("all_ids/#{crawl_id}")
+      else
+        redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
+        redis_db_connection.del(keys)
+        redis_db_connection.del("all_ids/#{crawl_id}")
+      end
     else
-      redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
-      redis_db_connection.del(keys)
-      redis_db_connection.del("all_ids/#{crawl_id}")
+      puts "deleted all redis keys for #{crawl_id}"
     end
-    puts "deleted all redis keys for #{crawl_id}"
   end
   
   def self.running_count_for(crawl_id)
