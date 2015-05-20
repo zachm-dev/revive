@@ -482,7 +482,7 @@ class Crawl < ActiveRecord::Base
     puts "done deleting app revivecrawler#{app_number} and stopping all the corresponding crawls"
   end
   
-  def self.new_range_of_apps(start,end)
+  def self.new_range_of_apps(start_of_range, end_of_range)
     
   end
   
