@@ -691,11 +691,15 @@ class Crawl < ActiveRecord::Base
   
   def self.remove_from_crawler_list_of_running(crawl_id)
     redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
-    if !redis_cache_connection.nil?
-      crawler_running_crawls = redis_cache_connection.read(['running_crawls']).to_a
-      crawler_running_crawls.delete(crawl_id)
-      redis_cache_connection.write(['running_crawls'], crawler_running_crawls)
-      puts "removed crawl #{crawl_id} from list of running"
+    begin
+      if !redis_cache_connection.nil?
+        crawler_running_crawls = redis_cache_connection.read(['running_crawls']).to_a
+        crawler_running_crawls.delete(crawl_id)
+        redis_cache_connection.write(['running_crawls'], crawler_running_crawls)
+        puts "removed crawl #{crawl_id} from list of running"
+      end
+    rescue
+      nil
     end
   end
   
