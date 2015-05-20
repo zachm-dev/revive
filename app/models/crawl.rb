@@ -711,7 +711,7 @@ class Crawl < ActiveRecord::Base
       if !$redis.get("deleted_crawls").nil?
         deleted_crawls = JSON.parse($redis.get("deleted_crawls"))
         crawl_obj[0]["redis_url"] = redis_url
-        new_deleted_crawl = crawl_obj[0]
+        new_deleted_crawl = crawl_obj
         $redis.set("deleted_crawls", new_deleted_crawl.push(deleted_crawls)).to_json)
       else
         crawl_obj[0]["redis_url"] = redis_url
