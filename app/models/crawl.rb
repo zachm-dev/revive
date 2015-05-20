@@ -764,7 +764,7 @@ class Crawl < ActiveRecord::Base
       puts "updating crawl stats"
       crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
       if crawl
-        crawl.update(options['crawl_id'].to_i, total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
+        crawl.update(total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
       end
       puts "deleting redis keys"
       Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
