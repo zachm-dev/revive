@@ -144,29 +144,31 @@ class HerokuPlatform
   end
   
   def stop_app(app_name)
+    heroku = HerokuPlatform.new
     puts "stopping app #{app_name}"
     dynos = ["worker", "processlinks", "verifydomains"]
     dynos.each do |dyno|
       puts "stopping dyno #{dyno} on app #{app_name}"
-      @heroku.start_dyno("#{app_name}", 0, '1X', "worker")
+      heroku.start_dyno("#{app_name}", 0, '1X', "worker")
     end
     puts "stopping redis cloud add-on on app #{app_name}"
-    @heroku.addon.update("#{app_name}", plan: "rediscloud:30")
+    heroku.addon.update("#{app_name}", plan: "rediscloud:30")
     puts "app successfully stopped #{app_name}"
   end
   
   def start_app(app_name)
+    heroku = HerokuPlatform.new
     puts "starting app #{app_name}"
     dynos = ["worker", "processlinks", "verifydomains"]
-    processlinks = @heroku.start_dyno("#{app_name}", 4, '2X', "processlinks")
+    processlinks = heroku.start_dyno("#{app_name}", 4, '2X', "processlinks")
     if !processlinks.empty?
-      worker = @heroku.start_dyno("#{app_name}", 3, '2X', "worker")
+      worker = heroku.start_dyno("#{app_name}", 3, '2X', "worker")
       if !worker.empty?
-        verifydomains = @heroku.start_dyno("#{app_name}", 3, '1X', "verifydomains")
+        verifydomains = heroku.start_dyno("#{app_name}", 3, '1X', "verifydomains")
       end
     end
     puts "starting redis cloud add-on on app #{app_name}"
-    @heroku.addon.update("#{app_name}", plan: "rediscloud:500")
+    heroku.addon.update("#{app_name}", plan: "rediscloud:500")
     puts "app successfully started #{app_name}"
   end
   
