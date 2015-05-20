@@ -800,6 +800,23 @@ class Crawl < ActiveRecord::Base
     return all_apps
   end
   
+  def self.get_all_redis_urls
+    app_names = Crawl.all_app_names
+    heroku = HerokuPlatform.new
+    redis_urls = {}
+    app_names.each do |name|
+      redis_url = heroku.get_redis_variables_for("#{name}")[:redis_url]
+      redis_urls["#{name}"] = redis_url
+    end
+    return redis_urls
+  end
+  
+  def self.save_all_redis_urls
+    redis_urls = Crawl.get_all_redis_urls
+    $redis.set('redis_urls', redis_urls.to_json)
+    puts "saved all redis urls"
+  end
+  
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
     if !JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}.empty?
