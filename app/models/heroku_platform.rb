@@ -151,8 +151,8 @@ class HerokuPlatform
       puts "stopping dyno #{dyno} on app #{app_name}"
       heroku.start_dyno("#{app_name}", 0, '1X', "worker")
     end
-    puts "stopping redis cloud add-on on app #{app_name}"
-    heroku.update_redis_cloud("#{app_name}")
+    # puts "stopping redis cloud add-on on app #{app_name}"
+    # heroku.update_redis_cloud("#{app_name}")
     puts "app successfully stopped #{app_name}"
   end
   
@@ -167,8 +167,8 @@ class HerokuPlatform
         verifydomains = heroku.start_dyno("#{app_name}", 3, '1X', "verifydomains")
       end
     end
-    puts "starting redis cloud add-on on app #{app_name}"
-    heroku.update_redis_cloud("#{app_name}", 30)
+    # puts "starting redis cloud add-on on app #{app_name}"
+    # heroku.update_redis_cloud("#{app_name}", 30)
     puts "app successfully started #{app_name}"
   end
   
