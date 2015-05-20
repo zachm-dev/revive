@@ -158,11 +158,11 @@ class HerokuPlatform
   def start_app(app_name)
     puts "starting app #{app_name}"
     dynos = ["worker", "processlinks", "verifydomains"]
-    processlinks = @heroku.start_dyno(to, 4, '2X', "processlinks")
+    processlinks = @heroku.start_dyno("#{app_name}", 4, '2X', "processlinks")
     if !processlinks.empty?
-      worker = @heroku.start_dyno(to, 3, '2X', "worker")
+      worker = @heroku.start_dyno("#{app_name}", 3, '2X', "worker")
       if !worker.empty?
-        verifydomains = @heroku.start_dyno(to, 3, '1X', "verifydomains")
+        verifydomains = @heroku.start_dyno("#{app_name}", 3, '1X', "verifydomains")
       end
     end
     puts "starting redis cloud add-on on app #{app_name}"
