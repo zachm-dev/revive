@@ -825,6 +825,11 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def self.get(k,v)
+    crawl = JSON.parse($redis.get('list_of_running_crawls')).select{|crawl|crawl["#{k}"]==v}
+    return crawl
+  end
+  
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
     running_crawls = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}
