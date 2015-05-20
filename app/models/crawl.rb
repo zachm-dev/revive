@@ -856,14 +856,9 @@ class Crawl < ActiveRecord::Base
       end
       puts "shut down crawl successfully #{options['crawl_id']}"
     else
-      puts "getting the crawl stats"
-      stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor').reject{|k,v|v.to_i==0}
-      puts "updating status to finish"
+      puts "updating status to finish crawl was not running"
       Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
-      crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
-      if crawl
-        crawl.update(stats)
-      end
+      puts "shut down crawl successfully #{options['crawl_id']}"
     end
   end
   

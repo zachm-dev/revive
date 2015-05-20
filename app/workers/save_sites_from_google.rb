@@ -1,7 +1,7 @@
 class SaveSitesFromGoogle
   
   include Sidekiq::Worker
-  # sidekiq_options retry: false
+  sidekiq_options :retry => 3
   
   def perform(crawl_id, options = {})
     if Rails.cache.read(['running_crawls']).to_a.include?(crawl_id)
