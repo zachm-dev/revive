@@ -523,8 +523,7 @@ class Crawl < ActiveRecord::Base
   
   def self.get_redis_keys_for(crawl_id, sender='crawler')
     if sender == 'crawler'
-      running_crawls = Rails.cache.read(['running_crawls']).to_a
-      if !running_crawls.empty? && running_crawls.include?(crawl_id.to_i)
+      if $redis.keys.include?("all_ids/#{crawl_id}")
         keys = $redis.smembers("all_ids/#{crawl_id}")
       else
         keys = []
@@ -532,7 +531,15 @@ class Crawl < ActiveRecord::Base
     else
       if !JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}.empty?
         redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
-        keys = redis_db_connection.smembers("all_ids/#{crawl_id}")
+        if !redis_db_connection.nil?
+          if redis_db_connection.keys.include?("all_ids/#{crawl_id}")
+            keys = redis_db_connection.smembers("all_ids/#{crawl_id}")
+          else
+            keys = []
+          end
+        else
+          keys = []
+        end
       else
         keys = []
       end
