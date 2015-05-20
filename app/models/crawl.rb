@@ -565,6 +565,17 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def self.all_processing_stats
+    crawl_ids = Crawl.running_list.map{|c|c["crawl_id"]}
+    crawl_ids.each do |id|
+      begin
+        Crawl.running_count_for(id, sender='processor')
+      rescue
+        nil
+      end
+    end
+  end
+  
   def self.running_count_for(crawl_id, sender='crawler')
     if sender == 'crawler'
       processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a.count
