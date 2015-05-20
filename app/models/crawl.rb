@@ -698,7 +698,7 @@ class Crawl < ActiveRecord::Base
     return redis_url
   end
   
-  def self.deleted_crawls
+  def self.deleted_list
     deleted_crawls = JSON.parse($redis.get('deleted_crawls'))
     return deleted_crawls
   end
@@ -714,10 +714,10 @@ class Crawl < ActiveRecord::Base
       app_name = crawl_obj[0]['name']
       redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
       if !$redis.get("deleted_crawls").nil?
-        deleted_crawls = JSON.parse($redis.get("deleted_crawls"))[0]
+        deleted_crawls = JSON.parse($redis.get("deleted_crawls"))
         crawl_obj[0]["redis_url"] = redis_url
-        new_deleted_crawl = crawl_obj
-        $redis.set("deleted_crawls", new_deleted_crawl.push(deleted_crawls).to_json)
+        new_deleted_crawl = deleted_crawls.push(crawl_obj[0])
+        $redis.set("deleted_crawls", new_deleted_crawl.to_json)
       else
         crawl_obj[0]["redis_url"] = redis_url
         new_deleted_crawl = crawl_obj[0]
