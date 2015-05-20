@@ -143,7 +143,7 @@ class HerokuPlatform
       end
   end
   
-  def stop_app(app_name)
+  def self.stop_app(app_name)
     heroku = HerokuPlatform.new
     puts "stopping app #{app_name}"
     dynos = ["worker", "processlinks", "verifydomains"]
@@ -156,7 +156,7 @@ class HerokuPlatform
     puts "app successfully stopped #{app_name}"
   end
   
-  def start_app(app_name)
+  def self.start_app(app_name)
     heroku = HerokuPlatform.new
     puts "starting app #{app_name}"
     dynos = ["worker", "processlinks", "verifydomains"]
