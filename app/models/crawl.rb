@@ -155,6 +155,7 @@ class Crawl < ActiveRecord::Base
                 Api.delay.start_crawl('app_name' => crawl_with_least, 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
               else
                 name = available_crawls[0]
+                HerokuPlatform.start_app("#{name}")
                 available_crawl_hash = {"name"=>name, "crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}
                 updated_list_of_running_crawls = list_of_running_crawls.push(available_crawl_hash)
                 puts "the updated list of running crawls is #{updated_list_of_running_crawls}"
@@ -164,6 +165,7 @@ class Crawl < ActiveRecord::Base
             
             else
               puts "there is not a list of running crawls saved on redis"
+              HerokuPlatform.start_app('revivecrawler1')
               available_crawl_hash = {"name"=>'revivecrawler1', "crawl_id"=>options['crawl_id'], "processor_name"=>processor_name}
               $redis.set('list_of_running_crawls', [available_crawl_hash].to_json)
               Api.delay.start_crawl('app_name' => name, 'processor_name' => processor_name, 'crawl_id' => options['crawl_id'])
@@ -215,15 +217,6 @@ class Crawl < ActiveRecord::Base
     else
       urls_array = base_urls.split(",").flatten
     end
-    
-    # processors_hash = {}
-    # processors_array = ['processor_three', 'processor_four', 'processor', 'processor_one', 'processor_two']
-    # processors_array.each do |processor_name|
-    #   running_count = Crawl.using(processor_name).where(status: 'running').count
-    #   processors_hash[processor_name] = running_count
-    # end
-
-    # processor_name = processors_hash.sort_by{|k,v|v}[0][0]
 
     redis_conn = Redis.new(url: 'redis://redistogo:46d4f04e871ae440da550714fdbd5c77@cobia.redistogo.com:9135/')
     if JSON.parse(redis_conn.get('list_of_running_crawls')).to_a.empty?
@@ -780,6 +773,7 @@ class Crawl < ActiveRecord::Base
     names_of_running_crawls = list_of_running_crawls.group_by{|crawl| crawl['name']}.keys
     puts "list of names of the running crawls are #{names_of_running_crawls}" 
     available_crawls = ( (list_of_all_crawls | names_of_running_crawls) - names_of_running_crawls ).to_a
+    return available_crawls
   end
   
   def self.app_stats
@@ -817,9 +811,27 @@ class Crawl < ActiveRecord::Base
     puts "saved all redis urls"
   end
   
+  def self.app_count_for(app_name)
+    app_stats = Crawl.app_stats
+    app_count = app_stats.select{|app| app['app_name'] == "#{app_name}"}[0]['count'].to_i
+    return app_count
+  end
+  
+  def self.stop_all_available_apps
+    available_apps = Crawl.available_apps
+    available_apps.each do |app_name|
+      puts "stopping #{app_name}"
+      HerokuPlatform.stop_app(app_name)
+    end
+  end
+  
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
-    if !JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}.empty?
+    running_crawls = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}
+    if !running_crawls.empty?
+      puts "getting app count"
+      app_name = running_crawls[0]['name']
+      app_count = Crawl.app_count_for(app_name)
       puts "getting the crawl stats"
       stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor')
       puts "the crawl stats are #{stats}"
@@ -838,6 +850,10 @@ class Crawl < ActiveRecord::Base
       end
       puts "deleting redis keys"
       Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
+      if app_count == 1
+        puts "stopping crawl dynos"
+        HerokuPlatform.stop_app(app_name)
+      end
       puts "shut down crawl successfully #{options['crawl_id']}"
     end
   end
