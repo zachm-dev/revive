@@ -529,14 +529,10 @@ class Crawl < ActiveRecord::Base
         keys = []
       end
     else
-      if !JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}.empty?
-        redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
-        if !redis_db_connection.nil?
-          if redis_db_connection.keys.include?("all_ids/#{crawl_id}")
-            keys = redis_db_connection.smembers("all_ids/#{crawl_id}")
-          else
-            keys = []
-          end
+      redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
+      if !redis_db_connection.nil?
+        if redis_db_connection.keys.include?("all_ids/#{crawl_id}")
+          keys = redis_db_connection.smembers("all_ids/#{crawl_id}")
         else
           keys = []
         end
