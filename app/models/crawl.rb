@@ -788,8 +788,8 @@ class Crawl < ActiveRecord::Base
     running_apps = Crawl.running_grouped_by_app_name
     running_apps.each do |k,v|
       app = "#{k}"
-      app.sub('revivecrawler', '')
-      mem = Crawl.get_redis_memory_for(app)
+      app_number = app.sub('revivecrawler', '')
+      mem = Crawl.get_redis_memory_for(app_number)
       stat = {'app_name' => "#{k}", 'count' => v.count, 'mem' => mem}
       all_apps.push(stat)
     end
