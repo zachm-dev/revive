@@ -562,9 +562,13 @@ class Crawl < ActiveRecord::Base
         $redis.del(keys)
         $redis.del("all_ids/#{crawl_id}")
       else
-        redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
-        redis_db_connection.del(keys)
-        redis_db_connection.del("all_ids/#{crawl_id}")
+        begin
+          redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
+          redis_db_connection.del(keys)
+          redis_db_connection.del("all_ids/#{crawl_id}")
+        rescue
+          nil
+        end
       end
     else
       puts "deleted all redis keys for #{crawl_id}"
