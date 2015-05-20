@@ -33,16 +33,6 @@ class SidekiqStats
   def self.start(options={})
     puts 'start sidekiq and dyno stats'
     processor_name = options['processor_name']    
-    
-    # if options["crawl_id"]
-    #   crawl = Crawl.using(:main_shard).find(options["crawl_id"])
-    #   heroku_app_id = crawl.heroku_app.id
-    # else
-    #   heroku_app_id = options[:heroku_app_id].to_i
-    # end
-    
-    # puts 'checking dyno stats'
-    # DynoStats.delay.last_checked?(heroku_app_id: heroku_app_id)
     puts 'scheduling sidekiq and dyno stats'
     SidekiqStats.perform_in(1.minute, options['crawl_id'], 'processor_name' => processor_name)
   end
