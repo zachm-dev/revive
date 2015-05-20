@@ -729,8 +729,6 @@ class Crawl < ActiveRecord::Base
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
     if !JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}.empty?
-      puts "migrating crawl to deleted crawls hash"
-      Crawl.add_to_deleted_crawls(options['crawl_id'])
       puts "getting the crawl stats"
       stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor')
       puts "the crawl stats are #{stats}"
@@ -738,6 +736,8 @@ class Crawl < ActiveRecord::Base
       Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
       puts "updating status to finish"
       Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
+      puts "migrating crawl to deleted crawls hash"
+      Crawl.add_to_deleted_crawls(options['crawl_id'])
       puts "deleting from list of running crawls"
       Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
       puts "updating crawl stats"
