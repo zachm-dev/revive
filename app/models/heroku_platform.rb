@@ -100,63 +100,7 @@ class HerokuPlatform
       app if app['name'] == name
     end.reject(&:nil?).any?
   end
-  
-  def self.fork(from, to, heroku_app_id, number_of_apps_running, options={})
-    processor_name = options['processor_name']
-    heroku_app = HerokuApp.using("#{processor_name}").where(id: heroku_app_id).first
-    if heroku_app && heroku_app.status != 'running'
-      heroku = HerokuPlatform.new
-      app = heroku.create_app(to)
-      if !app.empty? && app['build_stack'].has_key?('id')
-        slug = heroku.check_and_copy_slug(from, to)
-        if !slug.empty? && slug['app'].has_value?(to)
-          config = heroku.copy_config(from, to)
-          if !config.empty?
-            postgres = heroku.upgrade_postgres(to)
-            if !postgres.empty?
-              redis = heroku.add_redis(to)
-              if !redis.empty? && redis['app'].has_value?(to)
-                librato = heroku.add_librato(to)
-                if !librato.empty? && librato['app'].has_value?(to)
-                  rack_envs = heroku.copy_rack_and_rails_env_again(from, to)
-                  if !rack_envs.empty?
-                    log_metrics = heroku.enable_log_runtime_metrics(to)
-                    if !log_metrics.empty? && log_metrics['enabled'] == true
-                      librato_env_vars = heroku.get_librato_env_variables_for(to)
-                      processlinks = heroku.start_dyno(to, 4, '2X', "processlinks")
-                      if !processlinks.empty?
-                        worker = heroku.start_dyno(to, 3, '2X', "worker")
-                        if !worker.empty?
-                          verifydomains = heroku.start_dyno(to, 3, '1X', "verifydomains")
-                          if !verifydomains.empty?
-                            
-                            if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
-                              puts 'done creating new app'
-                              heroku_app.update(librato_user: librato_env_vars[:librato_user], librato_token: librato_env_vars[:librato_token], status: 'running', formation: {worker: 2, processlinks: 2, sidekiqstats: 1})
-                              Crawl.using("#{processor_name}").update(heroku_app.crawl.id, redis_url: librato_env_vars[:redis_url], status: 'running')
-                            else
-                              puts 'new app did not start properly'
-                              heroku_app.update(status: 'retry')
-                              Crawl.using("#{processor_name}").update(heroku_app.crawl_id, status: 'retry')
-                              heroku.delete_app(to)
-                              ForkNewApp.delay.retry(heroku_app_id, number_of_apps_running, 'processor_name' => processor_name)
-                            end
-                            
-                          end
-                        end
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-    end
-  end
-  
-  
+
   def self.create_new_app(from, to, options={})
       heroku = HerokuPlatform.new
       app = heroku.create_app(to)
@@ -186,12 +130,6 @@ class HerokuPlatform
                             puts 'app created successfully and restarting'
                             HerokuPlatform.restart_app(to)
                             
-                            # if librato_env_vars[:librato_user].to_s != "" && librato_env_vars[:librato_token].to_s != "" && librato_env_vars[:redis_url].to_s != ""
-                            #   puts 'app created successfully and restarting'
-                            #   HerokuPlatform.restart_app(to)
-                            # else
-                            #   puts 'new app did not start properly'
-                            # end
                             
                           end
                         end
@@ -203,6 +141,33 @@ class HerokuPlatform
           end
         end
       end
+  end
+  
+  def stop_app(app_name)
+    puts "stopping app #{app_name}"
+    dynos = ["worker", "processlinks", "verifydomains"]
+    dynos.each do |dyno|
+      puts "stopping dyno #{dyno} on app #{app_name}"
+      @heroku.start_dyno("#{app_name}", 0, '1X', "worker")
+    end
+    puts "stopping redis cloud add-on on app #{app_name}"
+    @heroku.addon.update("#{app_name}", plan: "rediscloud:30")
+    puts "app successfully stopped #{app_name}"
+  end
+  
+  def start_app(app_name)
+    puts "starting app #{app_name}"
+    dynos = ["worker", "processlinks", "verifydomains"]
+    processlinks = @heroku.start_dyno(to, 4, '2X', "processlinks")
+    if !processlinks.empty?
+      worker = @heroku.start_dyno(to, 3, '2X', "worker")
+      if !worker.empty?
+        verifydomains = @heroku.start_dyno(to, 3, '1X', "verifydomains")
+      end
+    end
+    puts "starting redis cloud add-on on app #{app_name}"
+    @heroku.addon.update("#{app_name}", plan: "rediscloud:500")
+    puts "app successfully started #{app_name}"
   end
   
   
@@ -354,24 +319,7 @@ class HerokuPlatform
     latest_api_release = @heroku.release.info('reviveprocessor', version_id)
     set_release_env_and_slug_id(version_id, latest_api_release['slug']['id'])
     @heroku.release.create(to, slug: latest_api_release['slug']['id'])
-    
-    # if local_release_exists? == true
-    #   local_release_env_version = get_local_release_env_version
-    #   puts "local release exists and the version is #{local_release_env_version}"
-    #
-    #   if local_release_env_version.to_i == latest_api_release['version'].to_i || local_release_env_version.to_i > latest_api_release['version'].to_i
-    #     puts "release exists and up to date OK to copy slug from local env: local version is #{latest_api_release['version']}"
-    #     @heroku.release.create(to, slug: ENV['SLUG_ID'])
-    #   else
-    #     puts "updating local env release version and slug id and copying slug to version #{latest_api_release['version']}"
-    #     set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
-    #     @heroku.release.create(to, slug: latest_api_release['slug']['id'])
-    #   end
-    # else
-    #   puts "local release does not exists: setting new local env release version and slug id: new version number is #{latest_api_release['version']}"
-    #   set_release_env_and_slug_id(latest_api_release['version'], latest_api_release['slug']['id'])
-    #   @heroku.release.create(to, slug: latest_api_release['slug']['id'])
-    # end
+
   end
 
   def copy_rack_and_rails_env_again(from, to)
