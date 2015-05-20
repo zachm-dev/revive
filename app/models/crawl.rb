@@ -77,7 +77,7 @@ class Crawl < ActiveRecord::Base
     
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     new_running_crawls = Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
-    Rails.cache.write(['expired_rotation'], running_crawls.push(self.id))
+    Rails.cache.write(['expired_rotation'], running_crawls)
     
     Rails.cache.write(["crawl/#{self.id}/start_time"], Time.now, raw: true)
     Rails.cache.write(["crawl/#{self.id}/total_minutes_to_run"], options['total_minutes'].to_i, raw: true)
@@ -92,10 +92,6 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{self.id}/processing_batches/ids"], [])
     Rails.cache.write(["crawl/#{self.id}/available"], [])
     Rails.cache.write(["crawl/#{self.id}/checked"], [])
-    
-    # Rails.cache.write(["crawl/#{crawl.id}/connections/total_time"], 0, raw: true)
-    # Rails.cache.write(["crawl/#{crawl.id}/connections/connect_time"], 0, raw: true)
-    # Rails.cache.write(["crawl/#{crawl.id}/connections/total"], 0, raw: true)
     
     Rails.cache.write(["crawl/#{self.id}/urls_found"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/urls_crawled"], 0, raw: true)
@@ -486,6 +482,14 @@ class Crawl < ActiveRecord::Base
     puts "done deleting app revivecrawler#{app_number} and stopping all the corresponding crawls"
   end
   
+  def self.new_range_of_apps(start,end)
+    
+  end
+  
+  def self.new_apps(number_of_apps)
+    
+  end
+  
   def self.new_app(app_number)
     HerokuPlatform.create_new_app('reviveprocessor', "revivecrawler#{app_number}")
   end
@@ -498,16 +502,8 @@ class Crawl < ActiveRecord::Base
     JSON.parse($redis.get('list_of_running_crawls'))
   end
   
-  def self.flush_redis
-    
-  end
-  
-  def self.restart_dynos
-    
-  end
-  
   def self.get_redis_memory_for(app_number)
-    redis_url = JSON.parse($redis.get('redis_urls')).select{|c| c["revivecrawler#{app_number}"]}
+    redis_url = JSON.parse($redis.get('redis_urls')).select{|c| c["revivecrawler#{app_number}"]}["revivecrawler#{app_number}"]
     redis = Redis.new(url: redis_url)
     redis_mem = redis.info['used_memory_human'].chomp('M')
     puts "#{k} current redis memory is #{redis_mem}"
@@ -747,56 +743,5 @@ class Crawl < ActiveRecord::Base
       puts "shut down crawl successfully #{options['crawl_id']}"
     end
   end
-
-  # def self.shut_down(options={})
-  #
-  #   list_of_running_crawls = JSON.parse($redis.get('list_of_running_crawls'))
-  #   crawl_to_shut_down = list_of_running_crawls.select{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
-  #   updated_list_of_running_crawls = list_of_running_crawls.reject{|crawl| crawl['crawl_id'].to_i == options['crawl_id'].to_i}
-  #   $redis.set('list_of_running_crawls', updated_list_of_running_crawls.to_json)
-  #   puts "removed crawl #{options['crawl_id']} and updated the list of running crawls"
-  #
-  #   if !crawl_to_shut_down.empty?
-  #     app_name = crawl_to_shut_down[0]['name']
-  #
-  #     if !$redis.get('redis_urls').nil? && list_of_running_crawls[0].has_key?(app_name)
-  #       redis_url = JSON.parse($redis.get('redis_urls'))[app_name]
-  #       redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
-  #       updated_array_of_running_crawls_on_app = redis_cache_connection.read(['running_crawls']) - [options['crawl_id'].to_i]
-  #       redis_cache_connection.write(['running_crawls'], updated_array_of_running_crawls_on_app)
-  #       puts "removed #{options['crawl_id'].to_i} from app and updated running crawls array to #{updated_array_of_running_crawls_on_app}"
-  #     else
-  #       heroku = HerokuPlatform.new
-  #       redis_url = heroku.get_env_vars_for(app_name, ['REDISCLOUD_URL'])['REDISCLOUD_URL']
-  #       if $redis.get('redis_urls').nil?
-  #         redis_urls = $redis.set('redis_urls', {"#{app_name}" => redis_url}.to_json)
-  #       else
-  #         redis_urls = JSON.parse($redis.get('redis_urls'))
-  #         redis_urls[app_name] = redis_url
-  #         $redis.set('redis_urls', redis_urls.to_json)
-  #       end
-  #       redis_cache_connection = ActiveSupport::Cache.lookup_store(:redis_store, redis_url)
-  #       updated_array_of_running_crawls_on_app = redis_cache_connection.read(['running_crawls']) - [options['crawl_id'].to_i]
-  #       redis_cache_connection.write(['running_crawls'], updated_array_of_running_crawls_on_app)
-  #       puts "removed #{options['crawl_id'].to_i} from app and updated running crawls array to #{updated_array_of_running_crawls_on_app}"
-  #     end
-  #   end
-  #
-  #
-  #
-  #   crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
-  #   puts "here is the crawl to stop #{options['crawl_id'].to_i} on the processor #{options['processor_name']}"
-  #   if crawl
-  #     status = options['status'].nil? ? 'finished' : options['status']
-  #     heroku_app = crawl.heroku_app
-  #     crawl.update(status: 'finished')
-  #     puts "shut_down: updated crawl #{crawl.id} new status #{crawl.status}"
-  #     if heroku_app
-  #       heroku_app.update(status: 'finished')
-  #       puts "shut_down: updated heroku app #{heroku_app.id} new status #{heroku_app.status}"
-  #     end
-  #   end
-  #
-  # end
   
 end
