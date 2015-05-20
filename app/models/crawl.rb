@@ -640,7 +640,7 @@ class Crawl < ActiveRecord::Base
       return redis_db_connection
     else
       puts "checking deleted crawls"
-      crawl_has_been_deleted = Crawl.get_deleted_crawl_for(crawl_id)
+      crawl_has_been_deleted = Crawl.get_deleted_crawl(crawl_id)
       if !crawl_has_been_deleted.nil?
         redis_url = crawl_has_been_deleted["redis_url"]
         puts "the redis url is #{redis_url}"
