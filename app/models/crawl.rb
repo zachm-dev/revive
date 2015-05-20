@@ -514,10 +514,14 @@ class Crawl < ActiveRecord::Base
     redis_mem_hash = {}
     redis_urls.each do |k,v|
       puts "getting redis mem for #{k} with url #{v}"
-      redis = Redis.new(url: v)
-      redis_mem = redis.info['used_memory_human'].chomp('M').to_f
-      redis_mem_hash["#{k}"] = redis_mem
-      puts "#{k} current redis memory is #{redis_mem}"
+      begin
+        redis = Redis.new(url: v)
+        redis_mem = redis.info['used_memory_human'].chomp('M').to_f
+        redis_mem_hash["#{k}"] = redis_mem
+        puts "#{k} current redis memory is #{redis_mem}"
+      rescue
+        nil
+      end
     end
     return redis_mem_hash
   end
