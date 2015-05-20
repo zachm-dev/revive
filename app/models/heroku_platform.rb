@@ -152,7 +152,7 @@ class HerokuPlatform
       heroku.start_dyno("#{app_name}", 0, '1X', "worker")
     end
     puts "stopping redis cloud add-on on app #{app_name}"
-    heroku.add_redis_cloud("#{app_name}")
+    heroku.update_redis_cloud("#{app_name}")
     puts "app successfully stopped #{app_name}"
   end
   
@@ -168,7 +168,7 @@ class HerokuPlatform
       end
     end
     puts "starting redis cloud add-on on app #{app_name}"
-    heroku.add_redis_cloud("#{app_name}", 30)
+    heroku.update_redis_cloud("#{app_name}", 30)
     puts "app successfully started #{app_name}"
   end
   
@@ -276,6 +276,11 @@ class HerokuPlatform
     @heroku.addon.create(to, plan: "redistogo:smedium")
   end
   
+  def update_redis_cloud(to, plan=500)
+    puts 'updating redis cloud'
+    @heroku.addon.update(to, plan: "rediscloud:#{plan}")
+  end
+
   def add_redis_cloud(to, plan=500)
     puts 'adding redis cloud'
     @heroku.addon.create(to, plan: "rediscloud:#{plan}")
