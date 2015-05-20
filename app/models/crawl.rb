@@ -510,9 +510,14 @@ class Crawl < ActiveRecord::Base
   
   def self.get_redis_memory_for(app_number)
     redis_url = JSON.parse($redis.get('redis_urls')).select{|c| c["revivecrawler#{app_number}"]}["revivecrawler#{app_number}"]
-    redis = Redis.new(url: redis_url)
-    redis_mem = redis.info['used_memory_human'].chomp('M')
-    puts "#{k} current redis memory is #{redis_mem}"
+    begin
+      redis = Redis.new(url: redis_url)
+      redis_mem = redis.info['used_memory_human'].chomp('M')
+      puts "revivecrawler#{app_number} current redis memory is #{redis_mem}"
+      return redis_mem
+    rescue
+      return 404
+    end
   end
   
   def self.get_all_redis_memory
@@ -731,7 +736,7 @@ class Crawl < ActiveRecord::Base
     return redis_url
   end
   
-  def self.deleted_list
+  def self.finished_list
     deleted_crawls = JSON.parse($redis.get('deleted_crawls'))
     return deleted_crawls
   end
@@ -757,6 +762,42 @@ class Crawl < ActiveRecord::Base
         $redis.set("deleted_crawls", [new_deleted_crawl].to_json)
       end
     end
+  end
+  
+  def self.all_app_names
+    app_names = HerokuPlatform.new.app_list.map{|app| app['name']}.select{|obj| obj.include?('revivecrawler')}
+    return app_names
+  end
+  
+  def self.running_grouped_by_app_name
+    grouped_by_app_name = JSON.parse($redis.get('list_of_running_crawls')).group_by{|crawl| crawl['name']}
+    return grouped_by_app_name
+  end
+  
+  def self.available_apps
+    list_of_all_crawls = Crawl.all_app_names
+    list_of_running_crawls = Crawl.running_list
+    names_of_running_crawls = list_of_running_crawls.group_by{|crawl| crawl['name']}.keys
+    puts "list of names of the running crawls are #{names_of_running_crawls}" 
+    available_crawls = ( (list_of_all_crawls | names_of_running_crawls) - names_of_running_crawls ).to_a
+  end
+  
+  def self.app_stats
+    all_apps = []
+    available_apps = Crawl.available_apps
+    running_apps = Crawl.running_grouped_by_app_name
+    running_apps.each do |k,v|
+      app = "#{k}"
+      app.sub('revivecrawler', '')
+      mem = Crawl.get_redis_memory_for(app)
+      stat = {'app_name' => "#{k}", 'count' => v.count, 'mem' => mem}
+      all_apps.push(stat)
+    end
+    available_apps.each do |k|
+      stat = {'app_name' => "#{k}", 'count' => 0, 'mem' => 0}
+      all_apps.push(stat)
+    end
+    return all_apps
   end
   
   def self.shut_down(options={})
