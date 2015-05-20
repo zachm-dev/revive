@@ -511,11 +511,13 @@ class Crawl < ActiveRecord::Base
   
   def self.get_all_redis_memory
     redis_urls = JSON.parse($redis.get('redis_urls'))
+    redis_mem_hash = {}
     redis_urls.each do |k,v|
       redis = Redis.new(url: v)
-      redis_mem = redis.info['used_memory_human'].chomp('M')
+      redis_mem_hash["#{k}"] = redis.info['used_memory_human'].chomp('M').to_f
       puts "#{k} current redis memory is #{redis_mem}"
     end
+    return redis_mem_hash
   end
   
   def self.get_redis_keys_for(crawl_id, sender='crawler')
