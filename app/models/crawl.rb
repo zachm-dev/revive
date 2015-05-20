@@ -698,6 +698,11 @@ class Crawl < ActiveRecord::Base
     return redis_url
   end
   
+  def self.deleted_crawls
+    deleted_crawls = JSON.parse($redis.get('deleted_crawls'))
+    return deleted_crawls
+  end
+  
   def self.get_deleted_crawl_for(crawl_id)
     deleted_crawl = JSON.parse($redis.get('deleted_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}[0]
     return deleted_crawl
