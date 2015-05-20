@@ -557,9 +557,20 @@ class Crawl < ActiveRecord::Base
     end
   end
   
-  def self.running_count_for(crawl_id)
-    processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).count
-    expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).count
+  def self.running_count_for(crawl_id, sender='crawler')
+    if sender == 'crawler'
+      processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a.count
+      expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a.count
+    else
+      redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
+      if !redis_cache_connection.nil?
+        processing_count = redis_cache_connection.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a.count
+        expired_count = redis_cache_connection.read(["crawl/#{crawl_id}/expired_ids"]).to_a.count
+      else
+        processing_count = 0
+        processing_count = 0
+      end
+    end
     puts "the number of processing batches left are #{processing_count} and the number of expired domains left to be processed are #{expired_count} for the crawl #{crawl_id}"
     return {"processing_count" => processing_count, "expired_count" => expired_count}
   end
