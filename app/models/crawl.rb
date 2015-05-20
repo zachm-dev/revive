@@ -517,7 +517,7 @@ class Crawl < ActiveRecord::Base
     redis_urls.each do |k,v|
       redis = Redis.new(url: v)
       redis_mem = redis.info['used_memory_human'].chomp('M')
-      puts "revivecrawler#{app_number} current redis memory is #{redis_mem}"
+      puts "#{k} current redis memory is #{redis_mem}"
     end
   end
   
