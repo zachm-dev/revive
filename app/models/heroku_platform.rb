@@ -147,9 +147,12 @@ class HerokuPlatform
     heroku = HerokuPlatform.new
     puts "stopping app #{app_name}"
     dynos = ["worker", "processlinks", "verifydomains"]
-    dynos.each do |dyno|
-      puts "stopping dyno #{dyno} on app #{app_name}"
-      heroku.start_dyno("#{app_name}", 0, '1X', "worker")
+    processlinks = heroku.start_dyno("#{app_name}", 0, '2X', "processlinks")
+    if !processlinks.empty?
+      worker = heroku.start_dyno("#{app_name}", 0, '2X', "worker")
+      if !worker.empty?
+        verifydomains = heroku.start_dyno("#{app_name}", 0, '1X', "verifydomains")
+      end
     end
     # puts "stopping redis cloud add-on on app #{app_name}"
     # heroku.update_redis_cloud("#{app_name}")
