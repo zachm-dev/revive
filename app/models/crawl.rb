@@ -833,7 +833,7 @@ class Crawl < ActiveRecord::Base
       app_name = running_crawls[0]['name']
       app_count = Crawl.app_count_for(app_name)
       puts "getting the crawl stats"
-      stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor')
+      stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor').reject{|k,v|v.to_i==0}
       puts "the crawl stats are #{stats}"
       puts "deleting from crawler list of running crawls"
       Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
@@ -846,7 +846,7 @@ class Crawl < ActiveRecord::Base
       puts "updating crawl stats"
       crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
       if crawl
-        crawl.update(total_urls_found: stats['total_urls_found'].to_i, total_broken: stats['total_broken'].to_i, total_expired: stats['total_expired'].to_i)
+        crawl.update(stats)
       end
       puts "deleting redis keys"
       Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
@@ -855,6 +855,15 @@ class Crawl < ActiveRecord::Base
         HerokuPlatform.stop_app(app_name)
       end
       puts "shut down crawl successfully #{options['crawl_id']}"
+    else
+      puts "getting the crawl stats"
+      stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor').reject{|k,v|v.to_i==0}
+      puts "updating status to finish"
+      Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
+      crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
+      if crawl
+        crawl.update(stats)
+      end
     end
   end
   
