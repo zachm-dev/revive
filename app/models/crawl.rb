@@ -470,6 +470,7 @@ class Crawl < ActiveRecord::Base
     Crawl.delete_all_crawls
     $redis.set('list_of_running_crawls', [].to_json)
     $redis.set('redis_urls', {}.to_json)
+    $redis.set('deleted_crawls', {}.to_json)
     puts "done deleting crawls and stoping them"
   end
   
@@ -637,6 +638,15 @@ class Crawl < ActiveRecord::Base
       puts "the redis url is #{redis_url}"
       redis_db_connection = Redis.new(:url => redis_url)
       return redis_db_connection
+    else
+      puts "checking deleted crawls"
+      crawl_has_been_deleted = JSON.parse($redis.get('deleted_crawls')).has_key?("#{crawl_id}")
+      if crawl_has_been_deleted
+        redis_url = JSON.parse($redis.get('deleted_crawls'))["#{crawl_id}"]
+        puts "the redis url is #{redis_url}"
+        redis_db_connection = Redis.new(:url => redis_url)
+        return redis_db_connection
+      end
     end
   end
   
@@ -688,9 +698,26 @@ class Crawl < ActiveRecord::Base
     return redis_url
   end
   
+  def self.add_to_deleted_crawls(crawl_id)
+    crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}
+    if !crawl_obj.empty?
+      app_name = crawl_obj[0]['name']
+      redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
+      if !$redis.get("deleted_crawls").nil?
+        deleted_crawls = JSON.parse($redis.get("deleted_crawls"))
+        deleted_crawls["#{crawl_id}"] = redis_url
+        $redis.set("deleted_crawls", deleted_crawls.to_json)
+      else
+        $redis.set("deleted_crawls", {"#{crawl_id}" => redis_url}.to_json)
+      end
+    end
+  end
+  
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
     if !JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}.empty?
+      puts "migrating crawl to deleted crawls hash"
+      
       puts "getting the crawl stats"
       stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor')
       puts "the crawl stats are #{stats}"
