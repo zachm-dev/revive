@@ -640,9 +640,9 @@ class Crawl < ActiveRecord::Base
       return redis_db_connection
     else
       puts "checking deleted crawls"
-      crawl_has_been_deleted = JSON.parse($redis.get('deleted_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}[0]
+      crawl_has_been_deleted = Crawl.get_deleted_crawl_for(crawl_id)
       if !crawl_has_been_deleted.nil?
-        redis_url = crawl_has_been_deleted["redis_url"]
+        redis_url = crawl_has_been_deleted[0]["redis_url"]
         puts "the redis url is #{redis_url}"
         redis_db_connection = Redis.new(:url => redis_url)
         return redis_db_connection
@@ -712,7 +712,7 @@ class Crawl < ActiveRecord::Base
         deleted_crawls = JSON.parse($redis.get("deleted_crawls"))
         crawl_obj[0]["redis_url"] = redis_url
         new_deleted_crawl = crawl_obj[0]
-        $redis.set("deleted_crawls", deleted_crawls.push(new_deleted_crawl).to_json)
+        $redis.set("deleted_crawls", new_deleted_crawl.push(deleted_crawls)).to_json)
       else
         crawl_obj[0]["redis_url"] = redis_url
         new_deleted_crawl = crawl_obj[0]
