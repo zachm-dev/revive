@@ -830,13 +830,15 @@ class Crawl < ActiveRecord::Base
     return crawl
   end
   
-  def self.delete_crawl_current_keys(crawl_id, processor_name)
+  def self.delete_expired_redis_keys(crawl_id, processor_name)
+    SidekiqStats.perform_in(10.minutes, crawl_id, processor_name)
     all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')}.to_a
     processing_ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a
     keys_to_delete = (all_items-processing_ids).to_a
     puts "total keys to delete are #{keys_to_delete.count}"
-    $redis.del(keys_to_delete)
-    SidekiqStats.perform_in(5.minutes, crawl_id, processor_name)
+    if !keys_to_delete.empty?
+      $redis.del(keys_to_delete)
+    end
   end
   
   def self.shut_down(options={})
