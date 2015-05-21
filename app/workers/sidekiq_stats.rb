@@ -13,12 +13,15 @@ class SidekiqStats
     puts 'SidekiqStats: called start processing from sidekiq stats'
     if !Rails.cache.read(['running_crawls']).empty? && Rails.cache.read(['running_crawls']).include?(crawl_id)
       
+      all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')}
       processing_ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a
-      expired_ids = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a
-      combined = (processing_ids|expired_ids)
-      all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')||i.include?('expired-')}
-      do_not_delete = (all_items&combined)
-      keys_to_delete = (all_items-do_not_delete)
+      # expired_ids = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a
+      # combined = (processing_ids|expired_ids)
+      # all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')||i.include?('expired-')}
+      
+      # do_not_delete = (all_items&combined)
+      # do_not_delete = (all_items&processing_ids)
+      keys_to_delete = (all_items-processing_ids)
       puts "total keys to delete are #{keys_to_delete.count}"
       $redis.keys.del(keys_to_delete)
       
