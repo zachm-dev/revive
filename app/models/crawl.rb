@@ -830,6 +830,15 @@ class Crawl < ActiveRecord::Base
     return crawl
   end
   
+  def self.delete_crawl_current_keys(crawl_id, processor_name)
+    all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')}.to_a
+    processing_ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a
+    keys_to_delete = (all_items-processing_ids).to_a
+    puts "total keys to delete are #{keys_to_delete.count}"
+    $redis.del(keys_to_delete)
+    SidekiqStats.perform_in(5.minutes, crawl_id, processor_name)
+  end
+  
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
     running_crawls = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}
