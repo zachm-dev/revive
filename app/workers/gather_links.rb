@@ -26,7 +26,7 @@ class GatherLinks
       # end
       process = true
       
-      redis_id = ('process-'+SecureRandom.hex+Time.now.to_i.to_s)
+      redis_id = ("process-#{crawl_id}-"+SecureRandom.hex+Time.now.to_i.to_s)
       puts "GatherLinks: the redis id is #{redis_id}"
       $redis.sadd "all_ids/#{crawl_id}", redis_id
       $redis.set(redis_id, {site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name']}.to_json)

@@ -30,7 +30,7 @@ class ProcessLinks
         elsif "#{response.code}" == '0'
           # Page.using(:master).delay.create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name)
           
-          redis_id = ('expired-'+SecureRandom.hex+Time.now.to_i.to_s)
+          redis_id = ("expired-#{crawl_id}-"+SecureRandom.hex+Time.now.to_i.to_s)
           $redis.sadd "all_ids/#{crawl_id}", redis_id
           puts "ProcessLinks: the redis id is #{redis_id}"
           $redis.set(redis_id, {status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name}.to_json)
