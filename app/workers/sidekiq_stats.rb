@@ -10,7 +10,7 @@ class SidekiqStats
     SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
     Link.delay.start_processing
     VerifyNamecheap.delay(:queue => 'verify_domains').start
-    Crawl.delay.delete_crawl_current_keys(crawl_id)
+    Crawl.delay.delete_crawl_current_keys(crawl_id, processor_name)
     puts 'SidekiqStats: called start processing from sidekiq stats'
     if !Rails.cache.read(['running_crawls']).empty? && Rails.cache.read(['running_crawls']).include?(crawl_id)
       
