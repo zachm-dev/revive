@@ -452,7 +452,7 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.delete_and_stop_all_apps
-    JSON.parse($redis.get('list_of_running_crawls')).each do |crawl|
+    JSON.parse($redis.get('list_of_running_crawls ')).each do |crawl|
       puts "shutting down crawl #{crawl['crawl_id']}"
       Crawl.shut_down('crawl_id' => crawl['crawl_id'], 'processor_name' => crawl['processor_name'])
     end
