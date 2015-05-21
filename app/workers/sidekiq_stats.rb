@@ -1,7 +1,7 @@
 class SidekiqStats
   
   include Sidekiq::Worker
-  sidekiq_options :retry => false
+  sidekiq_options :retry => 3
   # sidekiq_options :queue => :sidekiq_stats
   
   def perform(crawl_id, options={})
@@ -15,9 +15,9 @@ class SidekiqStats
       
       Crawl.update_stats(crawl_id, processor_name)
       
-      all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')}
+      all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')}.to_a
       processing_ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a
-      keys_to_delete = (all_items-processing_ids)
+      keys_to_delete = (all_items-processing_ids).to_a
       puts "total keys to delete are #{keys_to_delete.count}"
       $redis.del(keys_to_delete)
       
