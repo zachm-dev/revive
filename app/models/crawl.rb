@@ -111,7 +111,7 @@ class Crawl < ActiveRecord::Base
     processor_name = options['processor_name']
     user = User.using(:main_shard).find(options['user_id'].to_i)
     plan = user.subscription.plan
-    emails = ['alex@test.com', 'batman34@gmail.com']
+    emails = ['alex@test.com', 'batman34@gmail.com', 'gregoryortiz@mac.com']
     if emails.include?(user.email)
       puts 'this user is allowed to run unlimted crawls'
       crawls_at_the_same_time = 100
