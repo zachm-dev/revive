@@ -835,8 +835,8 @@ class Crawl < ActiveRecord::Base
     all_items = $redis.smembers("all_ids/#{crawl_id}").select{|i|i.include?('process-')}.to_a
     processing_ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a
     keys_to_delete = (all_items-processing_ids).to_a
-    puts "total keys to delete are #{keys_to_delete.count}"
     if !keys_to_delete.empty?
+      puts "total keys to delete are #{keys_to_delete.count}"
       $redis.del(keys_to_delete)
     end
   end
