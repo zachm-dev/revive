@@ -878,4 +878,14 @@ class Crawl < ActiveRecord::Base
     end
   end
   
+  def push
+    emit(:pushed) # emit sends a value into the stream
+  end
+  
+  # def pong
+  #   puts "crawl pong"
+  #   sleep 5
+  #   emit(:pong)
+  # end
+  
 end

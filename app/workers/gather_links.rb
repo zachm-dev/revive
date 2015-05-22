@@ -29,13 +29,14 @@ class GatherLinks
       redis_id = ("process-"+SecureRandom.hex+Time.now.to_i.to_s)
       puts "GatherLinks: the redis id is #{redis_id}"
       $redis.sadd "all_ids/#{crawl_id}", redis_id
-      $redis.set(redis_id, {site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name']}.to_json)
+      $redis.set(redis_id, {base_url: "#{base_url}", site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name']}.to_json)
       
       if process == true
         ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
         Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
         if Rails.cache.read(['current_processing_batch_id']).empty?
-          Link.delay.start_processing
+          puts "sending to be processed"
+          Link.delay(:queue => 'process_links').start_processing
         end
       end
       
@@ -54,20 +55,10 @@ class GatherLinks
     
     batch = GatherLinksBatch.using("#{processor_name}").where(batch_id: "#{options['bid']}").first
     if !batch.nil?
-
       total_crawl_urls = Rails.cache.read(["crawl/#{crawl.id}/urls_found"], raw: true).to_i
-      # total_site_urls = Link.using(:master).where(site_id: site.id).sum(:links_count)
-      
-      # total_time = Time.now - batch.started_at
-      # pages_per_second = Link.where(site_id: site.id).count / total_time
-      # est_crawl_time = total_urls_found / pages_per_second
-      # crawl_total_urls = crawl.total_urls_found.to_i + total_urls_found
-      
       crawl.update(total_urls_found: total_crawl_urls)
-      # site.update(total_urls_found: total_site_urls, gather_status: 'finished')
       site.update(gather_status: 'finished')
       batch.update(finished_at: Time.now, status: "finished")
-
     end
 
   end
