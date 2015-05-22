@@ -54,7 +54,7 @@ class ProcessLinks
     puts "finished processing batch #{options} and calling new batch to process"
     
     Link.delay(:queue => 'process_links').start_processing
-    $redis.sadd "finished_processing/#{crawl_id}", options["redis_id"]
+    $redis.sadd "finished_processing/#{options['crawl_id']}", options["redis_id"]
     
     processor_name = options['processor_name']
     
