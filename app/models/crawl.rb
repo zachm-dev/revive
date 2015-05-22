@@ -825,8 +825,13 @@ class Crawl < ActiveRecord::Base
     end
   end
   
-  def self.get(k,v)
-    crawl = JSON.parse($redis.get('list_of_running_crawls')).select{|crawl|crawl["#{k}"]==v}
+  def self.get(k,v, list='running')
+    if list == 'running'
+      crawl = Crawl.running_list.select{|crawl|crawl["#{k}"]==v}
+    elsif list == 'finished'
+      crawl = Crawl.finished_list.select{|crawl|crawl["#{k}"]==v}
+    end
+    
     return crawl
   end
   
