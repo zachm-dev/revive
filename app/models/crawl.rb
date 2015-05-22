@@ -843,52 +843,46 @@ class Crawl < ActiveRecord::Base
   
   def self.shut_down(options={})
     puts "starting to shut down crawl #{options['crawl_id']}"
-    running_crawls = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==options['crawl_id'].to_i}
+    running_crawls = Crawl.get('crawl_id', options['crawl_id'].to_i)
     if !running_crawls.empty?
       
+      puts "getting app count"
+      app_name = running_crawls[0]['name']
+      app_count = Crawl.app_count_for(app_name)
+      puts "getting the crawl stats"
+      stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor').reject{|k,v|v.to_i==0}
+      puts "the crawl stats are #{stats}"
+      puts "deleting from crawler list of running crawls"
+      Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
+      puts "updating status to finish"
+      Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
+      puts "migrating crawl to deleted crawls hash"
+      Crawl.add_to_deleted_crawls(options['crawl_id'])
+      puts "deleting from list of running crawls"
+      Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
       crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
-      
-      if crawl && crawl.status != 'finished'
-        puts "getting app count"
-        app_name = running_crawls[0]['name']
-        app_count = Crawl.app_count_for(app_name)
-        puts "getting the crawl stats"
-        stats = Crawl.get_stats(options['crawl_id'].to_i, sender='processor').reject{|k,v|v.to_i==0}
-        puts "the crawl stats are #{stats}"
-        puts "deleting from crawler list of running crawls"
-        Crawl.remove_from_crawler_list_of_running(options['crawl_id'].to_i)
-        puts "updating status to finish"
-        Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
-        puts "migrating crawl to deleted crawls hash"
-        Crawl.add_to_deleted_crawls(options['crawl_id'])
-        puts "deleting from list of running crawls"
-        Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
+      if crawl
         puts "updating crawl stats"
         crawl.update(stats)
-        puts "deleting redis keys"
-        Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
-        if app_count == 1
-          puts "stopping crawl dynos"
-          HerokuPlatform.stop_app(app_name)
-        end
-        puts "shut down crawl successfully #{options['crawl_id']}"
       end
+      puts "deleting redis keys"
+      Crawl.delete_redis_keys_for(options['crawl_id'].to_i, 'processor')
+      if app_count == 1
+        puts "stopping crawl dynos"
+        HerokuPlatform.stop_app(app_name)
+      end
+      puts "shut down crawl successfully #{options['crawl_id']}"
 
     else
-      puts "updating status to finish crawl was not running"
-      Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
+      
+      crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
+      if crawl && crawl.status != 'finished'
+        puts "updating status to finish crawl was not running"
+        Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
+      end
       puts "shut down crawl successfully #{options['crawl_id']}"
+      
     end
   end
-  
-  def push
-    emit(:pushed) # emit sends a value into the stream
-  end
-  
-  # def pong
-  #   puts "crawl pong"
-  #   sleep 5
-  #   emit(:pong)
-  # end
   
 end
