@@ -12,8 +12,7 @@ class SidekiqStats
     VerifyNamecheap.delay(:queue => 'verify_domains').start
     # Crawl.delay.delete_expired_redis_keys(crawl_id, processor_name)
     puts 'SidekiqStats: called start processing from sidekiq stats'
-    if !Rails.cache.read(['running_crawls']).empty? && Rails.cache.read(['running_crawls']).include?(crawl_id)
-      
+    if Rails.cache.read(['running_crawls']).include?(crawl_id)
       Crawl.update_stats(crawl_id, processor_name)
       running_count = Crawl.running_count_for(crawl_id)
       puts "the number of processing batches left are #{running_count['processing_count']} and the number of expired domains left to be processed are #{running_count['expired_count']} for the crawl #{crawl_id}"
