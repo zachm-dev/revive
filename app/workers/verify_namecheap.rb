@@ -131,7 +131,7 @@ class VerifyNamecheap
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
       puts "updating expired ids array and removing #{next_expired_id_to_verify}"
       
-      Rails.cache.delete(["crawl/#{next_crawl_to_process}/expired_ids"], next_expired_id_to_verify) 
+      Rails.cache.delete(next_expired_id_to_verify) 
     
       # new_expired_ids_rotation = all_expired_ids.rotate
       # Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], new_expired_ids_rotation)

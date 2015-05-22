@@ -26,7 +26,7 @@ class Link < ActiveRecord::Base
           puts "the next link to be processed is #{processing_link_ids}"
           new_crawls_rotation = running_crawls.rotate
         
-          Rails.cache.delete(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids)
+          Rails.cache.delete(processing_link_ids)
           Rails.cache.write(['running_crawls'], new_crawls_rotation)
           Rails.cache.write(['current_processing_batch_id'], "#{processing_link_ids}")
       
