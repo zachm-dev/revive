@@ -124,13 +124,12 @@ class VerifyNamecheap
     all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
     
     if !all_expired_ids.empty?
-      
+      next_expired_id_to_verify = all_expired_ids[0]
+      puts "updating expired ids array and removing #{next_expired_id_to_verify}"
       Rails.cache.write(['domain_being_verified'], [next_expired_id_to_verify])
       puts "the domain to be verified is #{next_expired_id_to_verify}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
-      next_expired_id_to_verify = all_expired_ids[0]
-      puts "updating expired ids array and removing #{next_expired_id_to_verify}"
       Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids-[next_expired_id_to_verify]) 
       
       batch = Sidekiq::Batch.new
