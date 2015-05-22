@@ -89,9 +89,11 @@ class Crawl < ActiveRecord::Base
     Rails.cache.write(["crawl/#{self.id}/processing_batches/total"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/processing_batches/running"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/processing_batches/finished"], 0, raw: true)
+    
     Rails.cache.write(["crawl/#{self.id}/processing_batches/ids"], [])
     Rails.cache.write(["crawl/#{self.id}/available"], [])
     Rails.cache.write(["crawl/#{self.id}/checked"], [])
+    Rails.cache.write(["crawl/#{self.id}/expired_ids"], [])
     
     Rails.cache.write(["crawl/#{self.id}/urls_found"], 0, raw: true)
     Rails.cache.write(["crawl/#{self.id}/urls_crawled"], 0, raw: true)
@@ -101,7 +103,7 @@ class Crawl < ActiveRecord::Base
 
     Rails.cache.write(['current_processing_batch_id'], '')
     
-    Rails.cache.write(["crawl/#{self.id}/expired_ids"], [])
+    
 
   end
   
@@ -266,15 +268,6 @@ class Crawl < ActiveRecord::Base
     else
       maxpages = options[:maxpages].empty? ? 10 : options[:maxpages].to_i
     end
-    
-    # processors_hash = {}
-    # processors_array = ['processor_three', 'processor_four', 'processor', 'processor_one', 'processor_two']
-    # processors_array.each do |processor_name|
-    #   running_count = Crawl.using(processor_name).where(status: 'running').count
-    #   processors_hash[processor_name] = running_count
-    # end
-    # processor_name = processors_hash.sort_by{|k,v|v}[0][0]
-
 
     redis_conn = Redis.new(url: 'redis://redistogo:46d4f04e871ae440da550714fdbd5c77@cobia.redistogo.com:9135/')
     if JSON.parse(redis_conn.get('list_of_running_crawls')).to_a.empty?
@@ -294,11 +287,8 @@ class Crawl < ActiveRecord::Base
     new_heroku_app_object = HerokuApp.using("#{processor_name}").create(status: "pending", crawl_id: new_crawl.id, verified: 'pending', user_id: user_id, processor_name: processor_name)
     ShardInfo.using(:main_shard).create(user_id: user.id, processor_name: processor_name, crawl_id: new_crawl.id, heroku_app_id: new_heroku_app_object.id)
     UserDashboard.add_pending_crawl(user.user_dashboard.id)
-    # Crawl.decision_maker(user_id)
-    # Api.delay.process_new_crawl(user_id: user_id, processor_name: processor_name)
     
     Api.delay.process_new_crawl('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
-    # Crawl.decision_maker('crawl_id' => new_crawl.id, 'user_id' => user_id, 'processor_name' => processor_name)
   end
   
   def self.save_new_sites(crawl_id, options={})

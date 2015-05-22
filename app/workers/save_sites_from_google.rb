@@ -45,7 +45,7 @@ class SaveSitesFromGoogle
         site = Site.using("#{processor_name}").create(domain: parsed_url, base_url: u.to_s, maxpages: crawl.maxpages.to_i, crawl_id: crawl_id, processing_status: "pending")
         GatherLinksBatch.using("#{processor_name}").create(site_id: site.id, status: "pending")
         site_id = site.id
-        $redis.sadd "all_ids/#{crawl_id}", ["site/#{new_site.id}/processing_batches/total", "site/#{site_id}/broken_domains", "site/#{site_id}/processing_batches/finished", "site/#{site_id}/expired_domains", "site/#{site_id}/processing_batches/running", "site/#{site_id}/total_site_urls"]
+        $redis.sadd "all_ids/#{crawl_id}", ["site/#{site_id}/processing_batches/total", "site/#{site_id}/broken_domains", "site/#{site_id}/processing_batches/finished", "site/#{site_id}/expired_domains", "site/#{site_id}/processing_batches/running", "site/#{site_id}/total_site_urls"]
       end
     else
       puts 'SaveSitesFromGoogle: crawl has stopped running and not updating or iterating over'
@@ -54,18 +54,7 @@ class SaveSitesFromGoogle
   
   def on_complete(status, options)
     puts "finished saving sites from google for the crawl #{options['crawl_id']}"
-    # crawl = Crawl.using(:main_shard).find(options['crawl_id'])
-    # Site.save_url_domains(crawl_id: options['crawl_id'])
-    # Site.save_moz_data(crawl_id: options['crawl_id'])
-    # Site.save_majestic_data(crawl_id: options['crawl_id'])
-    # ids = Site.in_the_top_x_percent(20, options['crawl_id'])
-    # crawl.sites.each do |site|
-    #   puts "the gather links batch of keyword crawl #{site.id}"
-    #   site.update(processing_status: "pending")
-    #   GatherLinksBatch.using(:main_shard).create(site_id: site.id, status: "pending")
-    # end
     GatherLinks.start('crawl_id' => options['crawl_id'], 'processor_name' => options['processor_name'])
-    # Crawl.delay.decision_maker(crawl.user.id)
   end
   
   def self.start_batch(crawl_id, options={})
