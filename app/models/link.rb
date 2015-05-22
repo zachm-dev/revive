@@ -60,11 +60,12 @@ class Link < ActiveRecord::Base
           batch = Sidekiq::Batch.new
           batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => crawl_id, 'site_id' => site_id, 'redis_id' => processing_link_ids, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
           
-          Rails.cache.delete(processing_link_ids)
-          
           batch.jobs do
             redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site_id, redis_obj['found_on'], domain, crawl_id, 'processor_name' => processor_name)}
           end
+          
+          puts "deleting process link id from batch for crawl #{crawl_id}"
+          Rails.cache.delete(processing_link_ids)
         
         else
           if running_crawls.count > 1
