@@ -70,7 +70,8 @@ class Crawl < ActiveRecord::Base
       "crawl/#{self.id}/gathering_batches/running",
       "crawl/#{self.id}/gathering_batches/finished",
       "crawl/#{self.id}/total_minutes_to_run",
-      "crawl/#{self.id}/broken_domains"
+      "crawl/#{self.id}/broken_domains",
+      "finished_processing/#{self.id}"
   ]
     
     $redis.sadd "all_ids/#{self.id}", crawl_keys
