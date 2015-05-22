@@ -144,14 +144,8 @@ class VerifyNamecheap
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
       if expired_rotation.count > 1
-        expired_ids_count = []
-        all_expired_ids.each do |id|
-          expired_ids_count << Rails.cache.read(["crawl/#{id}/expired_ids"]).to_a.count.to_i
-        end
-        if expired_ids_count.sum >= 1
-          puts "VerifyNamecheap: calling start method there are other calls in the rotation"
-          VerifyNamecheap.delay(:queue => 'verify_domains').start
-        end
+        puts 'VerifyNamecheap there are more crawls in this rotation'
+        VerifyNamecheap.delay(:queue => 'verify_domains').start
       end
     end
   end
