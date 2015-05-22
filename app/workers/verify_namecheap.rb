@@ -140,8 +140,6 @@ class VerifyNamecheap
         VerifyNamecheap.perform_async(next_expired_id_to_verify)
       end
 
-      
-
     else
       puts "there are no expired domains to be verified for this crawl #{next_crawl_to_process}"
       new_expired_rotation = expired_rotation.rotate

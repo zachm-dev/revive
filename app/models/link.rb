@@ -26,7 +26,7 @@ class Link < ActiveRecord::Base
           puts "the next link to be processed is #{next_link_id_to_process}"
           new_crawls_rotation = running_crawls.rotate
           
-          puts "deleting process link id from batch for crawl #{crawl_id}"
+          puts "deleting process link id from batch for crawl #{options['crawl_id']}"
           Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
           
           redis_obj = JSON.parse($redis.get(next_link_id_to_process))
