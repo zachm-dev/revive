@@ -121,25 +121,26 @@ class VerifyNamecheap
     expired_rotation = Rails.cache.read(['expired_rotation']).to_a
     puts "the current expired crawl rotation is #{expired_rotation}"
     next_crawl_to_process = expired_rotation[0]
-    next_expired_id_to_verify = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a[0]
+    all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
     
-    if !next_expired_id_to_verify.nil?
+    if !all_expired_ids.empty?
       puts "going to verify page #{next_expired_id_to_verify} for the crawl #{next_crawl_to_process}"
       Rails.cache.write(['domain_being_verified'], [next_expired_id_to_verify])
       puts "the domain to be verified is #{next_expired_id_to_verify}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
+      next_expired_id_to_verify = all_expired_ids[0]
       puts "updating expired ids array and removing #{next_expired_id_to_verify}"
-
+      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids-[next_expired_id_to_verify]) 
+      
       batch = Sidekiq::Batch.new
       batch.on(:complete, VerifyNamecheap)
       batch.jobs do
         puts "VerifyNamecheap: about to verify domain for crawl #{next_crawl_to_process} with id #{next_expired_id_to_verify}"
-        # VerifyNamecheap.delay.perform(next_expired_id_to_verify)
         VerifyNamecheap.perform_async(next_expired_id_to_verify)
       end
 
-      Rails.cache.delete(next_expired_id_to_verify) 
+      
 
     else
       puts "there are no expired domains to be verified for this crawl #{next_crawl_to_process}"

@@ -18,19 +18,22 @@ class Link < ActiveRecord::Base
       if !running_crawls.empty?
         next_crawl_to_process = running_crawls[0]
         puts "next crawl to process #{next_crawl_to_process}"
-        processing_link_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a[0]
+        processing_link_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a
 
-        if !processing_link_ids.nil?
+        if !processing_link_ids.empty?
           puts "start_processing: there are more links to be processed"
-          # next_link_id_to_process = processing_link_ids[0]
-          puts "the next link to be processed is #{processing_link_ids}"
+          next_link_id_to_process = processing_link_ids[0]
+          puts "the next link to be processed is #{next_link_id_to_process}"
           new_crawls_rotation = running_crawls.rotate
-      
-          redis_obj = JSON.parse($redis.get(processing_link_ids))
+          
+          puts "deleting process link id from batch for crawl #{crawl_id}"
+          Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
+          
+          redis_obj = JSON.parse($redis.get(next_link_id_to_process))
           puts "start_processing: the redis obj is #{redis_obj}"
         
           Rails.cache.write(['running_crawls'], new_crawls_rotation)
-          Rails.cache.write(['current_processing_batch_id'], "#{processing_link_ids}")
+          Rails.cache.write(['current_processing_batch_id'], "#{next_link_id_to_process}")
             
           processor_name = redis_obj['processor_name']
           site_id = redis_obj['site_id'].to_i
@@ -55,18 +58,15 @@ class Link < ActiveRecord::Base
             Rails.cache.increment(["site/#{site_id}/processing_batches/running"])
           end
     
-          puts " process links on complete variables link id #{processing_link_ids} site id #{site_id} and crawl id #{crawl_id}"
+          puts " process links on complete variables link id #{next_link_id_to_process} site id #{site_id} and crawl id #{crawl_id}"
     
           batch = Sidekiq::Batch.new
-          batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => crawl_id, 'site_id' => site_id, 'redis_id' => processing_link_ids, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
+          batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => crawl_id, 'site_id' => site_id, 'redis_id' => next_link_id_to_process, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
           
           batch.jobs do
             redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site_id, redis_obj['found_on'], domain, crawl_id, 'processor_name' => processor_name)}
           end
-          
-          puts "deleting process link id from batch for crawl #{crawl_id}"
-          Rails.cache.delete(processing_link_ids)
-        
+
         else
           if running_crawls.count > 1
             new_crawls_rotation = running_crawls.rotate
