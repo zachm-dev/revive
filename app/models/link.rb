@@ -11,7 +11,7 @@ class Link < ActiveRecord::Base
     
     stats = Sidekiq::Stats.new.queues["process_links"].to_i
     
-    if stats < 500
+    if stats < 300
 
       running_crawls = Rails.cache.read(['running_crawls']).to_a
       puts "start_processing: list of running crawls #{running_crawls}"
