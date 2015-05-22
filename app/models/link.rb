@@ -25,15 +25,13 @@ class Link < ActiveRecord::Base
           # next_link_id_to_process = processing_link_ids[0]
           puts "the next link to be processed is #{processing_link_ids}"
           new_crawls_rotation = running_crawls.rotate
-        
-          Rails.cache.delete(processing_link_ids)
-          Rails.cache.write(['running_crawls'], new_crawls_rotation)
-          Rails.cache.write(['current_processing_batch_id'], "#{processing_link_ids}")
-      
       
           redis_obj = JSON.parse($redis.get(processing_link_ids))
           puts "start_processing: the redis obj is #{redis_obj}"
-      
+        
+          Rails.cache.write(['running_crawls'], new_crawls_rotation)
+          Rails.cache.write(['current_processing_batch_id'], "#{processing_link_ids}")
+            
           processor_name = redis_obj['processor_name']
           site_id = redis_obj['site_id'].to_i
           crawl_id = redis_obj['crawl_id'].to_i
@@ -61,7 +59,9 @@ class Link < ActiveRecord::Base
     
           batch = Sidekiq::Batch.new
           batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => crawl_id, 'site_id' => site_id, 'redis_id' => processing_link_ids, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
-    
+          
+          Rails.cache.delete(processing_link_ids)
+          
           batch.jobs do
             redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site_id, redis_obj['found_on'], domain, crawl_id, 'processor_name' => processor_name)}
           end
