@@ -43,7 +43,7 @@ class Link < ActiveRecord::Base
           Rails.cache.increment(["crawl/#{crawl_id}/processing_batches/running"])
 
           if Rails.cache.read(["site/#{site_id}/processing_batches/total"], raw: true).to_i == 0
-      
+            site = Site.using("#{processor_name}").where(id: site_id).first
             puts "updating site and creating new starting variables for processing batch for the site #{site_id}"
             site.update(processing_status: 'running')
             Rails.cache.write(["site/#{site_id}/processing_batches/total"], 1, raw: true)
