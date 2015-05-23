@@ -556,8 +556,8 @@ class Crawl < ActiveRecord::Base
         begin
           redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
           redis_db_connection.del(keys)
-          redis_db_connection.del($redis.smembers('all_expired_ids').select{|obj| obj.include?("expired-#{crawl_id}")})
-          redis_db_connection.del($redis.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")})
+          redis_db_connection.del(redis_db_connection.smembers('all_expired_ids').select{|obj| obj.include?("expired-#{crawl_id}")})
+          redis_db_connection.del(redis_db_connection.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")})
           redis_db_connection.del("all_ids/#{crawl_id}")
         rescue
           nil
