@@ -553,13 +553,14 @@ class Crawl < ActiveRecord::Base
         expired_ids = $redis.smembers('all_expired_ids').select{|obj| obj.include?("expired-#{crawl_id}")}
         if expired_ids.count > 0
           $redis.del(expired_ids)
+          $redis.srem('all_expired_ids', expired_ids)
         end
         
-        processing_ids  =$redis.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")}
+        processing_ids = $redis.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")}
         if processing_ids.count > 0
           $redis.del(processing_ids)
+          $redis.srem('all_processing_ids', processing_ids)
         end
-        
         $redis.del("all_ids/#{crawl_id}")
       else
         begin
@@ -568,10 +569,12 @@ class Crawl < ActiveRecord::Base
           expired_ids = redis_db_connection.smembers('all_expired_ids').select{|obj| obj.include?("expired-#{crawl_id}")}
           if expired_ids.count > 0
             redis_db_connection.del(expired_ids)
+            redis_db_connection.srem('all_expired_ids', expired_ids)
           end
           processing_ids = redis_db_connection.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")}
           if processing_ids.count > 0
             redis_db_connection.del(processing_ids)  
+            redis_db_connection.srem('all_processing_ids', processing_ids)
           end
           redis_db_connection.del("all_ids/#{crawl_id}")
         rescue
