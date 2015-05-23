@@ -556,6 +556,8 @@ class Crawl < ActiveRecord::Base
         begin
           redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
           redis_db_connection.del(keys)
+          redis_db_connection.del($redis.smembers('all_expired_ids').select{|obj| obj.include?("expired-#{crawl_id}")})
+          redis_db_connection.del($redis.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")})
           redis_db_connection.del("all_ids/#{crawl_id}")
         rescue
           nil
@@ -650,19 +652,20 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.connect_to_crawler_redis_db(crawl_id)
-    crawl_obj = JSON.parse($redis.get('list_of_running_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}
+    crawl_obj = Crawl.get('crawl_id', crawl_id.to_i)[0]
     puts "the crawl obj is #{crawl_obj} redis db"
-    if !crawl_obj.empty?
-      app_name = crawl_obj[0]['name']
+    if !crawl_obj.nil?
+      app_name = crawl_obj['name']
       redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
       puts "the redis url is #{redis_url}"
       redis_db_connection = Redis.new(:url => redis_url)
       return redis_db_connection
     else
       puts "checking deleted crawls"
-      crawl_has_been_deleted = Crawl.get_deleted_crawl(crawl_id)
+      crawl_has_been_deleted = Crawl.get('crawl_id', crawl_id.to_i, 'finished')[0]
       if !crawl_has_been_deleted.nil?
-        redis_url = crawl_has_been_deleted["redis_url"]
+        app_name = crawl_has_been_deleted['name']
+        redis_url = JSON.parse($redis.get('redis_urls'))["#{app_name}"]
         puts "the redis url is #{redis_url}"
         redis_db_connection = Redis.new(:url => redis_url)
         return redis_db_connection
@@ -728,8 +731,13 @@ class Crawl < ActiveRecord::Base
   end
   
   def self.get_deleted_crawl(crawl_id)
-    deleted_crawl = JSON.parse($redis.get('deleted_crawls')).select{|c|c['crawl_id']==crawl_id.to_i}[0]
-    return deleted_crawl
+    deleted_crawl = Crawl.get('crawl_id', crawl_id.to_i, 'finished')[0]
+    if !deleted_crawl.nil?
+      name = deleted_crawl['name']
+    else
+      name = []
+    end
+    return name
   end
   
   def self.add_to_deleted_crawls(crawl_id)
@@ -856,8 +864,6 @@ class Crawl < ActiveRecord::Base
       Crawl.update_status_to_finish(options['crawl_id'].to_i, options['processor_name'])
       puts "migrating crawl to deleted crawls hash"
       Crawl.add_to_deleted_crawls(options['crawl_id'])
-      puts "deleting from list of running crawls"
-      Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
       crawl = Crawl.using("#{options['processor_name']}").where(id: options['crawl_id'].to_i).first
       if crawl
         puts "updating crawl stats"
@@ -869,6 +875,8 @@ class Crawl < ActiveRecord::Base
         puts "stopping crawl dynos"
         HerokuPlatform.stop_app(app_name)
       end
+      puts "deleting from list of running crawls"
+      Crawl.remove_from_list_of_running(options['crawl_id'].to_i)
       puts "shut down crawl successfully #{options['crawl_id']}"
 
     else

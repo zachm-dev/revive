@@ -21,6 +21,7 @@ class SidekiqStats
       end
       
       if running_count['expired_count'].to_i > 1
+        puts 'SidekiqStats: called verify namecheap from sidekiq stats'
         VerifyNamecheap.delay(:queue => 'verify_domains').start
       end
 

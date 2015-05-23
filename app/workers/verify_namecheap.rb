@@ -117,6 +117,8 @@ class VerifyNamecheap
     puts "VerifyNamecheap: calling start on_complete"
     if $redis.smembers('all_expired_ids').count > 1
       VerifyNamecheap.delay(:queue => 'verify_domains').start
+    elsif $redis.smembers('all_processing_ids').count > 1
+      Link.delay(:queue => 'process_links').start_processing
     end
   end
   
