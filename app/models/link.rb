@@ -28,44 +28,56 @@ class Link < ActiveRecord::Base
             new_crawls_rotation = running_crawls.rotate
           
             puts "deleting process link id from batch for crawl #{options['crawl_id']}"
-            # Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
-            $redis.srem('all_expired_ids', next_link_id_to_process)
-            redis_obj = JSON.parse($redis.get(next_link_id_to_process))
-            puts "start_processing: the redis obj is #{redis_obj}"
-        
-            Rails.cache.write(['running_crawls'], new_crawls_rotation)
-            Rails.cache.write(['current_processing_batch_id'], "#{next_link_id_to_process}")
+            $redis.srem('all_processing_ids', next_link_id_to_process)
             
-            processor_name = redis_obj['processor_name']
-            site_id = redis_obj['site_id'].to_i
-            crawl_id = redis_obj['crawl_id'].to_i
-            base_url = redis_obj['base_url']
-            crawl = Crawl.using("#{processor_name}").where(id: crawl_id).first
-            domain = Domainatrix.parse(base_url).domain
+            unparsed_redis_obj = $redis.get(next_link_id_to_process)
+            
+            
+            if !unparsed_redis_obj.nil?
+              redis_obj = JSON.parse(unparsed_redis_obj)
+              puts "start_processing: the redis obj is #{redis_obj}"
+        
+              Rails.cache.write(['running_crawls'], new_crawls_rotation)
+              Rails.cache.write(['current_processing_batch_id'], "#{next_link_id_to_process}")
+            
+              processor_name = redis_obj['processor_name']
+              site_id = redis_obj['site_id'].to_i
+              crawl_id = redis_obj['crawl_id'].to_i
+              base_url = redis_obj['base_url']
+              crawl = Crawl.using("#{processor_name}").where(id: crawl_id).first
+              domain = Domainatrix.parse(base_url).domain
 
-            Rails.cache.increment(["crawl/#{crawl_id}/processing_batches/total"])
-            Rails.cache.increment(["crawl/#{crawl_id}/processing_batches/running"])
+              Rails.cache.increment(["crawl/#{crawl_id}/processing_batches/total"])
+              Rails.cache.increment(["crawl/#{crawl_id}/processing_batches/running"])
 
-            if Rails.cache.read(["site/#{site_id}/processing_batches/total"], raw: true).to_i == 0
-              site = Site.using("#{processor_name}").where(id: site_id).first
-              puts "updating site and creating new starting variables for processing batch for the site #{site_id}"
-              site.update(processing_status: 'running')
-              Rails.cache.write(["site/#{site_id}/processing_batches/total"], 1, raw: true)
-              Rails.cache.write(["site/#{site_id}/processing_batches/running"], 1, raw: true)
-              Rails.cache.write(["site/#{site_id}/processing_batches/finished"], 0, raw: true)
-            else
-              puts 'incrementing process batch stats'
-              Rails.cache.increment(["site/#{site_id}/processing_batches/total"])
-              Rails.cache.increment(["site/#{site_id}/processing_batches/running"])
-            end
+              if Rails.cache.read(["site/#{site_id}/processing_batches/total"], raw: true).to_i == 0
+                site = Site.using("#{processor_name}").where(id: site_id).first
+                puts "updating site and creating new starting variables for processing batch for the site #{site_id}"
+                site.update(processing_status: 'running')
+                Rails.cache.write(["site/#{site_id}/processing_batches/total"], 1, raw: true)
+                Rails.cache.write(["site/#{site_id}/processing_batches/running"], 1, raw: true)
+                Rails.cache.write(["site/#{site_id}/processing_batches/finished"], 0, raw: true)
+              else
+                puts 'incrementing process batch stats'
+                Rails.cache.increment(["site/#{site_id}/processing_batches/total"])
+                Rails.cache.increment(["site/#{site_id}/processing_batches/running"])
+              end
     
-            puts " process links on complete variables link id #{next_link_id_to_process} site id #{site_id} and crawl id #{crawl_id}"
+              puts " process links on complete variables link id #{next_link_id_to_process} site id #{site_id} and crawl id #{crawl_id}"
     
-            batch = Sidekiq::Batch.new
-            batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => crawl_id, 'site_id' => site_id, 'redis_id' => next_link_id_to_process, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
+              batch = Sidekiq::Batch.new
+              batch.on(:complete, ProcessLinks, 'bid' => batch.bid, 'crawl_id' => crawl_id, 'site_id' => site_id, 'redis_id' => next_link_id_to_process, 'user_id' => crawl.user_id, 'crawl_type' => crawl.crawl_type, 'iteration' => crawl.iteration.to_i, 'processor_name' => processor_name)
           
-            batch.jobs do
-              redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site_id, redis_obj['found_on'], domain, crawl_id, 'processor_name' => processor_name)}
+              batch.jobs do
+                redis_obj['links'].each{|l| ProcessLinks.perform_async(l, site_id, redis_obj['found_on'], domain, crawl_id, 'processor_name' => processor_name)}
+              end
+              
+            else
+              
+              if $redis.smembers('all_processing_ids').count > 0
+                Link.delay(:queue => 'process_links').start_processing
+              end
+              
             end
 
           else

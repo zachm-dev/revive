@@ -17,7 +17,7 @@ class SidekiqStats
       
       if running_count['processing_count'].to_i > 1
         puts 'SidekiqStats: called start processing from sidekiq stats'
-        Link.delay.start_processing
+        Link.delay(:queue => 'process_links').start_processing
       end
       
       if running_count['expired_count'].to_i > 1
