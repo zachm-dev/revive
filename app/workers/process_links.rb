@@ -55,6 +55,7 @@ class ProcessLinks
     puts "finished processing batch #{options} and calling new batch to process"
     
     if $redis.smembers('all_processing_ids').count > 0
+      puts "ProcessLinks: calling process link"
       Link.delay(:queue => 'process_links').start_processing
     end
     $redis.sadd "finished_processing/#{options['crawl_id']}", options["redis_id"]

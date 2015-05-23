@@ -85,6 +85,7 @@ class Link < ActiveRecord::Base
               new_crawls_rotation = running_crawls.rotate
               Rails.cache.write(['running_crawls'], new_crawls_rotation)
               if $redis.smembers('all_processing_ids').count > 0
+                puts "start_processing: calling process link"
                 Link.delay(:queue => 'process_links').start_processing
               end
             end 

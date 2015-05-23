@@ -317,11 +317,11 @@ class Crawl < ActiveRecord::Base
     end
   end
   
-  def self.update_stats(crawl_id)
-    crawl = Crawl.find(crawl_id)
-    total_expired = crawl.pages.where(available: 'true').count
-    Crawl.update(crawl.id, total_expired: total_expired.to_i)
-  end
+  # def self.update_stats(crawl_id)
+  #   crawl = Crawl.find(crawl_id)
+  #   total_expired = crawl.pages.where(available: 'true').count
+  #   Crawl.update(crawl.id, total_expired: total_expired.to_i)
+  # end
   
   
   def self.crawl_stats(broken, available)
