@@ -47,8 +47,14 @@ class GatherLinks
   
   def on_complete(status, options)
 
+    if Sidekiq::ScheduledSet.new.size.to_i < 1
+      puts "no sidekiq stats currently running starting up"
+      SidekiqStats.delay.start('crawl_id' => options['crawl_id'], 'processor_name' => options['processor_name'])
+    end
+
     puts "GatherLinks Just finished Batch #{options['bid']}"
     processor_name = options['processor_name']
+
     site = Site.using("#{processor_name}").where(id: options['site_id'].to_i).first
     crawl = site.crawl
     

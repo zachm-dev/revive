@@ -54,6 +54,11 @@ class ProcessLinks
   def on_complete(status, options={})
     puts "finished processing batch #{options} and calling new batch to process"
     
+    if Sidekiq::ScheduledSet.new.size.to_i < 1
+      puts "no sidekiq stats currently running starting up"
+      SidekiqStats.delay.start('crawl_id' => options['crawl_id'], 'processor_name' => options['processor_name'])
+    end
+    
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     
     if running_crawls.count > 0
@@ -99,22 +104,5 @@ class ProcessLinks
     end
 
   end
-
-
-  # def self.start(link_id)
-  #   link = Link.find(link_id)
-  #   links = link.links
-  #   site = Site.find(link.site_id)
-  #   domain = Domainatrix.parse(site.base_url).domain
-  #   batch = Sidekiq::Batch.new
-  #   site.update(processing_status: 'running')
-  #   link.process_links_batch.update(status: "running", started_at: Time.now, batch_id: batch.bid)
-  #   batch.on(:complete, ProcessLinks, 'bid' => batch.bid)
-  #
-  #   batch.jobs do
-  #     links.each { |l| ProcessLinks.perform_async(l, site.id, link.found_on, domain) }
-  #   end
-  # end
-
   
 end
