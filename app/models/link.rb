@@ -75,6 +75,7 @@ class Link < ActiveRecord::Base
             else
               
               if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0
+                puts "Link: calling process link"
                 Link.delay(:queue => 'process_links').start_processing
               end
               

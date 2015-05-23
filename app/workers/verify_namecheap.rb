@@ -120,6 +120,7 @@ class VerifyNamecheap
     else 
       running = Rails.cache.read(['running_crawls']).to_a
       if running.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0
+        puts "VerifyNamecheap: calling process link"
         Link.delay(:queue => 'process_links').start_processing
       end
     end
