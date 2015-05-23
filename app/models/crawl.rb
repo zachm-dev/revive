@@ -646,7 +646,7 @@ class Crawl < ActiveRecord::Base
     stats = Crawl.get_stats(crawl_id, sender)
     puts "SidekiqStats: updating crawl stats for crawl #{crawl_id}"
     crawl = Crawl.using("#{processor_name}").where(id: crawl_id.to_i).first
-    if crawl
+    if crawl && crawl.status != 'finished'
       crawl.update_attributes(stats.reject{|k,v|v==0})
     end
   end
