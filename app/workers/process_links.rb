@@ -23,17 +23,18 @@ class ProcessLinks
           Page.using("#{processor_name}").create(status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id)
         elsif "#{response.code}" == '0'
           
-          redis_id = ("expired-"+SecureRandom.hex+Time.now.to_i.to_s)
+          redis_id = ("expired-#{crawl_id}-"+SecureRandom.hex+Time.now.to_i.to_s)
           $redis.sadd "all_ids/#{crawl_id}", redis_id
           puts "ProcessLinks: the redis id is #{redis_id}"
           $redis.set(redis_id, {status_code: "#{response.code}", url: "#{l}", internal: internal, site_id: site_id, found_on: "#{found_on}", crawl_id: crawl_id, processor_name: processor_name}.to_json)
           
-          expired_ids_array = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a
-          puts "ProcessLinks: the number of expired ids are #{expired_ids_array.count} for the crawl #{crawl_id}"
-          Rails.cache.write(["crawl/#{crawl_id}/expired_ids"], expired_ids_array.push(redis_id))
+          # expired_ids_array = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a
+          $redis.sadd "all_expired_ids", redis_id
+          # puts "ProcessLinks: the number of expired ids are #{expired_ids_array.count} for the crawl #{crawl_id}"
+          # Rails.cache.write(["crawl/#{crawl_id}/expired_ids"], expired_ids_array.push(redis_id))
           
           
-          if expired_ids_array.count <= 1
+          if $redis.smembers('all_expired_ids').count <= 1
             puts "ProcessLinks: calling start start method"
             VerifyNamecheap.delay(:queue => 'verify_domains').start
           end
@@ -53,7 +54,9 @@ class ProcessLinks
   def on_complete(status, options={})
     puts "finished processing batch #{options} and calling new batch to process"
     
-    Link.delay(:queue => 'process_links').start_processing
+    if $redis.smembers('all_expired_ids').count > 0
+      Link.delay(:queue => 'process_links').start_processing
+    end
     $redis.sadd "finished_processing/#{options['crawl_id']}", options["redis_id"]
     
     processor_name = options['processor_name']
@@ -93,20 +96,20 @@ class ProcessLinks
   end
 
 
-  def self.start(link_id)
-    link = Link.find(link_id)
-    links = link.links
-    site = Site.find(link.site_id)
-    domain = Domainatrix.parse(site.base_url).domain
-    batch = Sidekiq::Batch.new
-    site.update(processing_status: 'running')
-    link.process_links_batch.update(status: "running", started_at: Time.now, batch_id: batch.bid)
-    batch.on(:complete, ProcessLinks, 'bid' => batch.bid)
-
-    batch.jobs do
-      links.each { |l| ProcessLinks.perform_async(l, site.id, link.found_on, domain) }
-    end
-  end
+  # def self.start(link_id)
+  #   link = Link.find(link_id)
+  #   links = link.links
+  #   site = Site.find(link.site_id)
+  #   domain = Domainatrix.parse(site.base_url).domain
+  #   batch = Sidekiq::Batch.new
+  #   site.update(processing_status: 'running')
+  #   link.process_links_batch.update(status: "running", started_at: Time.now, batch_id: batch.bid)
+  #   batch.on(:complete, ProcessLinks, 'bid' => batch.bid)
+  #
+  #   batch.jobs do
+  #     links.each { |l| ProcessLinks.perform_async(l, site.id, link.found_on, domain) }
+  #   end
+  # end
 
   
 end

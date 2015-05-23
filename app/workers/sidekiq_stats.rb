@@ -8,16 +8,25 @@ class SidekiqStats
     puts 'getting sidekiq stats'
     if Rails.cache.read(['running_crawls']).include?(crawl_id)
       processor_name = options['processor_name']
-      SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
-      Link.delay.start_processing
-      VerifyNamecheap.delay(:queue => 'verify_domains').start
-      puts 'SidekiqStats: called start processing from sidekiq stats'
-    
-      Crawl.update_stats(crawl_id, processor_name)
       
-      $redis.del($redis.smembers("finished_processing/#{crawl_id}"))
+      if Sidekiq::ScheduledSet.new.size.to_i < 10
+        SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
+      end
       
       running_count = Crawl.running_count_for(crawl_id)
+      
+      if running_count['processing_count'].to_i > 1
+        puts 'SidekiqStats: called start processing from sidekiq stats'
+        Link.delay.start_processing
+      end
+      
+      if running_count['expired_count'].to_i > 1
+        VerifyNamecheap.delay(:queue => 'verify_domains').start
+      end
+
+      Crawl.update_stats(crawl_id, processor_name)
+      $redis.del($redis.smembers("finished_processing/#{crawl_id}"))
+      
       puts "the number of processing batches left are #{running_count['processing_count']} and the number of expired domains left to be processed are #{running_count['expired_count']} for the crawl #{crawl_id}"
       if running_count['processing_count'].to_i <= 2 && running_count['expired_count'].to_i <= 2
         puts "this crawl has finished all its jobs"
@@ -35,10 +44,16 @@ class SidekiqStats
   end
   
   def self.start(options={})
-    puts 'start sidekiq and dyno stats'
-    processor_name = options['processor_name']    
-    puts 'scheduling sidekiq and dyno stats'
-    SidekiqStats.perform_in(1.minute, options['crawl_id'], 'processor_name' => processor_name)
+    if Rails.cache.read(['running_crawls']).include?(options['crawl_id'])
+      if Sidekiq::Queue.new.select{|j|j.args[0].to_s.include?('SidekiqStats')}.count < 10
+        puts 'start sidekiq and dyno stats'
+        processor_name = options['processor_name']    
+        puts 'scheduling sidekiq and dyno stats'
+        if Sidekiq::ScheduledSet.new.size.to_i < 10
+          SidekiqStats.perform_in(1.minute, options['crawl_id'], 'processor_name' => processor_name)
+        end
+      end
+    end
   end
   
 end

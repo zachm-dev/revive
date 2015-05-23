@@ -104,7 +104,9 @@ class VerifyNamecheap
     else
       puts "VerifyNamecheap no page found on redis"
       puts "VerifyNamecheap: calling start perform method 3"
-      VerifyNamecheap.delay(:queue => 'verify_domains').start
+      if $redis.smembers('all_expired_ids').count > 1
+        VerifyNamecheap.delay(:queue => 'verify_domains').start
+      end
     end
     
     # END OF VERIFY DOMAIN STATUS
@@ -113,7 +115,9 @@ class VerifyNamecheap
   
   def on_complete(status, options)
     puts "VerifyNamecheap: calling start on_complete"
-    VerifyNamecheap.delay(:queue => 'verify_domains').start
+    if $redis.smembers('all_expired_ids').count > 1
+      VerifyNamecheap.delay(:queue => 'verify_domains').start
+    end
   end
   
   def self.start
@@ -121,7 +125,8 @@ class VerifyNamecheap
     expired_rotation = Rails.cache.read(['expired_rotation']).to_a
     puts "the current expired crawl rotation is #{expired_rotation}"
     next_crawl_to_process = expired_rotation[0]
-    all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
+    all_expired_ids = $redis.smembers('all_expired_ids').select{|objs| objs.include?("expired-#{next_crawl_to_process}")}.to_a
+    # all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
     
     if !all_expired_ids.empty?
       next_expired_id_to_verify = all_expired_ids[0]
@@ -130,7 +135,8 @@ class VerifyNamecheap
       puts "the domain to be verified is #{next_expired_id_to_verify}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
-      Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids-[next_expired_id_to_verify]) 
+      $redis.srem 'all_expired_ids', next_expired_id_to_verify
+      # Rails.cache.write(["crawl/#{next_crawl_to_process}/expired_ids"], all_expired_ids-[next_expired_id_to_verify])
       
       batch = Sidekiq::Batch.new
       batch.on(:complete, VerifyNamecheap)
@@ -143,7 +149,8 @@ class VerifyNamecheap
       puts "there are no expired domains to be verified for this crawl #{next_crawl_to_process}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
-      if expired_rotation.count > 1
+      if $redis.smembers('all_expired_ids').count > 1
+      # if expired_rotation.count > 1
         puts 'VerifyNamecheap there are more crawls in this rotation'
         VerifyNamecheap.delay(:queue => 'verify_domains').start
       end

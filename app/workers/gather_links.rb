@@ -28,14 +28,15 @@ class GatherLinks
       # process = true
       
       if process == true
-        redis_id = ("process-"+SecureRandom.hex+Time.now.to_i.to_s)
+        redis_id = ("process-#{crawl_id}-"+SecureRandom.hex+Time.now.to_i.to_s)
         puts "GatherLinks: the redis id is #{redis_id}"
         $redis.sadd "all_ids/#{crawl_id}", redis_id
         $redis.set(redis_id, {base_url: "#{base_url}", site_id: site_id, links: links, found_on: "#{page.url}", links_count: links_count, process: process, crawl_id: crawl_id, processor_name: options['processor_name']}.to_json)
         
-        ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
-        Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
-        if Rails.cache.read(['current_processing_batch_id']).empty?
+        $redis.sadd 'all_processing_ids', redis_id
+        # ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
+        # Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
+        if $redis.smembers('all_processing_ids').count <= 1
           puts "sending to be processed"
           Link.delay(:queue => 'process_links').start_processing
         end

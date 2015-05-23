@@ -14,10 +14,12 @@ class Link < ActiveRecord::Base
       running_crawls = Rails.cache.read(['running_crawls']).to_a
       puts "start_processing: list of running crawls #{running_crawls}"
       if !running_crawls.empty?
-        if Rails.cache.read(["crawl/#{running_crawls[0]}/expired_ids"]).to_a.count < 5
+        if $redis.smembers('all_expired_ids').count < 5
+        # if Rails.cache.read(["crawl/#{running_crawls[0]}/expired_ids"]).to_a.count < 5
           next_crawl_to_process = running_crawls[0]
           puts "next crawl to process #{next_crawl_to_process}"
-          processing_link_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a
+          processing_link_ids = $redis.smembers('all_processing_ids').select{|obj| obj.include?("process-#{next_crawl_to_process}")}
+          # processing_link_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/processing_batches/ids"]).to_a
 
           if !processing_link_ids.empty?
             puts "start_processing: there are more links to be processed"
@@ -26,8 +28,8 @@ class Link < ActiveRecord::Base
             new_crawls_rotation = running_crawls.rotate
           
             puts "deleting process link id from batch for crawl #{options['crawl_id']}"
-            Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
-          
+            # Rails.cache.write(["crawl/#{next_crawl_to_process}/processing_batches/ids"], processing_link_ids-[next_link_id_to_process])
+            $redis.srem('all_expired_ids', next_link_id_to_process)
             redis_obj = JSON.parse($redis.get(next_link_id_to_process))
             puts "start_processing: the redis obj is #{redis_obj}"
         
@@ -70,7 +72,9 @@ class Link < ActiveRecord::Base
             if running_crawls.count > 1
               new_crawls_rotation = running_crawls.rotate
               Rails.cache.write(['running_crawls'], new_crawls_rotation)
-              Link.delay.start_processing
+              if $redis.smembers('all_processing_ids').count > 0
+                Link.delay(:queue => 'process_links').start_processing
+              end
             end 
           end
         else

@@ -549,6 +549,8 @@ class Crawl < ActiveRecord::Base
     if !keys.empty?
       if sender == 'crawler'
         $redis.del(keys)
+        $redis.del($redis.smembers('all_expired_ids').select{|obj| obj.include?("expired-#{crawl_id}")})
+        $redis.del($redis.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")})
         $redis.del("all_ids/#{crawl_id}")
       else
         begin
@@ -577,13 +579,13 @@ class Crawl < ActiveRecord::Base
   
   def self.running_count_for(crawl_id, sender='crawler')
     if sender == 'crawler'
-      processing_count = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a.count
-      expired_count = Rails.cache.read(["crawl/#{crawl_id}/expired_ids"]).to_a.count
+      expired_count = $redis.smembers('all_expired_ids').select{|objs| objs.include?("expired-#{crawl_id}")}.count
+      processing_count = $redis.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")}.count
     else
-      redis_cache_connection = Crawl.connect_to_crawler_redis_cache(crawl_id)
-      if !redis_cache_connection.nil?
-        processing_count = redis_cache_connection.read(["crawl/#{crawl_id}/processing_batches/ids"]).to_a.count
-        expired_count = redis_cache_connection.read(["crawl/#{crawl_id}/expired_ids"]).to_a.count
+      redis_db_connection = Crawl.connect_to_crawler_redis_db(crawl_id)
+      if !redis_db_connection.nil?
+        processing_count = redis_db_connection.smembers('all_processing_ids').select{|obj| obj.include?("process-#{crawl_id}")}.count
+        expired_count = redis_db_connection.smembers('all_expired_ids').select{|objs| objs.include?("expired-#{crawl_id}")}.count
       else
         processing_count = 0
         processing_count = 0
