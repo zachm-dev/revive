@@ -54,9 +54,13 @@ class ProcessLinks
   def on_complete(status, options={})
     puts "finished processing batch #{options} and calling new batch to process"
     
-    if $redis.smembers('all_processing_ids').count > 0
-      puts "ProcessLinks: calling process link"
-      Link.delay(:queue => 'process_links').start_processing
+    running_crawls = Rails.cache.read(['running_crawls']).to_a
+    
+    if running_crawls.count > 0
+      if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0
+        puts "ProcessLinks: calling process link"
+        Link.delay(:queue => 'process_links').start_processing
+      end
     end
     $redis.sadd "finished_processing/#{options['crawl_id']}", options["redis_id"]
     
