@@ -7,7 +7,7 @@ class SidekiqStats
   def perform(crawl_id, options={})
     puts 'getting sidekiq stats'
     if Rails.cache.read(['running_crawls']).nil?
-      if if Sidekiq::ScheduledSet.new.size.to_i < 10
+      if Sidekiq::ScheduledSet.new.size.to_i < 10
         SidekiqStats.delay.start('crawl_id' => crawl_id, 'processor_name' => processor_name)
       end
     else
