@@ -77,8 +77,9 @@ class Crawl < ActiveRecord::Base
     $redis.sadd "all_ids/#{self.id}", crawl_keys
     
     running_crawls = Rails.cache.read(['running_crawls']).to_a
+    expired_crawls = Rails.cache.read(['expired_rotation']).to_a
     new_running_crawls = Rails.cache.write(['running_crawls'], running_crawls.push(self.id))
-    Rails.cache.write(['expired_rotation'], running_crawls)
+    new_expired_rotation = Rails.cache.write(['expired_rotation'], expired_crawls.push(self.id))
     
     Rails.cache.write(["crawl/#{self.id}/start_time"], Time.now, raw: true)
     Rails.cache.write(["crawl/#{self.id}/total_minutes_to_run"], options['total_minutes'].to_i, raw: true)
@@ -710,8 +711,9 @@ class Crawl < ActiveRecord::Base
     begin
       if !redis_cache_connection.nil?
         crawler_running_crawls = redis_cache_connection.read(['running_crawls']).to_a
-        crawler_running_crawls.delete(crawl_id)
-        redis_cache_connection.write(['running_crawls'], crawler_running_crawls)
+        crawler_expired_crawls = redis_cache_connection.read(['expired_rotation']).to_a
+        redis_cache_connection.write(['running_crawls'], crawler_running_crawls-[crawl_id])
+        redis_cache_connection.write(['expired_rotation'], crawler_expired_crawlss-[crawl_id])
         puts "removed crawl #{crawl_id} from list of running"
       end
     rescue

@@ -115,10 +115,10 @@ class VerifyNamecheap
   
   def on_complete(status, options)
     puts "VerifyNamecheap: calling start on_complete"
-    if $redis.smembers('all_expired_ids').count > 1
+    running = Rails.cache.read(['running_crawls']).to_a
+    if running.map{|c|Crawl.running_count_for(c)}.sum{|c|c['expired_count']} > 0
       VerifyNamecheap.delay(:queue => 'verify_domains').start
     else 
-      running = Rails.cache.read(['running_crawls']).to_a
       if running.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0
         puts "VerifyNamecheap: calling process link"
         Link.delay(:queue => 'process_links').start_processing
@@ -151,12 +151,11 @@ class VerifyNamecheap
         VerifyNamecheap.perform_async(next_expired_id_to_verify)
       end
 
-    else
+    elsif expired_rotation.count > 1
       puts "there are no expired domains to be verified for this crawl #{next_crawl_to_process}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
-      if $redis.smembers('all_expired_ids').count > 1
-      # if expired_rotation.count > 1
+      if expired_rotation.map{|c|Crawl.running_count_for(c)}.sum{|c|c['expired_count']} > 0
         puts 'VerifyNamecheap there are more crawls in this rotation'
         VerifyNamecheap.delay(:queue => 'verify_domains').start
       end

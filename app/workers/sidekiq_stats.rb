@@ -38,7 +38,11 @@ class SidekiqStats
       end
 
       Crawl.update_stats(crawl_id, processor_name)
-      $redis.del($redis.smembers("finished_processing/#{crawl_id}"))
+      
+      finished_processing = $redis.smembers("finished_processing/#{crawl_id}")
+      if finished_processing.count > 1
+        $redis.del(finished_processing)
+      end
     
       puts "the number of processing batches left are #{running_count['processing_count']} and the number of expired domains left to be processed are #{running_count['expired_count']} for the crawl #{crawl_id}"
       if running_count['processing_count'].to_i <= 2 && running_count['expired_count'].to_i <= 2
