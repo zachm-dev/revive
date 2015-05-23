@@ -118,7 +118,7 @@ class VerifyNamecheap
     if $redis.smembers('all_expired_ids').count > 1
       VerifyNamecheap.delay(:queue => 'verify_domains').start
     else 
-      running = Rails.cache.read(['running_crawls']).to_a.count > 0
+      running = Rails.cache.read(['running_crawls']).to_a
       if running.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0
         Link.delay(:queue => 'process_links').start_processing
       end
