@@ -7,7 +7,11 @@ class CrawlsController < ApplicationController
     crawls_array = []
     processor_names.each do |processor|
       # crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id).order('created_at').limit(10).flatten
-      crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id)
+      begin
+        crawls_array << Crawl.using("#{processor}").where(user_id: current_user.id)
+      rescue
+        
+      end
     end
     page = params[:page].nil? ? 1 : params[:page] 
     @crawls = crawls_array.flatten.sort_by{|record| record.created_at}.reverse.paginate(:page => page, :per_page => 10)
