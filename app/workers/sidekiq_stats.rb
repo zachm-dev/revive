@@ -22,7 +22,7 @@ class SidekiqStats
     
       running_count = Crawl.running_count_for(crawl_id)
     
-      if running_count['processing_count'].to_i > 1 && Sidekiq::Stats.new.queues["process_links"].to_i << 500
+      if running_count['processing_count'].to_i > 1 && Sidekiq::Stats.new.queues["process_links"].to_i < 500
         puts 'SidekiqStats: called start processing from sidekiq stats'
         Link.delay(:queue => 'process_links').start_processing
       end

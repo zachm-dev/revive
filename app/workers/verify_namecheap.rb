@@ -118,7 +118,7 @@ class VerifyNamecheap
     running = Rails.cache.read(['running_crawls']).to_a
     if running.map{|c|Crawl.running_count_for(c)}.sum{|c|c['expired_count']} > 0
       VerifyNamecheap.delay(:queue => 'verify_domains').start
-    elsif running.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0 && Sidekiq::Stats.new.queues["process_links"].to_i << 500
+    elsif running.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0 && Sidekiq::Stats.new.queues["process_links"].to_i < 500
       puts "VerifyNamecheap: calling process link"
       Link.delay(:queue => 'process_links').start_processing
     end

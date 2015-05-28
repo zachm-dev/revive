@@ -74,7 +74,7 @@ class Link < ActiveRecord::Base
               
             else
               
-              if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0 && Sidekiq::Stats.new.queues["process_links"].to_i << 500
+              if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0 && Sidekiq::Stats.new.queues["process_links"].to_i < 500
                 puts "Link: calling process link"
                 Link.delay(:queue => 'process_links').start_processing
               end
@@ -85,7 +85,7 @@ class Link < ActiveRecord::Base
             if running_crawls.count > 1
               new_crawls_rotation = running_crawls.rotate
               Rails.cache.write(['running_crawls'], new_crawls_rotation)
-              if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0 && Sidekiq::Stats.new.queues["process_links"].to_i << 500
+              if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0 && Sidekiq::Stats.new.queues["process_links"].to_i < 500
                 puts "start_processing: calling process link"
                 Link.delay(:queue => 'process_links').start_processing
               end
