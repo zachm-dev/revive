@@ -1,7 +1,7 @@
 class SidekiqStats
   
   include Sidekiq::Worker
-  sidekiq_options :retry => 3
+  sidekiq_options :retry => 2
   # sidekiq_options :queue => :sidekiq_stats
   
   def perform(crawl_id, options={})
@@ -12,12 +12,7 @@ class SidekiqStats
       end
     elsif Rails.cache.read(['running_crawls']).include?(crawl_id)
       
-      # running = Rails.cache.read(['running_crawls'])
-      
-      # not_running = $redis.smembers('all_processing_ids').reject{|i| running.include?(i)}
-      # if !not_running.empty?
-      #   $redis.srem('all_processing_ids', not_running)
-      # end
+      # Rails.cache.write(['expired_rotation'], Rails.cache.read(['running_crawls']).to_a)
       
       processor_name = options['processor_name']
     
