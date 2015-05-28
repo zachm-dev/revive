@@ -87,6 +87,6 @@ octopus:
       database: dd2a4lld9f69j2
       username: u7r3qia870f4ea
       password: p6ku9ua71s44j598umh2iln6ied
-      host: ec2-54-163-239-48.compute-1.amazonaws.com
-      port: 5432
+      host: ec2-54-83-29-171.compute-1.amazonaws.com
+      port: 5442
       pool: 1
