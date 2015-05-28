@@ -36,7 +36,7 @@ class GatherLinks
         $redis.sadd 'all_processing_ids', redis_id
         # ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
         # Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
-        if $redis.smembers('all_processing_ids').count <= 1 || Sidekiq::Stats.new.queues["process_links"].to_i < 500
+        if $redis.smembers('all_processing_ids').count <= 1
           puts "sending to be processed"
           Link.delay(:queue => 'process_links').start_processing
         end
@@ -57,6 +57,12 @@ class GatherLinks
     
     puts "GatherLinks: checking if there are more sites to crawl #{options['crawl_id']}"
     GatherLinks.delay.start('crawl_id' => options['crawl_id'], 'processor_name' => processor_name)
+    
+    stats = Sidekiq::Stats.new.queues["process_links"].to_i < 500
+    
+    if stats > 0 && stats < 500
+      Link.delay(:queue => 'process_links').start_processing
+    end
     
     batch = GatherLinksBatch.using("#{processor_name}").where(batch_id: "#{options['bid']}").first
     if !batch.nil?
