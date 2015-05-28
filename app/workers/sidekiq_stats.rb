@@ -1,7 +1,7 @@
 class SidekiqStats
   
   include Sidekiq::Worker
-  sidekiq_options :retry => 2
+  sidekiq_options :retry => 3
   # sidekiq_options :queue => :sidekiq_stats
   
   def perform(crawl_id, options={})
