@@ -36,7 +36,7 @@ class GatherLinks
         $redis.sadd 'all_processing_ids', redis_id
         # ids = Rails.cache.read(["crawl/#{crawl_id}/processing_batches/ids"])
         # Rails.cache.write(["crawl/#{crawl_id}/processing_batches/ids"], ids.push(redis_id))
-        if $redis.smembers('all_processing_ids').count <= 1
+        if $redis.smembers('all_processing_ids').count <= 1 || Sidekiq::Stats.new.queues["process_links"].to_i << 500
           puts "sending to be processed"
           Link.delay(:queue => 'process_links').start_processing
         end
@@ -54,15 +54,14 @@ class GatherLinks
 
     puts "GatherLinks Just finished Batch #{options['bid']}"
     processor_name = options['processor_name']
+    
+    puts "GatherLinks: checking if there are more sites to crawl #{options['crawl_id']}"
+    GatherLinks.delay.start('crawl_id' => options['crawl_id'], 'processor_name' => processor_name)
 
-    site = Site.using("#{processor_name}").where(id: options['site_id'].to_i).first
-    crawl = site.crawl
-    
-    puts "checking if there are more sites to crawl #{crawl.id}"
-    GatherLinks.delay.start('crawl_id' => crawl.id, 'processor_name' => processor_name)
-    
     batch = GatherLinksBatch.using("#{processor_name}").where(batch_id: "#{options['bid']}").first
     if !batch.nil?
+      site = Site.using("#{processor_name}").where(id: options['site_id'].to_i).first
+      crawl = site.crawl
       total_crawl_urls = Rails.cache.read(["crawl/#{crawl.id}/urls_found"], raw: true).to_i
       crawl.update(total_urls_found: total_crawl_urls)
       site.update(gather_status: 'finished')

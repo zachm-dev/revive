@@ -62,7 +62,7 @@ class ProcessLinks
     running_crawls = Rails.cache.read(['running_crawls']).to_a
     
     if running_crawls.count > 0
-      if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0
+      if running_crawls.map{|c|Crawl.running_count_for(c)}.sum{|c|c['processing_count']} > 0  && Sidekiq::Stats.new.queues["process_links"].to_i << 500
         puts "ProcessLinks: calling process link"
         Link.delay(:queue => 'process_links').start_processing
       end
