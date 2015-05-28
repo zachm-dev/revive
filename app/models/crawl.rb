@@ -613,7 +613,7 @@ class Crawl < ActiveRecord::Base
       end
     end
     puts "the number of processing batches left are #{processing_count} and the number of expired domains left to be processed are #{expired_count} for the crawl #{crawl_id}"
-    return {"processing_count" => processing_count, "expired_count" => expired_count}
+    return {"processing_count" => processing_count, "expired_count" => expired_count, 'crawl_id' => crawl_id}
   end
   
   def self.get_stats(crawl_id, sender='crawler')
@@ -713,7 +713,7 @@ class Crawl < ActiveRecord::Base
         crawler_running_crawls = redis_cache_connection.read(['running_crawls']).to_a
         crawler_expired_crawls = redis_cache_connection.read(['expired_rotation']).to_a
         redis_cache_connection.write(['running_crawls'], crawler_running_crawls-[crawl_id])
-        redis_cache_connection.write(['expired_rotation'], crawler_expired_crawlss-[crawl_id])
+        redis_cache_connection.write(['expired_rotation'], crawler_expired_crawls-[crawl_id])
         puts "removed crawl #{crawl_id} from list of running"
       end
     rescue

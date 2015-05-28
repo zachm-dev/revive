@@ -126,13 +126,18 @@ class VerifyNamecheap
     end
   end
   
-  def self.start
+  def self.start(options={})
     puts "VerifyNamecheap: start method"
     expired_rotation = Rails.cache.read(['expired_rotation']).to_a
     puts "the current expired crawl rotation is #{expired_rotation}"
-    next_crawl_to_process = expired_rotation[0]
+    
+    if options['crawl_id'].nil?
+      next_crawl_to_process = expired_rotation[0]
+    else
+      next_crawl_to_process = options['crawl_id'].to_i
+    end
+
     all_expired_ids = $redis.smembers('all_expired_ids').select{|objs| objs.include?("expired-#{next_crawl_to_process}")}.to_a
-    # all_expired_ids = Rails.cache.read(["crawl/#{next_crawl_to_process}/expired_ids"]).to_a
     
     if !all_expired_ids.empty?
       next_expired_id_to_verify = all_expired_ids[0]
@@ -155,9 +160,10 @@ class VerifyNamecheap
       puts "there are no expired domains to be verified for this crawl #{next_crawl_to_process}"
       new_expired_rotation = expired_rotation.rotate
       Rails.cache.write(['expired_rotation'], new_expired_rotation)
-      if expired_rotation.map{|c|Crawl.running_count_for(c)}.sum{|c|c['expired_count']} > 0
+      next_to_verify = expired_rotation.map{|c|Crawl.running_count_for(c)}.select{|c|c['expired_count'].to_i > 0}[0]
+      if !next_to_verify.nil?
         puts 'VerifyNamecheap there are more crawls in this rotation'
-        VerifyNamecheap.delay(:queue => 'verify_domains').start
+        VerifyNamecheap.delay(:queue => 'verify_domains').start('crawl_id' => next_to_verify['crawl_id'].to_i)
       end
     end
   end
