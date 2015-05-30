@@ -630,7 +630,7 @@ body, html {
     text-align: center;
   }
 
-  .sales-video-section h1 {
+  h1 {
     color: #fff;
     font-weight: bold;
     font-family: ubuntu;
@@ -653,7 +653,7 @@ body, html {
 
   .sales-btn-started  {
     margin-top: -70px;
-    
+
     a {
       width: 100%;
       height: 80px;
@@ -682,8 +682,8 @@ body, html {
       font-weight: bold;
       color: #9E9E9E;
       padding-top: 5px;
-      padding-right: 20px;
-      font-size: 12px;
+      padding-right: 30px;
+      font-size: 14px;
     }
 
     .guarantee-text {
@@ -697,9 +697,14 @@ body, html {
   padding-right: 0px !important;
 }
 
-.access-count-section {
+.sales-section {
   padding-top: 90px;
-  padding-bottom: 90px;
+
+  h4 {
+    font-family: ubuntu;
+    font-size: 20px;
+    font-weight: bold;  
+  }
 }
 
 h3.sales-section-title {
@@ -711,29 +716,42 @@ h3.sales-section-title {
 
 .sales-section-text {
   font-family: ubuntu;
-  font-size: 16px;
+  font-size: 19px;
   color: #545454;
-  letter-spacing: 1px;
+  line-height: 30px
 }
 
 h4.sales-subtitle-primary {
-  font-family: ubuntu;
   color: $primary-color;
 }
 
 h4.sales-subtitle-black {
-  font-family: ubuntu;
   color: #000;
 }
 
 h4.sales-subtitle-red {
-  font-family: ubuntu;
   color: #e27260;
 }
 
 .sales-section-text-gray {
-  font-family: ubuntu;
-  font-size: 14px;
-  color: #545454;
+  color: #8f8f8f;
   letter-spacing: 1px; 
+}
+
+.sales-small-title {
+  font-size: 18px;
+  font-family: ubuntu;
+  font-weight: bold;
+}
+
+.sales-small-text {
+  font-size: 16px;
+  font-family: ubuntu;
+  color: #545454;
+  letter-spacing: 1px
+}
+
+.sales-logo-section {
+  padding-top: 150px;
+  padding-bottom: 50px;
 }
