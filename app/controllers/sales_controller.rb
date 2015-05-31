@@ -1,5 +1,5 @@
 class SalesController < ApplicationController
   def index
-    render :layout => 'home'
+    render :layout => 'sales'
   end
 end

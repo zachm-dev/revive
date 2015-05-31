@@ -622,6 +622,19 @@ body, html {
   text-align: center;
 }
 
+.sales-how-works-section {
+  margin: 0 auto;
+  background: transparent linear-gradient(to right, #0C62A1 0%, #0F7FD2 50%, #0C62A1 100%) repeat scroll 0% 0%;
+  text-align: center;
+
+  h1 {
+    color: #fff;
+    font-weight: bold;
+    font-family: ubuntu;
+    margin: 20px 0px 40px 0px;
+  }
+}
+
 .sales-intro-section {
   .sales-video-section {
     height: 500px;
@@ -635,6 +648,21 @@ body, html {
     font-weight: bold;
     font-family: ubuntu;
     margin: 20px 0px 40px 0px;
+  }
+
+  .sales-black {
+    color: #000;
+    font-weight: normal;
+    margin-bottom: 20px;  
+  }
+
+  .sales-black-italic {
+    font-weight: normal;
+    font-style: italic;
+    color: #545454;
+    letter-spacing: 1px;
+    line-height: 30px;
+    font-size: 18px;
   }
 
   .videoWrapper {
@@ -754,4 +782,103 @@ h4.sales-subtitle-red {
 .sales-logo-section {
   padding-top: 150px;
   padding-bottom: 50px;
+}
+
+.sales-require-box {
+  border: 2px solid #6cab1a;
+  border-radius: 5px;
+  margin: 50px 20px;
+
+  .box-header {
+    text-align: center;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    .box-header-title {
+      background-color: #6CAB1A;
+      color: #fff;
+      font-size: 20px;
+      padding: 10px 0px;
+      font-family: ubuntu;
+    }
+  }
+
+  ul {
+    padding: 0px 20px;
+  }
+
+  li {
+    padding: 15px 15px 15px 29px;
+    list-style: outside none none;
+    margin: 4px;
+    background: transparent url("/assets/dash.png") no-repeat scroll left center;
+    font-size: 16px;
+    font-family: ubuntu;
+    color: #545454;
+  }
+}
+
+.sales-revive-video-section {
+  height: 400px;
+  padding-top: 30px;
+  text-align: center;
+}
+
+.sales-start-button {
+  width: 100%;
+  padding: 20px 0px;
+  margin: 15px 0px;
+  border: 2px solid $primary-color;
+  border-radius: 10px;
+  font-size: 25px;
+}
+
+.sales-how-works-section {
+  margin: 0 auto;
+  background: transparent linear-gradient(to right, #0C62A1 0%, #0F7FD2 50%, #0C62A1 100%) repeat scroll 0% 0%;
+  text-align: center;
+  margin-top: 50px;
+  padding-bottom: 50px;
+  
+  h1 {
+    color: #fff;
+    font-weight: bold;
+    font-family: ubuntu;
+    margin: 60px 0px 50px 0px;
+  }
+
+  .sales-how-it-works {
+    background: transparent url("/assets/how_it_works.png") no-repeat scroll center center;
+    height: 620px;
+  }
+
+  .left-text {
+    padding-right: 140px;
+    font-size: 18px;
+    padding-left: 100px;
+  }
+
+  .right-text {
+    font-size: 18px;
+    padding-right: 100px;
+    padding-left: 140px;
+  }
+
+  .process-title {
+    font-family: ubuntu;
+    color: #fff;
+    font-size: 20px;
+  }
+
+  .process-text {
+    font-family: ubuntu;
+    color: #cce7fb;
+    font-size: 17px;
+    letter-spacing: 1px;
+    line-height: 16px;
+  }
+
+  .process-core {
+    color: #f3e7a2;
+  }
 }
