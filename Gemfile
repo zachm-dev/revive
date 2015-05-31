@@ -83,6 +83,6 @@ gem 'rails_12factor', group: :production
 if ENV['RACK_ENV'] == 'production'
   gem 'sidekiq-pro', :source => "https://#{ENV['sidekiq_url']}"
 else
-  # gem 'sidekiq-pro'
-  gem 'sidekiq'
+  gem 'sidekiq-pro'
+  # gem 'sidekiq'
 end
