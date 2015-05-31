@@ -61,6 +61,11 @@ table {
     src: font_url('Walkway.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'ubuntu';
+    src: font_url('Ubuntu-R.ttf') format('truetype');
+}
+
 body, html {
   width: 100%;
   background: #f2f2f0;
