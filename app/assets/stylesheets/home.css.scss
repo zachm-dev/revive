@@ -61,6 +61,11 @@ table {
     src: font_url('Walkway.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'ubuntu';
+    src: font_url('Ubuntu-L.ttf') format('truetype');
+}
+
 body {
   width: 100%;
   background: #f2f2f0;
@@ -838,7 +843,7 @@ h4.sales-subtitle-red {
     padding: 15px 15px 15px 29px;
     list-style: outside none none;
     margin: 4px;
-    background: transparent url("/assets/dash.png") no-repeat scroll left center;
+    background: transparent url(image-path('"dash.png"')) no-repeat scroll left center;
     font-size: 16px;
     font-family: ubuntu;
     color: #545454;
@@ -869,7 +874,7 @@ h4.sales-subtitle-red {
   }
 
   .sales-how-it-works {
-    background: transparent url("/assets/how_it_works.png") no-repeat scroll center center;
+    background: transparent url(image-path("how_it_works.png")) no-repeat scroll center center;
     height: 620px;
   }
 
